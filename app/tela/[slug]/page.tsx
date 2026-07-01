@@ -1,9 +1,9 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, MessageCircle } from "lucide-react";
 import { getTelaPorSlug } from "@/lib/queries";
 import { publicImageUrl } from "@/lib/supabase/storage";
-import { demoPricesEnabled } from "@/lib/demo-prices";
 import { TelaImage } from "@/components/TelaImage";
 import { ColorSelector } from "@/components/ColorSelector";
 import { AttributeBadges } from "@/components/AttributeBadges";
@@ -16,6 +16,65 @@ const pesos = new Intl.NumberFormat("es-MX", {
   style: "currency",
   currency: "MXN",
 });
+
+/**
+ * Metadatos OpenGraph por tela: el catálogo se comparte por WhatsApp, y sin
+ * esto el preview del enlace sale genérico. Con foto + nombre + colores, cada
+ * enlace compartido es un mini-anuncio.
+ *
+ * A propósito SIN precio: WhatsApp cachea los previews por mucho tiempo y un
+ * precio embebido quedaría publicado aunque cambie en la BD (o sea uno demo).
+ *
+ * La lectura cae en el mismo `unstable_cache` que usa la página: no duplica
+ * queries a Supabase.
+ */
+export async function generateMetadata({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ color?: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const { color } = await searchParams;
+
+  const variantes = await getTelaPorSlug(slug);
+  // notFound() aquí (y no solo en la página): generateMetadata se resuelve
+  // ANTES de que empiece el streaming del loading.tsx, así el status HTTP
+  // sí llega como 404 y no como 200 con UI de "no encontrado".
+  if (variantes.length === 0) notFound();
+
+  const seleccionada =
+    variantes.find((v) => v.color_slug === color) ?? variantes[0];
+
+  const nombre = seleccionada.color_nombre
+    ? `${seleccionada.tela_nombre} · ${seleccionada.color_nombre}`
+    : seleccionada.tela_nombre;
+
+  const totalColores = new Set(
+    variantes.map((v) => v.color_slug ?? v.variante_id)
+  ).size;
+
+  const descripcion = [
+    seleccionada.descripcion ?? seleccionada.categoria,
+    totalColores > 1 ? `${totalColores} colores disponibles` : null,
+    "Telas La Jalisciense · Fresnillo",
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
+  const foto = publicImageUrl(seleccionada.foto_principal);
+
+  return {
+    title: `${nombre} — Telas La Jalisciense`,
+    description: descripcion,
+    openGraph: {
+      title: nombre,
+      description: descripcion,
+      ...(foto ? { images: [{ url: foto, alt: nombre }] } : {}),
+    },
+  };
+}
 
 export default async function TelaDetallePage({
   params,
@@ -113,7 +172,7 @@ export default async function TelaDetallePage({
                     / metro
                   </span>
                 </p>
-                {demoPricesEnabled() && (
+                {seleccionada.precio_es_referencia && (
                   <p className="mt-0.5 text-xs uppercase tracking-wide text-ink/40">
                     precio de referencia · confirmamos por WhatsApp
                   </p>

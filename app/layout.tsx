@@ -22,6 +22,14 @@ export const metadata: Metadata = {
   title: "Telas La Jalisciense — Catálogo",
   description:
     "Catálogo de telas al menudeo en Fresnillo. Chifón, tul, encaje y más.",
+  // Preview al compartir la portada por WhatsApp (el "camino de venta").
+  openGraph: {
+    title: "Telas La Jalisciense — Catálogo",
+    description:
+      "Explora las telas, elige tus metros y manda tu pedido por WhatsApp. Chifón, tul, encaje y más en Fresnillo.",
+    locale: "es_MX",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
