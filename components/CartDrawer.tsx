@@ -29,15 +29,29 @@ export function CartDrawer() {
     0
   );
 
+  // Honestidad de precios: si hay artículos sin precio o con precio de
+  // referencia (demo), el mensaje y el pie del carrito lo dicen explícito
+  // para que el cliente no llegue citando un total que la tienda no fijó.
+  const haySinPrecio = items.some((item) => item.precio == null);
+  const hayReferencia = items.some((item) => item.precio_referencia);
+
   const formatMessage = () => {
     let msg = "Hola, me interesa cotizar el siguiente pedido:\n\n";
     items.forEach((item) => {
       msg += `- ${item.cantidad}m de ${item.tela_nombre}`;
       if (item.color_nombre) msg += ` color ${item.color_nombre}`;
       if (item.sku) msg += ` (SKU: ${item.sku})`;
+      if (item.precio == null) msg += " — precio por confirmar";
       msg += "\n";
     });
-    msg += `\nTotal estimado: ${pesos.format(total)} MXN.\n¿Me confirman disponibilidad?`;
+    if (total > 0) {
+      msg += haySinPrecio
+        ? `\nTotal parcial (sin los artículos por confirmar): ${pesos.format(total)} MXN.`
+        : `\nTotal estimado: ${pesos.format(total)} MXN.`;
+    }
+    msg += hayReferencia || haySinPrecio
+      ? "\n¿Me confirman precios y disponibilidad?"
+      : "\n¿Me confirman disponibilidad?";
     return encodeURIComponent(msg);
   };
 
@@ -151,12 +165,17 @@ export function CartDrawer() {
         {items.length > 0 && (
           <div className="border-t border-line bg-white p-4 sm:p-6">
             <div className="mb-1 flex items-center justify-between">
-              <span className="text-lg font-medium text-ink">Total estimado</span>
+              <span className="text-lg font-medium text-ink">
+                {haySinPrecio ? "Total parcial" : "Total estimado"}
+              </span>
               <span className="font-display text-2xl text-amber">{pesos.format(total)}</span>
             </div>
             <p className="mb-4 text-xs text-ink/50">
-              Es una estimación. Confirmamos precio final y disponibilidad por
-              WhatsApp.
+              {hayReferencia
+                ? "Incluye precios de referencia. Confirmamos precio final y disponibilidad por WhatsApp."
+                : haySinPrecio
+                  ? "Algunos artículos se cotizan por WhatsApp; no están en el total."
+                  : "Es una estimación. Confirmamos precio final y disponibilidad por WhatsApp."}
             </p>
             <Button
               variant="whatsapp"

@@ -27,6 +27,12 @@ export type CatalogoTela = {
   oportunidades: string[];
   created_at: string;
   updated_at: string;
+  /**
+   * NO viene de la vista: lo añade `aplicarPreciosDemo` cuando rellena un
+   * precio vacío con uno de referencia. Permite que la UI y el mensaje de
+   * WhatsApp distingan precio real (BD) de precio demo.
+   */
+  precio_es_referencia?: boolean;
 };
 
 /**
@@ -39,6 +45,8 @@ export type TelaAgrupada = {
   tela_nombre: string;
   categoria: string | null;
   precio_desde: number | null;
+  /** ¿El `precio_desde` proviene de un precio demo (no capturado en la BD)? */
+  precio_desde_es_referencia: boolean;
   variantes: CatalogoTela[];
 };
 
@@ -55,18 +63,20 @@ export function agruparPorModelo(filas: CatalogoTela[]): TelaAgrupada[] {
         tela_nombre: fila.tela_nombre,
         categoria: fila.categoria,
         precio_desde: null,
+        precio_desde_es_referencia: false,
         variantes: [],
       };
       mapa.set(fila.tela_id, grupo);
     }
     grupo.variantes.push(fila);
 
-    // precio "desde" = el menor precio entre las variantes con precio
+    // precio "desde" = el menor precio entre las variantes con precio;
+    // arrastra si ese precio es real o de referencia (demo)
     if (fila.precio_metro != null) {
-      grupo.precio_desde =
-        grupo.precio_desde == null
-          ? fila.precio_metro
-          : Math.min(grupo.precio_desde, fila.precio_metro);
+      if (grupo.precio_desde == null || fila.precio_metro < grupo.precio_desde) {
+        grupo.precio_desde = fila.precio_metro;
+        grupo.precio_desde_es_referencia = fila.precio_es_referencia ?? false;
+      }
     }
   }
 

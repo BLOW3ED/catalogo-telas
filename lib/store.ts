@@ -8,6 +8,8 @@ export type CartItem = {
   color_nombre: string | null;
   sku: string | null;
   precio: number | null;
+  /** true si `precio` es de referencia (demo), no capturado en la BD. */
+  precio_referencia?: boolean;
   cantidad: number;
   foto_principal: string | null;
 };
@@ -47,6 +49,7 @@ export const useCartStore = create<CartState>()(
                 color_nombre: variante.color_nombre,
                 sku: variante.sku,
                 precio: variante.precio_metro,
+                precio_referencia: variante.precio_es_referencia ?? false,
                 cantidad,
                 foto_principal: variante.foto_principal,
               },

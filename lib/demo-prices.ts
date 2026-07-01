@@ -75,10 +75,19 @@ export function resolveDemoPrice(row: {
 /**
  * Aplica `resolveDemoPrice` a una lista de filas del catálogo, devolviendo
  * copias con `precio_metro` resuelto. No muta las filas originales.
+ *
+ * Las filas cuyo precio se RELLENÓ quedan marcadas con
+ * `precio_es_referencia: true`, para que la UI y el mensaje de WhatsApp
+ * puedan distinguir precio real (BD) de precio demo. Los precios reales
+ * pasan intactos y sin marca.
  */
 export function aplicarPreciosDemo<
   T extends { variante_id: string; categoria_slug: string | null; precio_metro: number | null }
 >(filas: T[]): T[] {
   if (!demoPricesEnabled()) return filas;
-  return filas.map((f) => ({ ...f, precio_metro: resolveDemoPrice(f) }));
+  return filas.map((f) =>
+    f.precio_metro != null
+      ? f
+      : { ...f, precio_metro: resolveDemoPrice(f), precio_es_referencia: true }
+  );
 }

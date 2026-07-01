@@ -4,7 +4,6 @@ import { publicImageUrl } from "@/lib/supabase/storage";
 import { TelaImage } from "@/components/TelaImage";
 import { ColorSwatch } from "@/components/ColorSwatch";
 import { AttributeBadges } from "@/components/AttributeBadges";
-import { demoPricesEnabled } from "@/lib/demo-prices";
 
 const pesos = new Intl.NumberFormat("es-MX", {
   style: "currency",
@@ -85,7 +84,7 @@ export function ProductCard({
                 </span>
                 <span className="text-ink/50"> /metro</span>
               </p>
-              {demoPricesEnabled() && (
+              {tela.precio_desde_es_referencia && (
                 <p className="text-[10px] uppercase tracking-wide text-ink/40">
                   precio de referencia
                 </p>
