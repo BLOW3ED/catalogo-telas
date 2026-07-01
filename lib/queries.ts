@@ -1,4 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
+import { unstable_cache } from "next/cache";
+import { createPublicClient } from "@/lib/supabase/public";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { CatalogoTela } from "@/lib/types";
 import { aplicarPreciosDemo } from "@/lib/demo-prices";
@@ -18,11 +19,57 @@ export type ResultadoCatalogo = {
 };
 
 /**
+ * Caché de datos (no de ruta): las páginas son dinámicas porque leen
+ * `searchParams`, así que el `revalidate` a nivel página no aplica. En cambio,
+ * `unstable_cache` sí cachea el RESULTADO de la query entre requests, con
+ * revalidación cada 60s → cada visita ya no pega a Supabase.
+ *
+ * Las funciones cacheadas LANZAN en error: `unstable_cache` no guarda
+ * excepciones, así que un fallo transitorio no queda cacheado 60s.
+ */
+const REVALIDATE_SEGUNDOS = 60;
+
+const listarCatalogoCached = unstable_cache(
+  async (limit: number, offset: number): Promise<CatalogoTela[]> => {
+    const supabase = createPublicClient();
+    const { data, error } = await supabase
+      .from("catalogo_telas")
+      .select("*")
+      .order("tela_nombre", { ascending: true })
+      .order("color_nombre", { ascending: true })
+      .range(offset, offset + limit - 1);
+
+    if (error) throw new Error(error.message);
+    return (data ?? []) as CatalogoTela[];
+  },
+  ["catalogo-listado"],
+  { revalidate: REVALIDATE_SEGUNDOS, tags: ["catalogo"] }
+);
+
+const telaPorSlugCached = unstable_cache(
+  async (slug: string): Promise<CatalogoTela[]> => {
+    const supabase = createPublicClient();
+    const { data, error } = await supabase
+      .from("catalogo_telas")
+      .select("*")
+      .eq("tela_slug", slug)
+      .order("color_nombre", { ascending: true });
+
+    if (error) throw new Error(error.message);
+    return (data ?? []) as CatalogoTela[];
+  },
+  ["catalogo-tela"],
+  { revalidate: REVALIDATE_SEGUNDOS, tags: ["catalogo"] }
+);
+
+/**
  * Lee la vista `catalogo_telas` (una fila por variante).
  * Server-side, llave anon → respeta RLS de lectura pública.
  *
- * Con `q`: busca por nombre de modelo, color o SKU usando la función
- * `buscar_telas` (f_unaccent + pg_trgm → insensible a acentos). Si esa función
+ * Sin `q`: listado cacheado por (limit, offset), revalida cada 60s.
+ * Con `q`: busca EN VIVO por nombre de modelo, color o SKU usando la función
+ * `buscar_telas` (f_unaccent + pg_trgm → insensible a acentos). Los términos
+ * de búsqueda son de cola larga, así que cachearlos aporta poco. Si esa función
  * aún no existe en la BD, cae a un ILIKE básico para no romper la búsqueda.
  */
 export async function getCatalogo(
@@ -32,36 +79,31 @@ export async function getCatalogo(
     return { data: [], error: null, configurado: false };
   }
 
-  const supabase = await createClient();
   const termino = q?.trim();
-
   if (termino) {
-    const { data, error } = await supabase.rpc("buscar_telas", { termino });
-    // PGRST202 = la función no existe todavía → fallback ILIKE (sin acentos).
-    if (error?.code === "PGRST202") {
-      return buscarConIlike(supabase, termino);
-    }
-    if (error) {
-      return { data: [], error: error.message, configurado: true };
-    }
-    return {
-      data: aplicarPreciosDemo((data ?? []) as CatalogoTela[]),
-      error: null,
-      configurado: true,
-    };
+    return buscarCatalogo(termino);
   }
 
-  const { data, error } = await supabase
-    .from("catalogo_telas")
-    .select("*")
-    .order("tela_nombre", { ascending: true })
-    .order("color_nombre", { ascending: true })
-    .range(offset, offset + limit - 1);
+  try {
+    const data = await listarCatalogoCached(limit, offset);
+    return { data: aplicarPreciosDemo(data), error: null, configurado: true };
+  } catch (e) {
+    const mensaje = e instanceof Error ? e.message : String(e);
+    return { data: [], error: mensaje, configurado: true };
+  }
+}
 
+async function buscarCatalogo(termino: string): Promise<ResultadoCatalogo> {
+  const supabase = createPublicClient();
+  const { data, error } = await supabase.rpc("buscar_telas", { termino });
+
+  // PGRST202 = la función no existe todavía → fallback ILIKE (sin acentos).
+  if (error?.code === "PGRST202") {
+    return buscarConIlike(supabase, termino);
+  }
   if (error) {
     return { data: [], error: error.message, configurado: true };
   }
-
   return {
     data: aplicarPreciosDemo((data ?? []) as CatalogoTela[]),
     error: null,
@@ -101,17 +143,15 @@ async function buscarConIlike(
 /**
  * Todas las variantes (colores) de un modelo, por su slug.
  * Para la página de detalle `/tela/[slug]`. Lista vacía → 404 en la página.
+ * Lectura cacheada (60s), igual que el listado.
  */
 export async function getTelaPorSlug(slug: string): Promise<CatalogoTela[]> {
   if (!isSupabaseConfigured()) return [];
 
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("catalogo_telas")
-    .select("*")
-    .eq("tela_slug", slug)
-    .order("color_nombre", { ascending: true });
-
-  if (error) return [];
-  return aplicarPreciosDemo((data ?? []) as CatalogoTela[]);
+  try {
+    const data = await telaPorSlugCached(slug);
+    return aplicarPreciosDemo(data);
+  } catch {
+    return [];
+  }
 }

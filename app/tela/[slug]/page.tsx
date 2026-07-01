@@ -10,9 +10,8 @@ import { AttributeBadges } from "@/components/AttributeBadges";
 import { AddToCart } from "@/components/AddToCart";
 import { Hint } from "@/components/Hint";
 
-// Mismo patrón de ISR que el inicio: se revalida cada 60s.
-export const revalidate = 60;
-
+// Página dinámica (lee `searchParams`); la lectura de la tela se cachea 60s
+// en lib/queries.ts (unstable_cache), igual que el listado del inicio.
 const pesos = new Intl.NumberFormat("es-MX", {
   style: "currency",
   currency: "MXN",

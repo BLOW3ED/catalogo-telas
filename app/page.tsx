@@ -14,9 +14,8 @@ import {
   MessageCircle,
 } from "lucide-react";
 
-// Cachea la lectura del catálogo (ISR): se revalida cada 60s.
-export const revalidate = 60;
-
+// La página es dinámica (lee `searchParams`), pero las lecturas del catálogo
+// se cachean 60s en lib/queries.ts (unstable_cache).
 export default async function HomePage({
   searchParams,
 }: {
