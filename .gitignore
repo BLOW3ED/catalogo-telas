@@ -11,11 +11,10 @@ next-env.d.ts
 # production
 /build
 
-# env — NUNCA subir llaves reales
+# env — NUNCA subir llaves reales (.env.example SÍ se versiona: es la plantilla sin llaves)
 .env
 .env.local
 .env*.local
-.env.example
 
 # fotos fuente de ingesta (pesadas; viven localmente y en el bucket `telas`)
 /FOTOS_TELAS/
