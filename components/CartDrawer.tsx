@@ -5,6 +5,9 @@ import { X, Trash2, MessageCircle } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { publicImageUrl } from "@/lib/supabase/storage";
 import { TelaImage } from "./TelaImage";
+import { Button } from "@/components/ui/Button";
+import { Hint } from "@/components/Hint";
+import { ShareCatalog } from "@/components/ShareCatalog";
 
 const pesos = new Intl.NumberFormat("es-MX", {
   style: "currency",
@@ -58,12 +61,17 @@ export function CartDrawer() {
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between border-b border-line p-4 sm:p-6">
-          <h2 className="font-display text-2xl text-ink">Cotización</h2>
+        <div className="flex items-start justify-between border-b border-line p-4 sm:p-6">
+          <div>
+            <h2 className="font-display text-2xl text-ink">Tu cotización</h2>
+            <p className="mt-0.5 text-sm text-ink/60">
+              Revísala y envíala por WhatsApp. Sin compromiso.
+            </p>
+          </div>
           <button
             onClick={() => setIsOpen(false)}
-            className="rounded-full p-2 text-ink/60 transition-colors hover:bg-line/50 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
-            aria-label="Cerrar carrito"
+            className="-mr-1 shrink-0 rounded-full p-2 text-ink/60 transition-colors hover:bg-line/50 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+            aria-label="Cerrar cotización"
           >
             <X className="h-6 w-6" />
           </button>
@@ -72,14 +80,22 @@ export function CartDrawer() {
         <div className="flex-1 overflow-y-auto p-4 sm:p-6">
           {items.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center text-center">
-              <p className="font-display text-xl text-ink/70">Carrito vacío</p>
-              <p className="mt-2 text-sm text-ink/50">Agrega telas para solicitar una cotización por WhatsApp.</p>
-              <button
+              <p className="font-display text-xl text-ink/70">Aún no agregas telas</p>
+              <p className="mt-2 max-w-xs text-sm text-ink/50">
+                Explora el catálogo, elige tus metros y agrégalos aquí. Luego lo
+                envías por WhatsApp y te atendemos.
+              </p>
+              <Button
+                variant="primary"
+                size="md"
+                className="mt-6"
                 onClick={() => setIsOpen(false)}
-                className="mt-6 rounded-xl border border-line bg-white px-5 py-2 text-sm font-medium transition-colors hover:bg-line/30"
               >
-                Seguir explorando
-              </button>
+                Explorar telas
+              </Button>
+              <div className="mt-3">
+                <ShareCatalog variant="ghost" size="md" label="Compartir catálogo" />
+              </div>
             </div>
           ) : (
             <ul className="space-y-6">
@@ -99,17 +115,17 @@ export function CartDrawer() {
                       </p>
                     </div>
                     <div className="mt-2 flex items-center justify-between">
-                      <div className="flex items-center rounded-lg border border-line bg-white px-1 py-1">
+                      <div className="flex items-center rounded-lg border border-line bg-white p-1">
                         <button
                           onClick={() => updateQuantity(item.id, Math.max(0.5, item.cantidad - 0.5))}
-                          className="px-2 text-ink/60 hover:text-amber"
-                          aria-label="Disminuir"
+                          className="flex h-9 w-9 items-center justify-center rounded-md text-lg text-ink/60 transition-colors hover:bg-line/30 hover:text-amber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+                          aria-label="Disminuir medio metro"
                         >-</button>
-                        <span className="w-10 text-center text-sm font-medium">{item.cantidad}m</span>
+                        <span className="w-12 text-center text-sm font-medium">{item.cantidad}m</span>
                         <button
                           onClick={() => updateQuantity(item.id, item.cantidad + 0.5)}
-                          className="px-2 text-ink/60 hover:text-amber"
-                          aria-label="Aumentar"
+                          className="flex h-9 w-9 items-center justify-center rounded-md text-lg text-ink/60 transition-colors hover:bg-line/30 hover:text-amber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+                          aria-label="Aumentar medio metro"
                         >+</button>
                       </div>
                       <div className="flex items-center gap-3">
@@ -134,20 +150,30 @@ export function CartDrawer() {
 
         {items.length > 0 && (
           <div className="border-t border-line bg-white p-4 sm:p-6">
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-1 flex items-center justify-between">
               <span className="text-lg font-medium text-ink">Total estimado</span>
               <span className="font-display text-2xl text-amber">{pesos.format(total)}</span>
             </div>
-            <a
+            <p className="mb-4 text-xs text-ink/50">
+              Es una estimación. Confirmamos precio final y disponibilidad por
+              WhatsApp.
+            </p>
+            <Button
+              variant="whatsapp"
+              size="lg"
+              fullWidth
               href={waHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-amber px-5 py-4 font-medium text-white shadow-sm transition-colors hover:bg-amber/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2"
               onClick={() => setIsOpen(false)}
             >
-              <MessageCircle className="h-5 w-5" />
+              <MessageCircle className="h-6 w-6" aria-hidden />
               Enviar pedido por WhatsApp
-            </a>
+            </Button>
+            <Hint id="cart-enviar" className="mt-3">
+              Al tocar el botón se abre WhatsApp con tu pedido ya escrito. Solo
+              envíalo y te contestamos.
+            </Hint>
           </div>
         )}
       </div>

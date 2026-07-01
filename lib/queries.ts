@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { CatalogoTela } from "@/lib/types";
+import { aplicarPreciosDemo } from "@/lib/demo-prices";
 
 /** ¿Están las variables de entorno de Supabase configuradas? */
 export function isSupabaseConfigured(): boolean {
@@ -43,7 +44,11 @@ export async function getCatalogo(
     if (error) {
       return { data: [], error: error.message, configurado: true };
     }
-    return { data: (data ?? []) as CatalogoTela[], error: null, configurado: true };
+    return {
+      data: aplicarPreciosDemo((data ?? []) as CatalogoTela[]),
+      error: null,
+      configurado: true,
+    };
   }
 
   const { data, error } = await supabase
@@ -57,7 +62,11 @@ export async function getCatalogo(
     return { data: [], error: error.message, configurado: true };
   }
 
-  return { data: (data ?? []) as CatalogoTela[], error: null, configurado: true };
+  return {
+    data: aplicarPreciosDemo((data ?? []) as CatalogoTela[]),
+    error: null,
+    configurado: true,
+  };
 }
 
 /**
@@ -82,7 +91,11 @@ async function buscarConIlike(
   if (error) {
     return { data: [], error: error.message, configurado: true };
   }
-  return { data: (data ?? []) as CatalogoTela[], error: null, configurado: true };
+  return {
+    data: aplicarPreciosDemo((data ?? []) as CatalogoTela[]),
+    error: null,
+    configurado: true,
+  };
 }
 
 /**
@@ -100,5 +113,5 @@ export async function getTelaPorSlug(slug: string): Promise<CatalogoTela[]> {
     .order("color_nombre", { ascending: true });
 
   if (error) return [];
-  return (data ?? []) as CatalogoTela[];
+  return aplicarPreciosDemo((data ?? []) as CatalogoTela[]);
 }

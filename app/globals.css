@@ -11,6 +11,8 @@
   --color-amber: #b45309; /* acento primario */
   --color-amber-soft: #c2843a; /* acento secundario */
   --color-line: #e7e1d8; /* bordes / sutil */
+  --color-whatsapp: #25d366; /* verde de marca WhatsApp (CTA del canal) */
+  --color-whatsapp-dark: #1da851; /* hover del botón WhatsApp */
 
   --font-display: var(--font-anton);
   --font-sans: var(--font-inter);

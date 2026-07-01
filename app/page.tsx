@@ -3,7 +3,16 @@ import { getCatalogo } from "@/lib/queries";
 import { agruparPorModelo } from "@/lib/types";
 import { ProductCard } from "@/components/ProductCard";
 import { SearchBar } from "@/components/SearchBar";
-import { AlertTriangle, Settings, SearchX } from "lucide-react";
+import { Hint } from "@/components/Hint";
+import { ShareCatalog } from "@/components/ShareCatalog";
+import {
+  AlertTriangle,
+  Settings,
+  SearchX,
+  Search,
+  ShoppingBag,
+  MessageCircle,
+} from "lucide-react";
 
 // Cachea la lectura del catálogo (ISR): se revalida cada 60s.
 export const revalidate = 60;
@@ -21,12 +30,21 @@ export default async function HomePage({
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
 
+      {configurado && <IntroPasos />}
+
       {configurado && (
-        <div className="mb-8 max-w-xl">
+        <div className="mb-4 max-w-xl">
           <Suspense fallback={null}>
             <SearchBar />
           </Suspense>
         </div>
+      )}
+
+      {configurado && (
+        <Hint id="home-buscar" className="mb-8 max-w-xl">
+          Escribe aquí el nombre, el color o el tipo de tela que buscas. También
+          puedes bajar y explorar todo el catálogo.
+        </Hint>
       )}
 
       {!configurado && <SetupNotice />}
@@ -46,13 +64,68 @@ export default async function HomePage({
       )}
 
       {modelos.length > 0 && (
-        <section className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
-          {modelos.map((tela, i) => (
-            <ProductCard key={tela.tela_id} tela={tela} priority={i < 4} />
-          ))}
-        </section>
+        <>
+          <Hint id="home-grid" arrow="down" className="mb-4 max-w-md">
+            Toca una tela para verla en grande, elegir su color y ver el precio.
+          </Hint>
+          <section className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+            {modelos.map((tela, i) => (
+              <ProductCard key={tela.tela_id} tela={tela} priority={i < 4} />
+            ))}
+          </section>
+        </>
       )}
     </main>
+  );
+}
+
+/** Franja de 3 pasos: refuerza el "camino de venta" en la portada. */
+function IntroPasos() {
+  const pasos = [
+    { icon: Search, titulo: "1. Explora", texto: "Busca o navega las telas." },
+    {
+      icon: ShoppingBag,
+      titulo: "2. Arma tu pedido",
+      texto: "Elige los metros y agrega.",
+    },
+    {
+      icon: MessageCircle,
+      titulo: "3. Envía",
+      texto: "Mándalo por WhatsApp.",
+    },
+  ];
+
+  return (
+    <section className="mb-8 rounded-2xl border border-line bg-white p-5 shadow-sm sm:p-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="font-display text-xl text-ink sm:text-2xl">
+            Pide tus telas en 3 pasos
+          </h2>
+          <p className="mt-1 text-sm text-ink/60">
+            Sin prisas y sin compromiso: arma tu pedido y te atendemos por WhatsApp.
+          </p>
+        </div>
+        <ShareCatalog variant="secondary" size="md" label="Compartir catálogo" />
+      </div>
+
+      <ol className="mt-5 grid gap-3 sm:grid-cols-3">
+        {pasos.map(({ icon: Icon, titulo, texto }) => (
+          <li
+            key={titulo}
+            className="flex items-start gap-3 rounded-xl bg-bg/60 p-3"
+          >
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber/10 text-amber">
+              <Icon className="h-5 w-5" aria-hidden />
+            </span>
+            <div>
+              <p className="font-semibold leading-tight text-ink">{titulo}</p>
+              <p className="text-sm text-ink/60">{texto}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
   );
 }
 

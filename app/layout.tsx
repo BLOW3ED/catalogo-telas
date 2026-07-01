@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Anton, Inter } from "next/font/google";
 import { SiteHeader } from "@/components/SiteHeader";
 import { CartDrawer } from "@/components/CartDrawer";
+import { WelcomeGuide } from "@/components/WelcomeGuide";
 import "./globals.css";
 
 const anton = Anton({
@@ -34,6 +35,7 @@ export default function RootLayout({
         <SiteHeader />
         <div className="flex-1">{children}</div>
         <CartDrawer />
+        <WelcomeGuide />
       </body>
     </html>
   );

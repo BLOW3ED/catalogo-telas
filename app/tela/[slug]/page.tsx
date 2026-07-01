@@ -3,10 +3,12 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, MessageCircle } from "lucide-react";
 import { getTelaPorSlug } from "@/lib/queries";
 import { publicImageUrl } from "@/lib/supabase/storage";
+import { demoPricesEnabled } from "@/lib/demo-prices";
 import { TelaImage } from "@/components/TelaImage";
 import { ColorSelector } from "@/components/ColorSelector";
 import { AttributeBadges } from "@/components/AttributeBadges";
 import { AddToCart } from "@/components/AddToCart";
+import { Hint } from "@/components/Hint";
 
 // Mismo patrón de ISR que el inicio: se revalida cada 60s.
 export const revalidate = 60;
@@ -92,18 +94,32 @@ export default async function TelaDetallePage({
             selectedSlug={seleccionada.color_slug}
           />
 
+          {variantes.length > 1 && (
+            <Hint id="detalle-color" arrow="up">
+              Puedes cambiar el color picando estos botones. La foto y el precio
+              se actualizan solos.
+            </Hint>
+          )}
+
           <AttributeBadges atributos={atributos} />
 
           {/* Precio */}
           <div className="rounded-2xl border border-line bg-white p-5">
             {seleccionada.precio_metro != null ? (
-              <p className="text-2xl font-semibold text-amber">
-                {pesos.format(seleccionada.precio_metro)}
-                <span className="text-base font-normal text-ink/50">
-                  {" "}
-                  / metro
-                </span>
-              </p>
+              <>
+                <p className="text-2xl font-semibold text-amber">
+                  {pesos.format(seleccionada.precio_metro)}
+                  <span className="text-base font-normal text-ink/50">
+                    {" "}
+                    / metro
+                  </span>
+                </p>
+                {demoPricesEnabled() && (
+                  <p className="mt-0.5 text-xs uppercase tracking-wide text-ink/40">
+                    precio de referencia · confirmamos por WhatsApp
+                  </p>
+                )}
+              </>
             ) : (
               <p className="text-lg text-ink/50">Precio a consultar</p>
             )}
