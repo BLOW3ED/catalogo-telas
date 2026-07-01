@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Tokens de marca Ápice — ámbar/bronce cálido sobre tinta casi negra.
+   En Tailwind v4 los tokens se declaran con @theme y generan utilidades
+   automáticamente (bg-bg, text-ink, text-amber, border-line, font-display...).
+--------------------------------------------------------------------------- */
+@theme {
+  --color-ink: #1a1714; /* tinta / texto */
+  --color-bg: #faf8f5; /* fondo hueso cálido */
+  --color-amber: #b45309; /* acento primario */
+  --color-amber-soft: #c2843a; /* acento secundario */
+  --color-line: #e7e1d8; /* bordes / sutil */
+
+  --font-display: var(--font-anton);
+  --font-sans: var(--font-inter);
+
+  --radius-xl: 0.875rem;
+  --radius-2xl: 1.25rem;
+}
+
+html {
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+}
+
+body {
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Foco visible y accesible en toda la app */
+:focus-visible {
+  outline: 2px solid var(--color-amber);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Títulos display con Anton */
+.font-display {
+  font-family: var(--font-display), system-ui, sans-serif;
+  letter-spacing: 0.01em;
+}
