@@ -24,6 +24,8 @@ uso: cliente final que navega, y vendedor en tablet que arma cotizaciones.
 (con hex), `categoria`, `acabado`, `caso_uso`, `oportunidad`.
 - Usar la **vista `catalogo_telas`** (una fila por variante) para listados/filtros.
 - `sku` es UNIQUE pero NULLABLE: hay fotos sin SKU; **nunca inventar SKU**.
+- `variante.orden` (sección 11 del SQL) = orden manual de colores; se edita con
+  drag & drop en `/admin/tela/[id]` y la vista lo expone como `variante_orden`.
 - Búsqueda full-text con `f_unaccent` + `pg_trgm` (insensible a acentos, soporta substrings).
 
 ## Storage
@@ -48,5 +50,8 @@ uso: cliente final que navega, y vendedor en tablet que arma cotizaciones.
 3. ✅ Script de ingesta (manifest CSV primero)
 4. ⏳ Filtros + detalle + selector de color (detalle y selector listos; filtros pendientes)
 5. ⏳ Cotización + WhatsApp (carrito y envío listos; pulido pendiente)
-6. ✅ Admin con Auth (mínimo: precio/stock en `/admin` con allowlist `ADMIN_EMAILS`)
+6. ✅ Admin con Auth (allowlist `ADMIN_EMAILS`): precio/stock en `/admin`, editor
+   completo de telas/variantes/fotos en `/admin/tela/[id]`, altas en
+   `/admin/tela/nueva`, inventario con kardex en `/admin/inventario`
+   (tabla `movimiento_inventario`, sección 10 del SQL)
 7. ⏳ Pulido visual, rendimiento, tests (README listo)

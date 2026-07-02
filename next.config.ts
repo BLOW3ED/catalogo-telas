@@ -6,6 +6,11 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseHost = supabaseUrl ? new URL(supabaseUrl).hostname : undefined;
 
 const nextConfig: NextConfig = {
+  // Las fotos del admin llegan como FormData a server actions; el default de
+  // 1 MB se queda corto para fotos de celular.
+  experimental: {
+    serverActions: { bodySizeLimit: "10mb" },
+  },
   images: {
     remotePatterns: supabaseHost
       ? [

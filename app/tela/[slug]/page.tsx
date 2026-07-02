@@ -118,7 +118,7 @@ export default async function TelaDetallePage({
       <div className="grid gap-8 lg:grid-cols-2">
         {/* Imagen y Disclaimer */}
         <div className="flex flex-col gap-4">
-          <div className="overflow-hidden rounded-2xl border border-line bg-white shadow-sm">
+          <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-sm">
             <TelaImage
               src={foto}
               alt={
@@ -138,7 +138,7 @@ export default async function TelaDetallePage({
         <div className="flex flex-col gap-5">
           <div>
             {seleccionada.categoria && (
-              <span className="text-xs uppercase tracking-wide text-amber-soft">
+              <span className="text-label-caps text-xs text-amber-soft">
                 {seleccionada.categoria}
               </span>
             )}
@@ -162,7 +162,7 @@ export default async function TelaDetallePage({
           <AttributeBadges atributos={atributos} />
 
           {/* Precio */}
-          <div className="rounded-2xl border border-line bg-white p-5">
+          <div className="rounded-2xl border border-line bg-surface p-5">
             {seleccionada.precio_metro != null ? (
               <>
                 <p className="text-2xl font-semibold text-amber">
@@ -208,7 +208,7 @@ export default async function TelaDetallePage({
               {tags.map((t) => (
                 <span
                   key={t}
-                  className="rounded-full border border-line bg-white/60 px-2.5 py-0.5 text-xs capitalize text-ink/60"
+                  className="rounded-full border border-line bg-surface/60 px-2.5 py-0.5 text-xs capitalize text-ink/60"
                 >
                   {t.replace(/-/g, " ")}
                 </span>

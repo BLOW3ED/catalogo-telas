@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, Trash2, MessageCircle } from "lucide-react";
+import { X, Trash2, MessageCircle, ArrowLeft } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { publicImageUrl } from "@/lib/supabase/storage";
 import { buildQuoteMessage, pesos } from "@/lib/whatsapp-message";
@@ -91,7 +91,7 @@ export function CartDrawer() {
             <ul className="space-y-6">
               {items.map((item) => (
                 <li key={item.id} className="flex gap-4">
-                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-line bg-white">
+                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-line bg-surface">
                     <TelaImage
                       src={publicImageUrl(item.foto_principal)}
                       alt={item.tela_nombre}
@@ -105,7 +105,7 @@ export function CartDrawer() {
                       </p>
                     </div>
                     <div className="mt-2 flex items-center justify-between">
-                      <div className="flex items-center rounded-lg border border-line bg-white p-1">
+                      <div className="flex items-center rounded-lg border border-line bg-surface p-1">
                         <button
                           onClick={() => updateQuantity(item.id, Math.max(0.5, item.cantidad - 0.5))}
                           className="flex h-9 w-9 items-center justify-center rounded-md text-lg text-ink/60 transition-colors hover:bg-line/30 hover:text-amber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
@@ -139,7 +139,7 @@ export function CartDrawer() {
         </div>
 
         {items.length > 0 && (
-          <div className="border-t border-line bg-white p-4 sm:p-6">
+          <div className="border-t border-line bg-surface p-4 sm:p-6">
             <div className="mb-1 flex items-center justify-between">
               <span className="text-lg font-medium text-ink">
                 {haySinPrecio ? "Total parcial" : "Total estimado"}
@@ -164,6 +164,16 @@ export function CartDrawer() {
             >
               <MessageCircle className="h-6 w-6" aria-hidden />
               Enviar pedido por WhatsApp
+            </Button>
+            <Button
+              variant="secondary"
+              size="md"
+              fullWidth
+              className="mt-2"
+              onClick={() => setIsOpen(false)}
+            >
+              <ArrowLeft className="h-4 w-4" aria-hidden />
+              Seguir comprando
             </Button>
             <Hint id="cart-enviar" className="mt-3">
               Al tocar el botón se abre WhatsApp con tu pedido ya escrito. Solo

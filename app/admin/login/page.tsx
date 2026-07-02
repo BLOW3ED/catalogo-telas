@@ -23,7 +23,7 @@ export default async function AdminLoginPage({
 
   return (
     <main className="mx-auto flex max-w-md flex-col px-4 py-16 sm:py-24">
-      <div className="rounded-2xl border border-line bg-white p-6 shadow-sm sm:p-8">
+      <div className="rounded-2xl border border-line bg-surface p-6 shadow-sm sm:p-8">
         <div className="mb-6 flex items-center gap-3">
           <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber/10 text-amber">
             <Lock className="h-5 w-5" aria-hidden />
@@ -49,7 +49,7 @@ export default async function AdminLoginPage({
               name="email"
               required
               autoComplete="email"
-              className="h-12 rounded-xl border border-line bg-white px-4 text-base font-normal text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+              className="h-12 rounded-xl border border-line bg-surface px-4 text-base font-normal text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
             />
           </label>
           <label className="flex flex-col gap-1.5 text-sm font-medium text-ink">
@@ -59,7 +59,7 @@ export default async function AdminLoginPage({
               name="password"
               required
               autoComplete="current-password"
-              className="h-12 rounded-xl border border-line bg-white px-4 text-base font-normal text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+              className="h-12 rounded-xl border border-line bg-surface px-4 text-base font-normal text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
             />
           </label>
           <SubmitButton label="Entrar" pendingLabel="Entrando…" />

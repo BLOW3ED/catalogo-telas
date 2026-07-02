@@ -43,7 +43,7 @@ export function SearchBar() {
         onChange={(e) => setValor(e.target.value)}
         placeholder="Buscar por nombre, color o SKU…"
         aria-label="Buscar telas"
-        className="w-full rounded-xl border border-line bg-white py-3 pl-12 pr-10 text-ink shadow-sm placeholder:text-ink/40 focus:border-amber focus:outline-none focus:ring-2 focus:ring-amber/30"
+        className="w-full rounded-xl border border-line bg-surface py-3 pl-12 pr-10 text-ink shadow-sm placeholder:text-ink/40 focus:border-amber focus:outline-none focus:ring-2 focus:ring-amber/30"
       />
       {valor && (
         <button

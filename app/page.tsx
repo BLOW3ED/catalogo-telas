@@ -95,7 +95,7 @@ function IntroPasos() {
   ];
 
   return (
-    <section className="mb-8 rounded-2xl border border-line bg-white p-5 shadow-sm sm:p-6">
+    <section className="mb-8 rounded-2xl border border-line bg-surface p-5 shadow-sm sm:p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="font-display text-xl text-ink sm:text-2xl">
@@ -130,7 +130,7 @@ function IntroPasos() {
 
 function SetupNotice() {
   return (
-    <div className="rounded-2xl border border-line bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-line bg-surface p-6 shadow-sm">
       <div className="mb-3 flex items-center gap-2 text-amber">
         <Settings className="h-5 w-5" aria-hidden />
         <h2 className="font-display text-xl">Falta conectar Supabase</h2>
@@ -147,7 +147,7 @@ function SetupNotice() {
 
 function NoResults({ termino }: { termino: string }) {
   return (
-    <div className="rounded-2xl border border-dashed border-line bg-white/60 p-10 text-center">
+    <div className="rounded-2xl border border-dashed border-line bg-surface/60 p-10 text-center">
       <SearchX className="mx-auto mb-3 h-8 w-8 text-ink/30" aria-hidden />
       <p className="font-display text-2xl text-ink/70">Sin resultados</p>
       <p className="mt-1 text-sm text-ink/50">
@@ -159,7 +159,7 @@ function NoResults({ termino }: { termino: string }) {
 
 function EmptyState() {
   return (
-    <div className="rounded-2xl border border-dashed border-line bg-white/60 p-10 text-center">
+    <div className="rounded-2xl border border-dashed border-line bg-surface/60 p-10 text-center">
       <p className="font-display text-2xl text-ink/70">Aún no hay telas</p>
       <p className="mt-1 text-sm text-ink/50">
         Corre <code className="rounded bg-line/60 px-1">npm run ingest</code> y luego{" "}

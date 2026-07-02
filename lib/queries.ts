@@ -29,15 +29,28 @@ export type ResultadoCatalogo = {
  */
 const REVALIDATE_SEGUNDOS = 60;
 
+/** 42703 = "undefined_column": la sección 11 del SQL (variante_orden) aún no corre. */
+const COLUMNA_INEXISTENTE = "42703";
+
 const listarCatalogoCached = unstable_cache(
   async (limit: number, offset: number): Promise<CatalogoTela[]> => {
     const supabase = createPublicClient();
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from("catalogo_telas")
       .select("*")
       .order("tela_nombre", { ascending: true })
+      .order("variante_orden", { ascending: true })
       .order("color_nombre", { ascending: true })
       .range(offset, offset + limit - 1);
+
+    if (error?.code === COLUMNA_INEXISTENTE) {
+      ({ data, error } = await supabase
+        .from("catalogo_telas")
+        .select("*")
+        .order("tela_nombre", { ascending: true })
+        .order("color_nombre", { ascending: true })
+        .range(offset, offset + limit - 1));
+    }
 
     if (error) throw new Error(error.message);
     return (data ?? []) as CatalogoTela[];
@@ -49,11 +62,20 @@ const listarCatalogoCached = unstable_cache(
 const telaPorSlugCached = unstable_cache(
   async (slug: string): Promise<CatalogoTela[]> => {
     const supabase = createPublicClient();
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from("catalogo_telas")
       .select("*")
       .eq("tela_slug", slug)
+      .order("variante_orden", { ascending: true })
       .order("color_nombre", { ascending: true });
+
+    if (error?.code === COLUMNA_INEXISTENTE) {
+      ({ data, error } = await supabase
+        .from("catalogo_telas")
+        .select("*")
+        .eq("tela_slug", slug)
+        .order("color_nombre", { ascending: true }));
+    }
 
     if (error) throw new Error(error.message);
     return (data ?? []) as CatalogoTela[];

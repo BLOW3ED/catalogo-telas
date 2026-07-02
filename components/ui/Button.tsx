@@ -26,7 +26,7 @@ const variants: Record<Variant, string> = {
   whatsapp:
     "bg-whatsapp text-white shadow-sm hover:bg-whatsapp-dark focus-visible:ring-whatsapp",
   secondary:
-    "border border-line bg-white text-ink shadow-sm hover:bg-line/30 focus-visible:ring-amber",
+    "border border-line bg-surface text-ink shadow-sm hover:bg-line/30 focus-visible:ring-amber",
   ghost:
     "text-ink/70 hover:bg-line/40 hover:text-ink focus-visible:ring-amber",
 };

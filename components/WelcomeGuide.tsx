@@ -79,7 +79,7 @@ export function WelcomeGuide() {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-line px-5 py-4">
-          <p className="text-xs font-medium uppercase tracking-[0.15em] text-amber-soft">
+          <p className="text-label-caps text-xs text-amber-soft">
             Cómo funciona
           </p>
           <button

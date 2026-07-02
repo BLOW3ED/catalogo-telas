@@ -341,5 +341,102 @@ $$;
 grant execute on function buscar_telas(text) to anon, authenticated;
 
 -- ============================================================================
+-- 10. Inventario: kardex de movimientos por variante
+--     Libro append-only que explica CADA cambio de stock (entrada, salida,
+--     merma, ajuste). `variante.stock` sigue siendo la verdad "actual"; el
+--     kardex es la historia. Lo escribe solo service_role (server actions
+--     de /admin/inventario); lectura pública NO: es dato interno de tienda,
+--     así que NO se crea política de SELECT para anon.
+-- ============================================================================
+create table if not exists movimiento_inventario (
+  id               uuid primary key default uuid_generate_v4(),
+  variante_id      uuid not null references variante(id) on delete cascade,
+  -- entrada = llegó tela | salida = se vendió/cortó | merma = daño/pérdida
+  -- ajuste = conteo físico: `cantidad` es el NUEVO stock absoluto, no un delta
+  tipo             text not null check (tipo in ('entrada','salida','merma','ajuste')),
+  cantidad         numeric(10,2) not null check (cantidad >= 0),   -- metros
+  stock_resultante numeric(10,2) check (stock_resultante is null or stock_resultante >= 0),
+  nota             text,
+  usuario_email    text,                                           -- quién lo registró
+  created_at       timestamptz not null default now()
+);
+
+create index if not exists idx_movimiento_variante
+  on movimiento_inventario(variante_id, created_at desc);
+create index if not exists idx_movimiento_fecha
+  on movimiento_inventario(created_at desc);
+
+alter table movimiento_inventario enable row level security;
+-- Sin políticas: solo service_role (que ignora RLS) puede leer/escribir.
+
+-- ============================================================================
+-- 11. Orden manual de variantes (colores) dentro de cada tela
+--     El admin arrastra los colores en /admin/tela/[id] y ese orden manda en
+--     el selector de color del catálogo público. Menor `orden` = primero.
+-- ============================================================================
+alter table variante add column if not exists orden integer not null default 0;
+
+-- Backfill: conservar el orden actual (por antigüedad) para telas existentes.
+update variante v
+   set orden = sub.rn
+  from (
+    select id, row_number() over (partition by tela_id order by created_at) - 1 as rn
+      from variante
+  ) sub
+ where sub.id = v.id
+   and v.orden = 0;          -- idempotente: no pisa un orden ya personalizado
+
+create index if not exists idx_variante_orden on variante(tela_id, orden);
+
+-- La vista gana `variante_orden` (al FINAL: `create or replace view` solo
+-- permite agregar columnas al final). El frontend ordena por ella.
+create or replace view catalogo_telas as
+select
+  v.id                       as variante_id,
+  t.id                       as tela_id,
+  t.slug                     as tela_slug,
+  t.nombre                   as tela_nombre,
+  t.descripcion              as descripcion,
+  cat.nombre                 as categoria,
+  cat.slug                   as categoria_slug,
+  v.sku                      as sku,
+  col.nombre                 as color_nombre,
+  col.slug                   as color_slug,
+  col.hex                    as color_hex,
+  ac.nombre                  as acabado,
+  v.precio_metro             as precio_metro,
+  v.gramaje                  as gramaje,
+  v.stock                    as stock,
+  v.es_bordado               as es_bordado,
+  v.es_brillante             as es_brillante,
+  v.es_traslucida            as es_traslucida,
+  v.es_tornasol              as es_tornasol,
+  (select f.ruta
+     from foto f
+    where f.variante_id = v.id
+    order by f.orden asc, f.created_at asc
+    limit 1)                 as foto_principal,
+  coalesce((
+    select array_agg(cu.slug order by cu.nombre)
+      from tela_caso_uso tcu
+      join caso_uso cu on cu.id = tcu.caso_uso_id
+     where tcu.tela_id = t.id
+  ), '{}')                   as casos_uso,
+  coalesce((
+    select array_agg(o.slug order by o.nombre)
+      from tela_oportunidad tox
+      join oportunidad o on o.id = tox.oportunidad_id
+     where tox.tela_id = t.id
+  ), '{}')                   as oportunidades,
+  t.created_at               as created_at,
+  t.updated_at               as updated_at,
+  v.orden                    as variante_orden
+from variante v
+join tela t       on t.id = v.tela_id
+left join categoria cat on cat.id = t.categoria_id
+left join color col     on col.id = v.color_id
+left join acabado ac    on ac.id = v.acabado_id;
+
+-- ============================================================================
 -- FIN del esquema
 -- ============================================================================

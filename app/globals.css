@@ -1,24 +1,33 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   Tokens de marca Ápice — ámbar/bronce cálido sobre tinta casi negra.
+   Tokens "The Atelier" (ver design-system/design-system.html) — paleta cálida
+   y neutra tipo M3, con terracota como acento y tipografía editorial
+   (Fraunces para display/headlines, Karla para cuerpo/labels). Radios de
+   esquina casi rectos: la calidez viene de la foto y el color, no de curvas.
    En Tailwind v4 los tokens se declaran con @theme y generan utilidades
    automáticamente (bg-bg, text-ink, text-amber, border-line, font-display...).
 --------------------------------------------------------------------------- */
 @theme {
-  --color-ink: #1a1714; /* tinta / texto */
-  --color-bg: #faf8f5; /* fondo hueso cálido */
-  --color-amber: #b45309; /* acento primario */
-  --color-amber-soft: #c2843a; /* acento secundario */
-  --color-line: #e7e1d8; /* bordes / sutil */
+  --color-ink: #1c1c18; /* on-surface: texto principal */
+  --color-bg: #fcf9f3; /* surface: fondo cálido hueso */
+  --color-surface: #f6f3ed; /* surface-container-low: tarjetas y paneles */
+  --color-surface-high: #ebe8e2; /* surface-container-high: hover/activo sutil */
+  --color-amber: #9a4523; /* secondary: acento terracota cálido */
+  --color-amber-soft: #a8551b; /* tono intermedio para eyebrows/labels */
+  --color-line: #e5e2dc; /* outline-variant suave: bordes */
   --color-whatsapp: #25d366; /* verde de marca WhatsApp (CTA del canal) */
   --color-whatsapp-dark: #1da851; /* hover del botón WhatsApp */
 
-  --font-display: var(--font-anton);
-  --font-sans: var(--font-inter);
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-karla);
 
-  --radius-xl: 0.875rem;
-  --radius-2xl: 1.25rem;
+  /* Escala de radios editorial: casi recta, salvo rounded-full (círculos). */
+  --radius: 0.125rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.5rem;
+  --radius-2xl: 0.75rem;
 }
 
 html {
@@ -37,8 +46,19 @@ body {
   border-radius: 4px;
 }
 
-/* Títulos display con Anton */
+/* Títulos display/headline con Fraunces (serif editorial) */
 .font-display {
-  font-family: var(--font-display), system-ui, sans-serif;
-  letter-spacing: 0.01em;
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* Label caps: eyebrows y etiquetas en mayúsculas (Karla, tracking amplio).
+   No fija tamaño de fuente a propósito: se combina con un text-* de Tailwind
+   (p.ej. `text-label-caps text-xs`) sin pelear por especificidad. */
+.text-label-caps {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }

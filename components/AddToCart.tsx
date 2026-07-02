@@ -26,7 +26,7 @@ export function AddToCart({ variante }: { variante: CatalogoTela }) {
         guarda en tu cotización.
       </Hint>
       <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="flex items-center justify-between rounded-xl border border-line bg-white p-1 shadow-sm sm:w-40">
+        <div className="flex items-center justify-between rounded-xl border border-line bg-surface p-1 shadow-sm sm:w-40">
           <button
             type="button"
             onClick={() => setCantidad((prev) => Math.max(0.5, prev - 0.5))}

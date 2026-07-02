@@ -41,7 +41,7 @@ export function ProductCard({
   return (
     <Link
       href={`/tela/${tela.tela_slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg focus-visible:-translate-y-1"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg focus-visible:-translate-y-1"
     >
       <div className="overflow-hidden">
         <div className="transition-transform duration-300 group-hover:scale-[1.03]">
@@ -55,7 +55,7 @@ export function ProductCard({
 
       <div className="flex flex-1 flex-col gap-2 p-4">
         {tela.categoria && (
-          <span className="text-xs uppercase tracking-wide text-amber-soft">
+          <span className="text-label-caps text-xs text-amber-soft">
             {tela.categoria}
           </span>
         )}

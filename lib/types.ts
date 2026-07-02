@@ -28,6 +28,12 @@ export type CatalogoTela = {
   created_at: string;
   updated_at: string;
   /**
+   * Posición manual del color dentro de su tela (menor = primero). Opcional
+   * porque la columna solo existe tras correr la sección 11 del SQL; las
+   * queries caen a ordenar por nombre de color si aún no está.
+   */
+  variante_orden?: number | null;
+  /**
    * NO viene de la vista: lo añade `aplicarPreciosDemo` cuando rellena un
    * precio vacío con uno de referencia. Permite que la UI y el mensaje de
    * WhatsApp distingan precio real (BD) de precio demo.

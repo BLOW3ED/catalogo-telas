@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
-import { LogOut, Search, ShieldAlert } from "lucide-react";
+import { LogOut, Pencil, Search, ShieldAlert } from "lucide-react";
 import { getSesionAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { publicImageUrl } from "@/lib/supabase/storage";
 import { TelaImage } from "@/components/TelaImage";
 import { ColorSwatch } from "@/components/ColorSwatch";
+import { AdminNav } from "@/components/admin/AdminNav";
 import { SubmitButton } from "@/components/admin/SubmitButton";
 import { actualizarVariante, logout } from "./actions";
 import type { CatalogoTela } from "@/lib/types";
@@ -16,9 +18,10 @@ export const metadata: Metadata = {
 };
 
 /**
- * Panel de administración mínimo: edición inline de precio y stock por
- * variante — lo que la tienda ajusta a diario. Todo lo demás (altas, fotos,
- * nombres) sigue en Supabase Studio o el script de ingesta (ver README).
+ * Panel de administración: edición inline de precio y stock por variante —
+ * lo que la tienda ajusta a diario. El lápiz de cada fila abre el editor
+ * completo (/admin/tela/[id]: valores, variantes, fotos) y la navegación
+ * lleva a inventario (/admin/inventario) y al alta de telas (/admin/tela/nueva).
  *
  * Lee la vista con el cliente service_role SIN caché: el admin siempre ve
  * la verdad de la BD (sin precios demo). Al guardar, `revalidateTag` refresca
@@ -55,24 +58,7 @@ export default async function AdminPage({
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="font-display text-3xl text-ink">Administración</h1>
-          <p className="mt-1 text-sm text-ink/60">
-            Sesión: {user.email}. Edita precio y stock; los cambios salen al
-            catálogo al instante.
-          </p>
-        </div>
-        <form action={logout}>
-          <button
-            type="submit"
-            className="inline-flex h-10 items-center gap-2 rounded-xl border border-line bg-white px-4 text-sm font-medium text-ink shadow-sm transition-colors hover:bg-line/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
-          >
-            <LogOut className="h-4 w-4" aria-hidden />
-            Salir
-          </button>
-        </form>
-      </div>
+      <AdminNav titulo="Administración" email={user.email ?? ""} />
 
       {/* Búsqueda (GET → estado compartible en la URL, igual que el sitio público) */}
       <form method="get" className="mb-3 flex max-w-md gap-2" role="search">
@@ -87,12 +73,12 @@ export default async function AdminPage({
             defaultValue={termino}
             placeholder="Buscar por tela, color o SKU…"
             aria-label="Buscar variantes"
-            className="h-11 w-full rounded-xl border border-line bg-white pl-9 pr-3 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+            className="h-11 w-full rounded-xl border border-line bg-surface pl-9 pr-3 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
           />
         </div>
         <button
           type="submit"
-          className="h-11 rounded-xl border border-line bg-white px-4 text-sm font-medium text-ink shadow-sm transition-colors hover:bg-line/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+          className="h-11 rounded-xl border border-line bg-surface px-4 text-sm font-medium text-ink shadow-sm transition-colors hover:bg-line/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
         >
           Buscar
         </button>
@@ -112,7 +98,7 @@ export default async function AdminPage({
       )}
 
       {!error && variantes.length === 0 && (
-        <div className="rounded-2xl border border-dashed border-line bg-white/60 p-10 text-center text-sm text-ink/50">
+        <div className="rounded-2xl border border-dashed border-line bg-surface/60 p-10 text-center text-sm text-ink/50">
           {termino
             ? `Sin resultados para “${termino}”.`
             : "Aún no hay variantes en el catálogo. Corre la ingesta (ver README)."}
@@ -123,7 +109,7 @@ export default async function AdminPage({
         {variantes.map((v) => (
           <li
             key={v.variante_id}
-            className="rounded-2xl border border-line bg-white p-4 shadow-sm"
+            className="rounded-2xl border border-line bg-surface p-4 shadow-sm"
           >
             <form
               action={actualizarVariante}
@@ -173,7 +159,7 @@ export default async function AdminPage({
                     step="0.01"
                     inputMode="decimal"
                     placeholder="a consultar"
-                    className="h-10 w-28 rounded-xl border border-line bg-white px-3 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+                    className="h-10 w-28 rounded-xl border border-line bg-surface px-3 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
                   />
                 </label>
                 <label className="flex flex-col gap-1 text-xs font-medium text-ink/60">
@@ -186,10 +172,18 @@ export default async function AdminPage({
                     step="0.5"
                     inputMode="decimal"
                     placeholder="—"
-                    className="h-10 w-24 rounded-xl border border-line bg-white px-3 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+                    className="h-10 w-24 rounded-xl border border-line bg-surface px-3 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
                   />
                 </label>
                 <SubmitButton label="Guardar" pendingLabel="Guardando…" size="sm" />
+                <Link
+                  href={`/admin/tela/${v.tela_id}`}
+                  aria-label={`Editar ${v.tela_nombre}: valores, variantes y fotos`}
+                  title="Editar tela (valores, variantes y fotos)"
+                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line bg-surface text-ink/70 shadow-sm transition-colors hover:bg-surface-high hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+                >
+                  <Pencil className="h-4 w-4" aria-hidden />
+                </Link>
               </div>
             </form>
           </li>
@@ -214,7 +208,7 @@ function NoAutorizado({ email }: { email: string }) {
       <form action={logout} className="mt-6">
         <button
           type="submit"
-          className="inline-flex h-11 items-center gap-2 rounded-xl border border-line bg-white px-5 text-sm font-medium text-ink shadow-sm transition-colors hover:bg-line/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+          className="inline-flex h-11 items-center gap-2 rounded-xl border border-line bg-surface px-5 text-sm font-medium text-ink shadow-sm transition-colors hover:bg-line/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
         >
           <LogOut className="h-4 w-4" aria-hidden />
           Cerrar sesión

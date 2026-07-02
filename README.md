@@ -61,12 +61,28 @@ El flujo es en dos pasos a propósito — primero revisas, luego subes:
 
 ## Administrar el catálogo
 
-### Precios y stock: panel `/admin`
+### Panel `/admin`
 
-El panel en **`/admin`** permite editar **precio por metro y stock** de cada
-variante, con búsqueda por tela/color/SKU. Los cambios salen al sitio público
-**al instante** (invalida el caché con `revalidateTag`). Deja un campo vacío
-para "a consultar" — no es lo mismo que 0.
+El panel en **`/admin`** cubre la operación diaria completa. Los cambios salen
+al sitio público **al instante** (invalida el caché con `revalidateTag`):
+
+- **Edición rápida** (portada de `/admin`): precio por metro y stock de cada
+  variante, con búsqueda por tela/color/SKU. Deja un campo vacío para
+  "a consultar" — no es lo mismo que 0.
+- **Editor completo** (`/admin/tela/[id]`, botón de lápiz en cada fila):
+  nombre, URL, descripción, categoría, casos de uso y oportunidades del
+  modelo; alta/edición/baja de variantes (SKU, color, acabado, gramaje,
+  propiedades ópticas); y **fotos**: subir (JPG/PNG/WebP), reordenar (la
+  primera es la portada) y eliminar — también se borran del bucket.
+- **Alta de telas** (`/admin/tela/nueva`): crea el modelo y te lleva al
+  editor para agregar variantes y fotos.
+- **Inventario** (`/admin/inventario`): kardex de movimientos — entrada,
+  salida, merma y ajuste por conteo físico — con historial (quién, cuándo,
+  por qué), resumen de variantes sin existencia / stock bajo / sin conteo, y
+  lista de "por resurtir". El umbral de stock bajo es de 10 m, ajustable con
+  `INVENTARIO_UMBRAL_BAJO`. Requiere la **sección 10** de
+  `catalogo_telas_supabase.sql` (el archivo es idempotente: córrelo completo
+  en el editor SQL de Supabase Studio).
 
 Para habilitarlo (una sola vez):
 
@@ -79,17 +95,12 @@ La sesión sola no basta: solo los correos de `ADMIN_EMAILS` pueden administrar
 (los proyectos de Supabase permiten registro público por default). Sin la
 variable, nadie entra.
 
-### Todo lo demás: Supabase Studio
+### Catálogos de apoyo: Supabase Studio
 
-Altas de telas, fotos, nombres y catálogos de apoyo se editan en el
-**Table Editor de Supabase Studio** (o vía `pnpm ingest` para fotos):
-
-- **Nombres y descripciones**: tabla **`tela`**.
-- **Colores, categorías, usos y ocasiones**: tablas `color`, `categoria`,
-  `caso_uso`, `oportunidad`.
-
-Estos cambios aparecen en el sitio en **menos de 60 segundos** (caché de
-lecturas; ver `lib/queries.ts`).
+Los **lookups** (nuevos colores, categorías, acabados, usos y ocasiones) se
+dan de alta en el **Table Editor de Supabase Studio**: tablas `color`,
+`categoria`, `acabado`, `caso_uso`, `oportunidad`. Para carga masiva de fotos
+sigue existiendo `pnpm ingest`.
 
 > ⚠️ La vista `catalogo_telas` es de solo lectura — edita siempre las tablas
 > base (`variante`, `tela`, etc.).
@@ -132,7 +143,7 @@ lookups: color (con hex), categoria, acabado
 3. ✅ Script de ingesta (manifest CSV → upload)
 4. ⏳ Filtros + detalle + selector de color (detalle y selector listos; filtros pendientes)
 5. ⏳ Cotización + WhatsApp (carrito y envío listos; pulido pendiente)
-6. ✅ Admin con Auth (mínimo: precio/stock en `/admin`; altas siguen en Studio)
+6. ✅ Admin con Auth (precio/stock, altas/edición de telas y variantes, fotos e inventario con kardex)
 7. ⏳ Pulido visual, rendimiento, tests
 
 Más contexto para desarrollo (convenciones, paleta, fases) en [`CLAUDE.md`](./CLAUDE.md).

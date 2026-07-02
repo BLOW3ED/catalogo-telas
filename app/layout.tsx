@@ -1,20 +1,21 @@
 import type { Metadata } from "next";
-import { Anton, Inter } from "next/font/google";
+import { Fraunces, Karla } from "next/font/google";
 import { SiteHeader } from "@/components/SiteHeader";
 import { CartDrawer } from "@/components/CartDrawer";
 import { WelcomeGuide } from "@/components/WelcomeGuide";
 import "./globals.css";
 
-const anton = Anton({
-  weight: "400",
+// Fraunces: serif editorial variable — display/headlines ("The Atelier").
+const fraunces = Fraunces({
   subsets: ["latin"],
-  variable: "--font-anton",
+  variable: "--font-fraunces",
   display: "swap",
 });
 
-const inter = Inter({
+// Karla: sans variable — cuerpo, labels y UI.
+const karla = Karla({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-karla",
   display: "swap",
 });
 
@@ -38,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className={`${anton.variable} ${inter.variable}`}>
+    <html lang="es" className={`${fraunces.variable} ${karla.variable}`}>
       <body className="flex min-h-screen flex-col bg-bg text-ink antialiased">
         <SiteHeader />
         <div className="flex-1">{children}</div>
