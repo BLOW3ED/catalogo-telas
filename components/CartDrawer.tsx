@@ -4,15 +4,11 @@ import { useEffect, useState } from "react";
 import { X, Trash2, MessageCircle } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { publicImageUrl } from "@/lib/supabase/storage";
+import { buildQuoteMessage, pesos } from "@/lib/whatsapp-message";
 import { TelaImage } from "./TelaImage";
 import { Button } from "@/components/ui/Button";
 import { Hint } from "@/components/Hint";
 import { ShareCatalog } from "@/components/ShareCatalog";
-
-const pesos = new Intl.NumberFormat("es-MX", {
-  style: "currency",
-  currency: "MXN",
-});
 
 export function CartDrawer() {
   const { items, isOpen, setIsOpen, removeItem, updateQuantity } = useCartStore();
@@ -35,28 +31,8 @@ export function CartDrawer() {
   const haySinPrecio = items.some((item) => item.precio == null);
   const hayReferencia = items.some((item) => item.precio_referencia);
 
-  const formatMessage = () => {
-    let msg = "Hola, me interesa cotizar el siguiente pedido:\n\n";
-    items.forEach((item) => {
-      msg += `- ${item.cantidad}m de ${item.tela_nombre}`;
-      if (item.color_nombre) msg += ` color ${item.color_nombre}`;
-      if (item.sku) msg += ` (SKU: ${item.sku})`;
-      if (item.precio == null) msg += " — precio por confirmar";
-      msg += "\n";
-    });
-    if (total > 0) {
-      msg += haySinPrecio
-        ? `\nTotal parcial (sin los artículos por confirmar): ${pesos.format(total)} MXN.`
-        : `\nTotal estimado: ${pesos.format(total)} MXN.`;
-    }
-    msg += hayReferencia || haySinPrecio
-      ? "\n¿Me confirman precios y disponibilidad?"
-      : "\n¿Me confirman disponibilidad?";
-    return encodeURIComponent(msg);
-  };
-
   const numero = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") || "";
-  const waHref = `https://wa.me/${numero}?text=${formatMessage()}`;
+  const waHref = `https://wa.me/${numero}?text=${encodeURIComponent(buildQuoteMessage(items))}`;
 
   return (
     <>

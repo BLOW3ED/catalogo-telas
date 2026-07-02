@@ -1,0 +1,1354 @@
+<!-- Filter Overlay -->
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Atelier - Filter Overlay</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&amp;family=Karla:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Config injected -->
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-fixed-variant": "#7b2f0e",
+                      "inverse-surface": "#31312d",
+                      "on-primary-fixed": "#1d1b19",
+                      "primary-fixed": "#e7e1de",
+                      "tertiary-container": "#2c2a26",
+                      "tertiary": "#171612",
+                      "surface": "#fcf9f3",
+                      "on-background": "#1c1c18",
+                      "outline": "#7c766f",
+                      "surface-bright": "#fcf9f3",
+                      "on-tertiary-fixed": "#1d1b18",
+                      "on-primary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "on-surface-variant": "#4b4640",
+                      "on-primary-container": "#95918e",
+                      "background": "#fcf9f3",
+                      "primary": "#171614",
+                      "outline-variant": "#cdc5bd",
+                      "on-surface": "#1c1c18",
+                      "inverse-primary": "#cac5c2",
+                      "on-primary-fixed-variant": "#494644",
+                      "primary-container": "#2c2a28",
+                      "surface-container": "#f0eee8",
+                      "inverse-on-surface": "#f3f0ea",
+                      "surface-dim": "#dcdad4",
+                      "error": "#ba1a1a",
+                      "on-secondary": "#ffffff",
+                      "on-secondary-fixed": "#380d00",
+                      "tertiary-fixed": "#e7e1dc",
+                      "surface-container-high": "#ebe8e2",
+                      "on-error-container": "#93000a",
+                      "on-tertiary-fixed-variant": "#494642",
+                      "surface-variant": "#e5e2dc",
+                      "secondary": "#9a4523",
+                      "surface-container-lowest": "#ffffff",
+                      "on-error": "#ffffff",
+                      "surface-container-low": "#f6f3ed",
+                      "secondary-fixed": "#ffdbcf",
+                      "on-tertiary-container": "#95918c",
+                      "secondary-container": "#ff946c",
+                      "primary-fixed-dim": "#cac5c2",
+                      "secondary-fixed-dim": "#ffb59a",
+                      "tertiary-fixed-dim": "#cbc6c0",
+                      "on-secondary-container": "#772b0a",
+                      "surface-tint": "#615e5b",
+                      "surface-container-highest": "#e5e2dc",
+                      "on-tertiary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "gutter": "16px",
+                      "unit": "4px",
+                      "margin-desktop": "64px",
+                      "margin-mobile": "24px",
+                      "section-gap": "48px"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Karla"
+                      ],
+                      "caption": [
+                              "Karla"
+                      ],
+                      "headline-lg": [
+                              "Fraunces"
+                      ],
+                      "headline-md": [
+                              "Fraunces"
+                      ],
+                      "display": [
+                              "Fraunces"
+                      ],
+                      "body-lg": [
+                              "Karla"
+                      ],
+                      "label-caps": [
+                              "Karla"
+                      ],
+                      "headline-lg-mobile": [
+                              "Fraunces"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "caption": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display": [
+                              "40px",
+                              {
+                                      "lineHeight": "48px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "300"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "34px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cdc5bd; /* outline-variant */
+            border-radius: 2px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7c766f; /* outline */
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased overflow-hidden">
+<!-- Full-screen Modal Container -->
+<div class="fixed inset-0 z-50 flex flex-col bg-surface md:w-[480px] md:right-0 md:left-auto md:border-l md:border-outline-variant/30 md:shadow-[-40px_0_40px_rgba(23,22,20,0.05)] transition-transform duration-300 transform translate-x-0">
+<!-- Header -->
+<header class="flex justify-between items-center h-[64px] px-margin-mobile w-full border-b border-outline-variant/30 bg-surface/90 backdrop-blur-md z-10 shrink-0">
+<button aria-label="Close filters" class="w-10 h-10 flex items-center justify-start text-on-surface hover:opacity-70 transition-opacity">
+<span class="material-symbols-outlined text-[24px]">close</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary tracking-tight">Filters</h1>
+<button aria-label="Clear all filters" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors h-10 flex items-center justify-end">
+                Clear
+            </button>
+</header>
+<!-- Scrollable Content -->
+<main class="flex-1 overflow-y-auto pt-6 pb-[120px] px-margin-mobile">
+<!-- Accordion: Color -->
+<div class="border-b border-outline-variant/30 pb-6 mb-6 group cursor-pointer" onclick="toggleAccordion('color-content', 'color-icon')">
+<div class="flex justify-between items-center mb-4">
+<h2 class="font-body-lg text-body-lg text-primary">Color</h2>
+<span class="material-symbols-outlined text-on-surface-variant transition-transform duration-200 rotate-180" id="color-icon">expand_more</span>
+</div>
+<div class="grid grid-cols-6 gap-4 origin-top transition-all duration-300 ease-in-out opacity-100 max-h-48" id="color-content">
+<!-- Color Swatches -->
+<button aria-label="White" class="w-8 h-8 rounded-full border border-outline-variant shadow-sm relative group focus:outline-none" style="background-color: #fcf9f3;">
+<span class="absolute inset-0 border-2 border-primary rounded-full scale-110 opacity-0 group-focus:opacity-100 transition-opacity"></span>
+</button>
+<button aria-label="Oatmeal" class="w-8 h-8 rounded-full border border-outline-variant shadow-sm relative group focus:outline-none" style="background-color: #e5e2dc;">
+<span class="absolute inset-0 border-2 border-primary rounded-full scale-110 opacity-0 group-focus:opacity-100 transition-opacity"></span>
+</button>
+<button aria-label="Stone" class="w-8 h-8 rounded-full border border-outline-variant shadow-sm relative group focus:outline-none" style="background-color: #cac5c2;">
+<span class="absolute inset-0 border-2 border-primary rounded-full scale-110 opacity-0 group-focus:opacity-100 transition-opacity"></span>
+</button>
+<button aria-label="Taupe" class="w-8 h-8 rounded-full border border-outline-variant shadow-sm relative group focus:outline-none" style="background-color: #7c766f;">
+<span class="absolute inset-0 border-2 border-primary rounded-full scale-110 opacity-0 group-focus:opacity-100 transition-opacity"></span>
+</button>
+<button aria-label="Ink" class="w-8 h-8 rounded-full border border-outline-variant shadow-sm relative group focus:outline-none" style="background-color: #171614;">
+<span class="absolute inset-0 border-2 border-primary rounded-full scale-110 opacity-0 group-focus:opacity-100 transition-opacity"></span>
+</button>
+<button aria-label="Terracotta" class="w-8 h-8 rounded-full border border-outline-variant shadow-sm relative group focus:outline-none flex items-center justify-center" style="background-color: #9a4523;">
+<!-- Active State Example -->
+<span class="material-symbols-outlined text-[16px] text-white">check</span>
+<span class="absolute inset-0 border-2 border-primary rounded-full scale-110 opacity-100 transition-opacity"></span>
+</button>
+<button aria-label="Charcoal" class="w-8 h-8 rounded-full border border-outline-variant shadow-sm relative group focus:outline-none" style="background-color: #4b4640;">
+<span class="absolute inset-0 border-2 border-primary rounded-full scale-110 opacity-0 group-focus:opacity-100 transition-opacity"></span>
+</button>
+<button aria-label="Deep Olive" class="w-8 h-8 rounded-full border border-outline-variant shadow-sm relative group focus:outline-none" style="background-color: #2c2a26;">
+<span class="absolute inset-0 border-2 border-primary rounded-full scale-110 opacity-0 group-focus:opacity-100 transition-opacity"></span>
+</button>
+</div>
+</div>
+<!-- Accordion: Material -->
+<div class="border-b border-outline-variant/30 pb-6 mb-6 group cursor-pointer" onclick="toggleAccordion('material-content', 'material-icon')">
+<div class="flex justify-between items-center mb-4">
+<h2 class="font-body-lg text-body-lg text-primary flex items-center gap-2">
+                        Material 
+                        <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> <!-- Indicates active filter inside -->
+</h2>
+<span class="material-symbols-outlined text-on-surface-variant transition-transform duration-200 rotate-180" id="material-icon">expand_more</span>
+</div>
+<div class="flex flex-col gap-3 origin-top transition-all duration-300 ease-in-out opacity-100 max-h-64 overflow-hidden" id="material-content">
+<!-- Checkbox List -->
+<label class="flex items-center gap-4 group cursor-pointer">
+<div class="relative w-5 h-5 border border-outline-variant rounded-[2px] bg-surface flex items-center justify-center group-hover:border-primary transition-colors">
+<input class="peer sr-only" type="checkbox"/>
+<span class="material-symbols-outlined text-[16px] text-surface opacity-0 peer-checked:opacity-100 absolute bg-primary inset-[-1px] border border-primary flex items-center justify-center rounded-[2px] transition-all">check</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">Cotton</span>
+</label>
+<label class="flex items-center gap-4 group cursor-pointer">
+<div class="relative w-5 h-5 border border-outline-variant rounded-[2px] bg-surface flex items-center justify-center group-hover:border-primary transition-colors">
+<input checked="" class="peer sr-only" type="checkbox"/>
+<span class="material-symbols-outlined text-[16px] text-surface opacity-0 peer-checked:opacity-100 absolute bg-primary inset-[-1px] border border-primary flex items-center justify-center rounded-[2px] transition-all">check</span>
+</div>
+<span class="font-body-md text-body-md text-primary transition-colors">Linen</span>
+</label>
+<label class="flex items-center gap-4 group cursor-pointer">
+<div class="relative w-5 h-5 border border-outline-variant rounded-[2px] bg-surface flex items-center justify-center group-hover:border-primary transition-colors">
+<input class="peer sr-only" type="checkbox"/>
+<span class="material-symbols-outlined text-[16px] text-surface opacity-0 peer-checked:opacity-100 absolute bg-primary inset-[-1px] border border-primary flex items-center justify-center rounded-[2px] transition-all">check</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">Silk</span>
+</label>
+<label class="flex items-center gap-4 group cursor-pointer">
+<div class="relative w-5 h-5 border border-outline-variant rounded-[2px] bg-surface flex items-center justify-center group-hover:border-primary transition-colors">
+<input checked="" class="peer sr-only" type="checkbox"/>
+<span class="material-symbols-outlined text-[16px] text-surface opacity-0 peer-checked:opacity-100 absolute bg-primary inset-[-1px] border border-primary flex items-center justify-center rounded-[2px] transition-all">check</span>
+</div>
+<span class="font-body-md text-body-md text-primary transition-colors">Wool Blend</span>
+</label>
+</div>
+</div>
+<!-- Accordion: Weight -->
+<div class="border-b border-outline-variant/30 pb-6 mb-6 group cursor-pointer" onclick="toggleAccordion('weight-content', 'weight-icon')">
+<div class="flex justify-between items-center mb-4">
+<h2 class="font-body-lg text-body-lg text-primary">Weight</h2>
+<span class="material-symbols-outlined text-on-surface-variant transition-transform duration-200" id="weight-icon">expand_more</span>
+</div>
+<!-- Initially Closed Example -->
+<div class="flex flex-col gap-3 origin-top transition-all duration-300 ease-in-out opacity-0 max-h-0 overflow-hidden" id="weight-content">
+<label class="flex items-center gap-4 group cursor-pointer">
+<div class="relative w-5 h-5 border border-outline-variant rounded-[2px] bg-surface flex items-center justify-center group-hover:border-primary transition-colors">
+<input class="peer sr-only" type="checkbox"/>
+<span class="material-symbols-outlined text-[16px] text-surface opacity-0 peer-checked:opacity-100 absolute bg-primary inset-[-1px] border border-primary flex items-center justify-center rounded-[2px] transition-all">check</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">Light (Sheer)</span>
+</label>
+<label class="flex items-center gap-4 group cursor-pointer">
+<div class="relative w-5 h-5 border border-outline-variant rounded-[2px] bg-surface flex items-center justify-center group-hover:border-primary transition-colors">
+<input class="peer sr-only" type="checkbox"/>
+<span class="material-symbols-outlined text-[16px] text-surface opacity-0 peer-checked:opacity-100 absolute bg-primary inset-[-1px] border border-primary flex items-center justify-center rounded-[2px] transition-all">check</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">Medium (Suiting)</span>
+</label>
+<label class="flex items-center gap-4 group cursor-pointer">
+<div class="relative w-5 h-5 border border-outline-variant rounded-[2px] bg-surface flex items-center justify-center group-hover:border-primary transition-colors">
+<input class="peer sr-only" type="checkbox"/>
+<span class="material-symbols-outlined text-[16px] text-surface opacity-0 peer-checked:opacity-100 absolute bg-primary inset-[-1px] border border-primary flex items-center justify-center rounded-[2px] transition-all">check</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">Heavy (Upholstery)</span>
+</label>
+</div>
+</div>
+</main>
+<!-- Sticky Footer / Apply Button -->
+<footer class="absolute bottom-0 left-0 w-full p-margin-mobile bg-surface/90 backdrop-blur-md border-t border-outline-variant/30 z-20">
+<button class="w-full h-12 bg-primary text-on-primary font-label-caps text-label-caps rounded flex items-center justify-center hover:bg-tertiary-container transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                Apply (3)
+            </button>
+</footer>
+</div>
+<!-- Background Scrim (visible only on desktop to dim underlying content) -->
+<div class="hidden md:block fixed inset-0 bg-inverse-surface/20 backdrop-blur-sm z-40 transition-opacity"></div>
+<script>
+        function toggleAccordion(contentId, iconId) {
+            const content = document.getElementById(contentId);
+            const icon = document.getElementById(iconId);
+            
+            if (content.classList.contains('max-h-0')) {
+                // Open
+                content.classList.remove('max-h-0', 'opacity-0');
+                content.classList.add('max-h-64', 'opacity-100'); // Assuming 64 is enough, adjust if needed based on content
+                icon.classList.add('rotate-180');
+            } else {
+                // Close
+                content.classList.add('max-h-0', 'opacity-0');
+                content.classList.remove('max-h-64', 'opacity-100', 'max-h-48');
+                icon.classList.remove('rotate-180');
+            }
+        }
+    </script>
+</body></html>
+
+<!-- Discovery Home -->
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Atelier - Discovery Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&amp;family=Karla:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "on-secondary-fixed-variant": "#7b2f0e",
+                  "inverse-surface": "#31312d",
+                  "on-primary-fixed": "#1d1b19",
+                  "primary-fixed": "#e7e1de",
+                  "tertiary-container": "#2c2a26",
+                  "tertiary": "#171612",
+                  "surface": "#fcf9f3",
+                  "on-background": "#1c1c18",
+                  "outline": "#7c766f",
+                  "surface-bright": "#fcf9f3",
+                  "on-tertiary-fixed": "#1d1b18",
+                  "on-primary": "#ffffff",
+                  "error-container": "#ffdad6",
+                  "on-surface-variant": "#4b4640",
+                  "on-primary-container": "#95918e",
+                  "background": "#fcf9f3",
+                  "primary": "#171614",
+                  "outline-variant": "#cdc5bd",
+                  "on-surface": "#1c1c18",
+                  "inverse-primary": "#cac5c2",
+                  "on-primary-fixed-variant": "#494644",
+                  "primary-container": "#2c2a28",
+                  "surface-container": "#f0eee8",
+                  "inverse-on-surface": "#f3f0ea",
+                  "surface-dim": "#dcdad4",
+                  "error": "#ba1a1a",
+                  "on-secondary": "#ffffff",
+                  "on-secondary-fixed": "#380d00",
+                  "tertiary-fixed": "#e7e1dc",
+                  "surface-container-high": "#ebe8e2",
+                  "on-error-container": "#93000a",
+                  "on-tertiary-fixed-variant": "#494642",
+                  "surface-variant": "#e5e2dc",
+                  "secondary": "#9a4523",
+                  "surface-container-lowest": "#ffffff",
+                  "on-error": "#ffffff",
+                  "surface-container-low": "#f6f3ed",
+                  "secondary-fixed": "#ffdbcf",
+                  "on-tertiary-container": "#95918c",
+                  "secondary-container": "#ff946c",
+                  "primary-fixed-dim": "#cac5c2",
+                  "secondary-fixed-dim": "#ffb59a",
+                  "tertiary-fixed-dim": "#cbc6c0",
+                  "on-secondary-container": "#772b0a",
+                  "surface-tint": "#615e5b",
+                  "surface-container-highest": "#e5e2dc",
+                  "on-tertiary": "#ffffff"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.125rem",
+                  "lg": "0.25rem",
+                  "xl": "0.5rem",
+                  "full": "0.75rem"
+          },
+          "spacing": {
+                  "gutter": "16px",
+                  "unit": "4px",
+                  "margin-desktop": "64px",
+                  "margin-mobile": "24px",
+                  "section-gap": "48px"
+          },
+          "fontFamily": {
+                  "body-md": ["Karla"],
+                  "caption": ["Karla"],
+                  "headline-lg": ["Fraunces"],
+                  "headline-md": ["Fraunces"],
+                  "display": ["Fraunces"],
+                  "body-lg": ["Karla"],
+                  "label-caps": ["Karla"],
+                  "headline-lg-mobile": ["Fraunces"]
+          },
+          "fontSize": {
+                  "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                  "caption": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                  "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "400"}],
+                  "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "400"}],
+                  "display": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "300"}],
+                  "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                  "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                  "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "400"}]
+          }
+        },
+      }
+    }
+  </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased min-h-screen pb-24 md:pb-0 selection:bg-surface-dim selection:text-primary">
+<!-- Top Navigation (Mobile & Desktop) -->
+<header class="fixed top-0 w-full z-50 bg-surface/90 dark:bg-surface-dim/90 backdrop-blur-md border-b border-outline-variant/30 flat no shadows flex justify-between items-center h-[48px] px-margin-mobile w-full">
+<!-- Leading Action -->
+<button aria-label="Open Menu" class="text-primary dark:text-on-primary-fixed hover:opacity-70 transition-opacity flex items-center justify-center p-2 -ml-2">
+<span class="material-symbols-outlined font-[300]">menu</span>
+</button>
+<!-- Center Logo -->
+<div class="flex-grow flex justify-center">
+<img alt="The Atelier" class="h-5 w-auto object-contain" src="data:image/png;base64,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"/>
+</div>
+<!-- Trailing Action -->
+<button aria-label="Shopping Bag" class="text-primary dark:text-on-primary-fixed hover:opacity-70 transition-opacity flex items-center justify-center p-2 -mr-2">
+<span class="material-symbols-outlined font-[300]">shopping_bag</span>
+</button>
+</header>
+<main>
+<!-- Hero Feature -->
+<section class="relative w-full h-[80vh] min-h-[600px] mt-[48px] flex flex-col justify-end">
+<!-- Background Image -->
+<div class="absolute inset-0 z-0">
+<div class="w-full h-full bg-cover bg-center bg-no-repeat absolute inset-0" data-alt="A close-up, high-resolution photograph of a heavily textured, premium Belgian linen fabric in a light oatmeal or natural ecru color. The lighting is soft, warm, and highly directional, highlighting the complex weave and subtle imperfections of the textile. The image evokes a sense of tactile luxury, quiet craftsmanship, and warm minimalism, characteristic of high-end editorial design." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBhOZA_KEkSbHi2KvGv_u1hf3TdYE1-9fT4yvxEPiOkeqOxuXhqrfdi40IpgAzLKb9F2KE3Pn3T79fk0jZZg5RIjdig-Rib_GFaEOR7RYBCE0aeN7KMvSGDGYyOFgfoQee_k9UYVobi11KfjE6-8O55sPoOwAIqeh1p9Iatk8MbR2TO6aGQXu0nCbl5qxLUZhU0P9JQpx4j9woTCXpC18bEP7L5oEAaEvjKbo4x2dE8SErkmk9qMKTc')"></div>
+<!-- Gradient Overlay for Text Legibility -->
+<div class="absolute inset-0 bg-gradient-to-t from-primary-container/80 via-primary-container/20 to-transparent"></div>
+</div>
+<!-- Content -->
+<div class="relative z-10 px-margin-mobile md:px-margin-desktop pb-section-gap flex flex-col items-start w-full md:max-w-2xl">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-surface-container-low mb-6">
+          The Belgian Series
+        </h1>
+<a class="inline-flex items-center justify-center px-6 py-3 border border-surface-container-low text-surface-container-low font-label-caps text-label-caps uppercase tracking-wider hover:bg-surface-container-low hover:text-primary transition-colors duration-300 rounded" href="#">
+          Explore Collection
+        </a>
+</div>
+</section>
+<!-- Collection Carousel Section -->
+<section class="py-section-gap px-0 md:px-margin-desktop overflow-hidden">
+<div class="px-margin-mobile md:px-0 flex justify-between items-end mb-8">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary mb-2">Curated Materials</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Seasonal wools, silks, and technical blends.</p>
+</div>
+<a class="hidden md:inline-flex items-center text-primary font-label-caps text-label-caps hover:opacity-70 transition-opacity" href="#">
+          View All <span class="material-symbols-outlined text-[16px] ml-1">arrow_forward</span>
+</a>
+</div>
+<!-- Carousel Container -->
+<div class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-gutter px-margin-mobile md:px-0 pb-8 -mx-margin-mobile md:mx-0">
+<!-- Card 1 -->
+<article class="snap-start shrink-0 w-[280px] group cursor-pointer">
+<div class="w-full aspect-[4/5] mb-4 overflow-hidden rounded relative border border-outline-variant/30">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="A meticulously styled flat lay of a fine merino wool fabric swatch in a deep charcoal gray. The fabric is softly draped to reveal its luxurious drape and slight sheen. The background is a stark, clean stone surface, emphasizing the warmth and minimalism of the editorial style. Soft, diffused daylight from the left creates gentle shadows, highlighting the high-end quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOjCcS5gl_82Ctnn9j9W7rXdxgmPJOjdL2mDtR7wjcPEmU_ap7v_zi55R37VQQbpWSpp94tsy0pVjhnV-PToOJgsVwA2t-Cvo3PIk_aS_jB3x-f1ooPaYUiGUVHMgKO2HT6a8sNh0wjvJanzwGNvKXkMPY85eeHhuf2BU6kmBkQBN7T_XIzMEqLESPNpKQXf06Krqza8JcOzfCryJlKiJkLGwmEylk4zSuHY8J-09byQ8-fMgJeRyq"/>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-body-lg text-body-lg text-primary mb-1">Merino Charcoal</h3>
+<p class="font-caption text-caption text-on-surface-variant">100% Virgin Wool</p>
+</div>
+<p class="font-label-caps text-label-caps text-primary mt-1">€120/M</p>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="snap-start shrink-0 w-[280px] group cursor-pointer">
+<div class="w-full aspect-[4/5] mb-4 overflow-hidden rounded relative border border-outline-variant/30">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="A close-up shot of raw, unbleached silk fabric with a slub texture. The material is caught mid-air, fluttering lightly against an off-white background, capturing a sense of movement and ethereal lightness. The lighting is bright and airy, perfectly aligning with a calm, premium commerce aesthetic and warm minimalist design principles." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSgz50UuTwlKEP5wIT7rerIMTE5AJPX3IUWIPwgIkK49vxvZPladbRglpgbfBR9eV-l6V7p63LppAKY5Sw7Fdm1xfhXdbiwCN-aFuIjs3IyQycgy3y4movdKGLBTxuw0bHQLB2zH-KV7G5qxzG1qW0PBcD2uNp-EnYDU8BYBu1hRG9Y5oW-KNlCGPuRTsqcSCT7UEILavwdzclWZqnIpeuggPfkJ8Q-wHz_pwed9c86Qr7h0loWQMq"/>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-body-lg text-body-lg text-primary mb-1">Raw Habotai</h3>
+<p class="font-caption text-caption text-on-surface-variant">Pure Mulberry Silk</p>
+</div>
+<p class="font-label-caps text-label-caps text-primary mt-1">€185/M</p>
+</div>
+</article>
+<!-- Card 3 -->
+<article class="snap-start shrink-0 w-[280px] group cursor-pointer">
+<div class="w-full aspect-[4/5] mb-4 overflow-hidden rounded relative border border-outline-variant/30">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="A textured, tightly woven cotton canvas in an earthy terracotta shade. The image is taken straight-on, filling the frame edge-to-edge to emphasize the geometric precision of the weave. The rich, warm color contrasts beautifully with the minimalist design language, presented in sharp focus under studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPqNCOtGCKgsxSZc5b2PQLRRVky5qzWo5Wy9EIm1E5OwG28RDIcsKlREIs8wdaCGye7QPtv4Yw5HwQtJx0wnTfKZ_sgztHXArBXmS0MczvYD2O2tJ2ZTAQ4WURVRI6fqFJHklja0R1kQbgb-KKogve-ocuo3Tn-YVmi0PX3jKaupUGUpHU16f87B6zHoxeKC64xXnQr9flv3hXnzIwugtJoKElCmdL_4D_rEIFx3w4lTidFBCm-Ot6"/>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-body-lg text-body-lg text-primary mb-1">Heavy Canvas</h3>
+<p class="font-caption text-caption text-on-surface-variant">Organic Cotton</p>
+</div>
+<p class="font-label-caps text-label-caps text-primary mt-1">€85/M</p>
+</div>
+</article>
+<!-- Card 4 -->
+<article class="snap-start shrink-0 w-[280px] group cursor-pointer">
+<div class="w-full aspect-[4/5] mb-4 overflow-hidden rounded relative border border-outline-variant/30">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="A sheer, translucent organza fabric in a pale misty blue, delicately layered over itself to create variations in opacity. The background is a soft beige, contributing to the warm minimalist aesthetic. The lighting highlights the crispness of the fabric and its subtle reflective qualities, typical of high-end editorial photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2RI_vSu4QkLaFJVUZ93pSi488i69JCitmx9xWucszd5MrRMaXdIF83KfP2MUb-WYF6LR9wY8SVGq-cMyQ-H-1qi29Ka1jwY_RpPM6gJsz7IuEcTo2RlNqMHbn4n98vlbr-EBjsgCcBIs6Vfxh2IDohl5GcXE7E0DCrJO_GvZ0uYpFKoIJpL-Pzt8lSfxdY4SqjA1NOnDfRTAsCMIJdhdzacLfLSfRtMIXkkW8wx2vMPKPbv2HeMhZ"/>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-body-lg text-body-lg text-primary mb-1">Mist Organza</h3>
+<p class="font-caption text-caption text-on-surface-variant">Silk Blend</p>
+</div>
+<p class="font-label-caps text-label-caps text-primary mt-1">€210/M</p>
+</div>
+</article>
+</div>
+</section>
+</main>
+<!-- Mobile Bottom Nav Shell -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 bg-surface dark:bg-surface-container-lowest border-t border-outline-variant/20 flat no shadows fixed bottom-0 left-0 w-full flex justify-around items-center pt-2 pb-safe px-4 h-16">
+<!-- Active Tab: Discover -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:opacity-70 transition-opacity Active: translate-y-[-2px] transition-transform w-16" href="#">
+<span class="material-symbols-outlined mb-1" data-weight="fill" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-label-caps text-[10px]">Discover</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors w-16" href="#">
+<span class="material-symbols-outlined mb-1">grid_view</span>
+<span class="font-label-caps text-[10px]">Catalog</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors w-16" href="#">
+<span class="material-symbols-outlined mb-1">inventory_2</span>
+<span class="font-label-caps text-[10px]">Samples</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors w-16" href="#">
+<span class="material-symbols-outlined mb-1">architecture</span>
+<span class="font-label-caps text-[10px]">Studio</span>
+</a>
+</nav>
+<style>
+    /* Utility to hide scrollbar but keep functionality */
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    
+    /* safe area padding for iOS */
+    .pb-safe {
+      padding-bottom: env(safe-area-inset-bottom, 16px);
+    }
+  </style>
+</body></html>
+
+<!-- Fabric Detail -->
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>The Atelier - Fabric Detail</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Fraunces (Display/Headline) & Karla (Body/Label) -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&amp;family=Karla:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#7b2f0e",
+                    "inverse-surface": "#31312d",
+                    "on-primary-fixed": "#1d1b19",
+                    "primary-fixed": "#e7e1de",
+                    "tertiary-container": "#2c2a26",
+                    "tertiary": "#171612",
+                    "surface": "#fcf9f3",
+                    "on-background": "#1c1c18",
+                    "outline": "#7c766f",
+                    "surface-bright": "#fcf9f3",
+                    "on-tertiary-fixed": "#1d1b18",
+                    "on-primary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "on-surface-variant": "#4b4640",
+                    "on-primary-container": "#95918e",
+                    "background": "#fcf9f3",
+                    "primary": "#171614",
+                    "outline-variant": "#cdc5bd",
+                    "on-surface": "#1c1c18",
+                    "inverse-primary": "#cac5c2",
+                    "on-primary-fixed-variant": "#494644",
+                    "primary-container": "#2c2a28",
+                    "surface-container": "#f0eee8",
+                    "inverse-on-surface": "#f3f0ea",
+                    "surface-dim": "#dcdad4",
+                    "error": "#ba1a1a",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed": "#380d00",
+                    "tertiary-fixed": "#e7e1dc",
+                    "surface-container-high": "#ebe8e2",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed-variant": "#494642",
+                    "surface-variant": "#e5e2dc",
+                    "secondary": "#9a4523",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error": "#ffffff",
+                    "surface-container-low": "#f6f3ed",
+                    "secondary-fixed": "#ffdbcf",
+                    "on-tertiary-container": "#95918c",
+                    "secondary-container": "#ff946c",
+                    "primary-fixed-dim": "#cac5c2",
+                    "secondary-fixed-dim": "#ffb59a",
+                    "tertiary-fixed-dim": "#cbc6c0",
+                    "on-secondary-container": "#772b0a",
+                    "surface-tint": "#615e5b",
+                    "surface-container-highest": "#e5e2dc",
+                    "on-tertiary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "16px",
+                    "unit": "4px",
+                    "margin-desktop": "64px",
+                    "margin-mobile": "24px",
+                    "section-gap": "48px",
+                    "safe": "env(safe-area-inset-bottom, 24px)",
+                    "safe-top": "env(safe-area-inset-top, 24px)"
+            },
+            "fontFamily": {
+                    "body-md": ["Karla"],
+                    "caption": ["Karla"],
+                    "headline-lg": ["Fraunces"],
+                    "headline-md": ["Fraunces"],
+                    "display": ["Fraunces"],
+                    "body-lg": ["Karla"],
+                    "label-caps": ["Karla"],
+                    "headline-lg-mobile": ["Fraunces"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "caption": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "400"}],
+                    "display": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "300"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        /* Ambient shadow for the bottom sheet */
+        .shadow-ambient {
+            box-shadow: 0 -8px 40px rgba(23, 22, 20, 0.15);
+        }
+        
+        /* Hide scrollbar for clean editorial look */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-primary text-on-surface antialiased selection:bg-surface-dim selection:text-primary overflow-hidden w-full h-screen relative flex flex-col">
+<!-- Fixed Macro Image Background -->
+<div class="absolute inset-0 w-full h-full z-0" data-alt="Extreme macro close-up photography of heavyweight Belgian linen fabric. The highly textured weave is illuminated by soft, natural studio light highlighting the organic slubs and variations in the raw flax fibers. The color palette is a neutral, warm oatmeal tone consistent with high-end interior design textiles. Sharp focus on the central threads with a subtle depth of field drop-off at the edges, creating a tactile and premium editorial mood." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBVE9i4S3l4r0RbRjhMkUAD9cRITOhl9V6UbniJjTFRJErQJxKiSYfZFTaD4IW8ujuzd_RzhQqMC2CNwISFoXZ5uXsVW3YXl_-5dLq-9Jr4jVe4a0rQiAifVj-TeWPp7G1YCbvl8CkRrmMRD0NPOXDH-a-dICIxGCjutPvUW0DRea9HwLgWf4Z8Fw7M0w3xgjfgN0qSXUsOhtdFXkNB46kVdD_6SC9tJCtBH6PKuhwyWiIZs9E52SlT')">
+</div>
+<!-- Floating Top Header (Suppressed standard TopAppBar because this is a focused detail view, but implementing the requested floating actions) -->
+<header class="fixed top-0 w-full z-50 pt-safe-top px-margin-mobile h-16 flex justify-between items-center bg-transparent pointer-events-none">
+<button aria-label="Go back" class="w-10 h-10 rounded-full bg-surface/50 backdrop-blur-md border border-outline-variant/30 flex items-center justify-center text-primary pointer-events-auto hover:opacity-70 transition-opacity">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<button aria-label="Share" class="w-10 h-10 rounded-full bg-surface/50 backdrop-blur-md border border-outline-variant/30 flex items-center justify-center text-primary pointer-events-auto hover:opacity-70 transition-opacity">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">ios_share</span>
+</button>
+</header>
+<!-- Scrollable Bottom Sheet -->
+<main class="relative z-10 w-full h-full flex flex-col justify-end overflow-y-auto no-scrollbar pointer-events-none snap-y snap-mandatory">
+<!-- Spacer to push content down and reveal image -->
+<div class="h-[442px] flex-shrink-0 snap-start"></div>
+<!-- Detail Panel -->
+<div class="bg-surface w-full rounded-t-[24px] rounded-b-none shadow-ambient pointer-events-auto pt-8 pb-32 px-margin-mobile flex-grow min-h-[442px] snap-end flex flex-col gap-section-gap relative">
+<!-- Drag Handle Hint -->
+<div class="absolute top-4 left-1/2 -translate-x-1/2 w-12 h-1 bg-outline-variant rounded-full"></div>
+<!-- Header Section -->
+<div class="flex flex-col gap-2">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase">Linen</p>
+<div class="flex justify-between items-start gap-4">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary max-w-[70%]">Heavyweight Belgian Linen</h1>
+<span class="font-body-lg text-body-lg text-primary">$185/m</span>
+</div>
+</div>
+<!-- Description -->
+<p class="font-body-md text-body-md text-on-surface-variant max-w-prose">
+                A masterclass in texture. Woven in the Flanders region from flax cultivated for centuries, this heavyweight linen offers unparalleled drape and a highly tactile, slubbed surface. Perfect for structured upholstery and heavy drapery that demands an organic yet refined presence.
+            </p>
+<!-- Specs Grid (Bento style) -->
+<div class="grid grid-cols-2 gap-4">
+<div class="border border-outline-variant/30 p-4 rounded bg-surface-container-low flex flex-col gap-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Weight</span>
+<span class="font-body-md text-body-md text-primary">450gsm</span>
+</div>
+<div class="border border-outline-variant/30 p-4 rounded bg-surface-container-low flex flex-col gap-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Width</span>
+<span class="font-body-md text-body-md text-primary">150cm</span>
+</div>
+<div class="border border-outline-variant/30 p-4 rounded bg-surface-container-low flex flex-col gap-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Origin</span>
+<span class="font-body-md text-body-md text-primary">Belgium</span>
+</div>
+<div class="border border-outline-variant/30 p-4 rounded bg-surface-container-low flex flex-col gap-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Care</span>
+<span class="font-body-md text-body-md text-primary">Dry Clean</span>
+</div>
+</div>
+<!-- Additional Detail: Colorways (Optional enhancement for professional UI) -->
+<div class="flex flex-col gap-4">
+<span class="font-label-caps text-label-caps text-primary border-b border-outline-variant/30 pb-2">Available Tones</span>
+<div class="flex gap-4">
+<div aria-label="Oatmeal" class="w-12 h-12 rounded border border-outline-variant/30 bg-[#F4F1EB]"></div>
+<div aria-label="Stone" class="w-12 h-12 rounded border border-outline-variant/30 bg-[#E5E2DC]"></div>
+<div aria-label="Ink" class="w-12 h-12 rounded border border-outline-variant/30 bg-[#2C2A28]"></div>
+</div>
+</div>
+<!-- Padding at bottom to ensure content clears the sticky action bar when fully scrolled -->
+<div class="h-10"></div>
+</div>
+</main>
+<!-- Sticky Bottom Action Bar -->
+<div class="fixed bottom-0 left-0 w-full bg-surface/90 backdrop-blur-md border-t border-outline-variant/30 p-4 pb-safe z-50 flex items-center justify-center">
+<button class="w-full md:w-auto md:min-w-[320px] bg-primary-container text-surface py-4 px-8 rounded font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity active:scale-[0.98] duration-200">
+            Add to Sample Box
+        </button>
+</div>
+</body></html>
+
+<!-- Catalog Grid -->
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>The Atelier - Catalog</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&amp;family=Karla:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-fixed-variant": "#7b2f0e",
+                      "inverse-surface": "#31312d",
+                      "on-primary-fixed": "#1d1b19",
+                      "primary-fixed": "#e7e1de",
+                      "tertiary-container": "#2c2a26",
+                      "tertiary": "#171612",
+                      "surface": "#fcf9f3",
+                      "on-background": "#1c1c18",
+                      "outline": "#7c766f",
+                      "surface-bright": "#fcf9f3",
+                      "on-tertiary-fixed": "#1d1b18",
+                      "on-primary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "on-surface-variant": "#4b4640",
+                      "on-primary-container": "#95918e",
+                      "background": "#fcf9f3",
+                      "primary": "#171614",
+                      "outline-variant": "#cdc5bd",
+                      "on-surface": "#1c1c18",
+                      "inverse-primary": "#cac5c2",
+                      "on-primary-fixed-variant": "#494644",
+                      "primary-container": "#2c2a28",
+                      "surface-container": "#f0eee8",
+                      "inverse-on-surface": "#f3f0ea",
+                      "surface-dim": "#dcdad4",
+                      "error": "#ba1a1a",
+                      "on-secondary": "#ffffff",
+                      "on-secondary-fixed": "#380d00",
+                      "tertiary-fixed": "#e7e1dc",
+                      "surface-container-high": "#ebe8e2",
+                      "on-error-container": "#93000a",
+                      "on-tertiary-fixed-variant": "#494642",
+                      "surface-variant": "#e5e2dc",
+                      "secondary": "#9a4523",
+                      "surface-container-lowest": "#ffffff",
+                      "on-error": "#ffffff",
+                      "surface-container-low": "#f6f3ed",
+                      "secondary-fixed": "#ffdbcf",
+                      "on-tertiary-container": "#95918c",
+                      "secondary-container": "#ff946c",
+                      "primary-fixed-dim": "#cac5c2",
+                      "secondary-fixed-dim": "#ffb59a",
+                      "tertiary-fixed-dim": "#cbc6c0",
+                      "on-secondary-container": "#772b0a",
+                      "surface-tint": "#615e5b",
+                      "surface-container-highest": "#e5e2dc",
+                      "on-tertiary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "gutter": "16px",
+                      "unit": "4px",
+                      "margin-desktop": "64px",
+                      "margin-mobile": "24px",
+                      "section-gap": "48px"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Karla"
+                      ],
+                      "caption": [
+                              "Karla"
+                      ],
+                      "headline-lg": [
+                              "Fraunces"
+                      ],
+                      "headline-md": [
+                              "Fraunces"
+                      ],
+                      "display": [
+                              "Fraunces"
+                      ],
+                      "body-lg": [
+                              "Karla"
+                      ],
+                      "label-caps": [
+                              "Karla"
+                      ],
+                      "headline-lg-mobile": [
+                              "Fraunces"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "caption": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display": [
+                              "40px",
+                              {
+                                      "lineHeight": "48px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "300"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "34px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Hide scrollbar for horizontal scrolling filter bar */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background antialiased pt-[48px] pb-[80px] md:pb-0 font-body-md text-body-md min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/90 dark:bg-surface-dim/90 backdrop-blur-md border-b border-outline-variant/30 flex justify-between items-center h-[48px] px-margin-mobile">
+<button class="text-primary dark:text-on-primary-fixed hover:opacity-70 transition-opacity active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<div class="font-display text-display text-primary dark:text-on-primary-fixed tracking-tight" style="font-size: 24px; line-height: 32px;">
+            The Atelier
+        </div>
+<button class="text-primary dark:text-on-primary-fixed hover:opacity-70 transition-opacity active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+</button>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow flex flex-col">
+<!-- Sticky Filter Bar -->
+<div class="sticky top-[48px] z-40 bg-surface border-b border-outline-variant/20 py-3">
+<div class="flex overflow-x-auto hide-scrollbar px-margin-mobile space-x-2">
+<button class="px-4 py-1.5 rounded-DEFAULT bg-primary text-on-primary font-label-caps text-label-caps whitespace-nowrap border border-primary transition-colors">
+                    All
+                </button>
+<button class="px-4 py-1.5 rounded-DEFAULT bg-surface-container text-on-surface-variant font-label-caps text-label-caps whitespace-nowrap border border-outline-variant/30 hover:border-outline transition-colors">
+                    Linen
+                </button>
+<button class="px-4 py-1.5 rounded-DEFAULT bg-surface-container text-on-surface-variant font-label-caps text-label-caps whitespace-nowrap border border-outline-variant/30 hover:border-outline transition-colors">
+                    Wool
+                </button>
+<button class="px-4 py-1.5 rounded-DEFAULT bg-surface-container text-on-surface-variant font-label-caps text-label-caps whitespace-nowrap border border-outline-variant/30 hover:border-outline transition-colors">
+                    Silk
+                </button>
+<button class="px-4 py-1.5 rounded-DEFAULT bg-surface-container text-on-surface-variant font-label-caps text-label-caps whitespace-nowrap border border-outline-variant/30 hover:border-outline transition-colors">
+                    Cotton
+                </button>
+<button class="px-4 py-1.5 rounded-DEFAULT bg-surface-container text-on-surface-variant font-label-caps text-label-caps whitespace-nowrap border border-outline-variant/30 hover:border-outline transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+                    Color
+                </button>
+</div>
+</div>
+<!-- Catalog Grid -->
+<div class="p-4 md:px-margin-desktop md:py-8">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-gutter">
+<!-- Fabric Card 1 -->
+<a class="group block cursor-pointer" href="#">
+<div class="aspect-[1/1.2] w-full rounded-DEFAULT overflow-hidden border border-outline-variant/20 relative bg-surface-container-lowest">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="A close-up, high-resolution shot of a thick, woven Belgian linen fabric. The texture is coarse and organic, bathed in soft, natural light that highlights the interwoven threads. The warm oatmeal tone of the fabric conveys a sense of earthy luxury and high-end minimalism." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGZ3PelUlJ60KM4DI163ltDVbB1sLWiTXhflTsjixViXv09bLE8wwPXt4gx2OV2eF_zMrq7VWBWZvId4DI9mnw6a4HwmSSJmqQiuCn2VJcS-kweZMCJRXSLR8NoMwiJ1rGdQHEn8wnm6VGctO_lBxVI7bEzHR84awcFcWV8UrUKEp_z-QmPIvKm44PZ8XuaYBLt5EKdPZvtgQlPxjJS3vCfLp5clw8lbocPwSZqfe6P7-hGvOuIyDk"/>
+</div>
+<div class="mt-3 flex flex-col gap-0.5">
+<div class="flex justify-between items-start gap-2">
+<h3 class="font-headline-md text-[14px] leading-tight text-on-surface">Heavyweight Belgian Linen</h3>
+<span class="font-body-md text-[14px] text-on-surface-variant whitespace-nowrap">$68/m</span>
+</div>
+<p class="font-label-caps text-label-caps text-on-surface-variant/70">100% Linen • 450gsm</p>
+</div>
+</a>
+<!-- Fabric Card 2 -->
+<a class="group block cursor-pointer" href="#">
+<div class="aspect-[1/1.2] w-full rounded-DEFAULT overflow-hidden border border-outline-variant/20 relative bg-surface-container-lowest">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="A macro photograph of raw, unbleached silk. The surface has a subtle, irregular sheen with tiny slubs visible, characteristic of natural tussah silk. The lighting is diffused, casting delicate shadows across the slightly crumpled folds, emphasizing its refined, understated elegance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwGsjq7QwLAegaQmmX1DZ5n9g56dkwdSmaEYK3K22_e56bXr9tG6PJEU3kf94GL7zBYCqvaGYrx4A4WMp5cQS2W4aAEul9BOaFZF9nFaUFftqiCoXswBoTDpdZSh8AV7j5152avcM55nDiOYbf3c3I2E2tmtmDpaR3OoU_EKUBNQLH-seA2HclVNVEpk6UuqZHuhlrVeKhiBrhRpbuPHErAbShonGGTS8F942kOqyhy1_X6z9y3GBa"/>
+</div>
+<div class="mt-3 flex flex-col gap-0.5">
+<div class="flex justify-between items-start gap-2">
+<h3 class="font-headline-md text-[14px] leading-tight text-on-surface">Raw Tussah Silk</h3>
+<span class="font-body-md text-[14px] text-on-surface-variant whitespace-nowrap">$115/m</span>
+</div>
+<p class="font-label-caps text-label-caps text-on-surface-variant/70">100% Silk • 120gsm</p>
+</div>
+</a>
+<!-- Fabric Card 3 -->
+<a class="group block cursor-pointer" href="#">
+<div class="aspect-[1/1.2] w-full rounded-DEFAULT overflow-hidden border border-outline-variant/20 relative bg-surface-container-lowest">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="A detailed view of a dark charcoal brushed wool textile. The soft, felt-like surface is rich and dense, absorbing light with a matte finish. Tiny stray fibers catch the edge lighting, revealing the warmth and insulating quality of the heavy winter suiting material." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1TmNqY3nqsQNfXrEgMlkD8kp6O6Rw9SaG70oEVXJbvMaZktyq2znDGYOt5qcN5gVmHaf3_8XgRcm90eHcJZh9zwAh6-EvOzVDcy-99Zqx3nsnR8TeVtQ8Z05cZG-XMJRXcQha5nWlezM4A76Ok7zzvI3JxEg1apJ0Q6L-iaCOsyIXBTGsiX-7C8J03d011NQWPPysTmzqzMgz0PpD4R_lBe4Uh6XAt2YONkyRubUre-OC_U7NZeE8"/>
+</div>
+<div class="mt-3 flex flex-col gap-0.5">
+<div class="flex justify-between items-start gap-2">
+<h3 class="font-headline-md text-[14px] leading-tight text-on-surface">Brushed Alpaca Blend</h3>
+<span class="font-body-md text-[14px] text-on-surface-variant whitespace-nowrap">$140/m</span>
+</div>
+<p class="font-label-caps text-label-caps text-on-surface-variant/70">60% Alpaca 40% Wool • 550gsm</p>
+</div>
+</a>
+<!-- Fabric Card 4 -->
+<a class="group block cursor-pointer" href="#">
+<div class="aspect-[1/1.2] w-full rounded-DEFAULT overflow-hidden border border-outline-variant/20 relative bg-surface-container-lowest">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="A crisp, tightly woven Egyptian cotton poplin in a muted terracotta shade. The fabric lies perfectly flat, demonstrating its smooth, cool hand. Soft, directional light creates a subtle gradient across the matte surface, echoing the warm minimalist palette of the brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMeXYFDmWXId5O8NepWUcLvUanBSge6gRcdRpVRZYWhXY77Q-9AdK8w1cOOenBaRiNQ_u199LefxrVbHQb764er7sYv7WsgPhYydk6rqDfhCJExdLUV2XdGknGlixhBTrmxHwMyOvn3w-B5B5KVst_knhAmhDqx-VhJmRvDy0rqvHMZtvEc0Abffk9m91VyPFG0SnrkyAPvsbxoV7rL_2BQXxPs9pZnzpqMk1JZzRPyCMLAa95I6my"/>
+</div>
+<div class="mt-3 flex flex-col gap-0.5">
+<div class="flex justify-between items-start gap-2">
+<h3 class="font-headline-md text-[14px] leading-tight text-on-surface">Crisp Poplin Cotton</h3>
+<span class="font-body-md text-[14px] text-on-surface-variant whitespace-nowrap">$35/m</span>
+</div>
+<p class="font-label-caps text-label-caps text-on-surface-variant/70">100% Cotton • 140gsm</p>
+</div>
+</a>
+</div>
+<!-- Load More Indicator -->
+<div class="mt-12 flex justify-center pb-8">
+<div class="w-8 h-8 rounded-full border-2 border-outline-variant/30 border-t-primary animate-spin"></div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface dark:bg-surface-container-lowest border-t border-outline-variant/20 md:hidden pb-safe">
+<ul class="flex justify-around items-center pt-2 pb-2 px-4 h-full">
+<li>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+<span class="font-label-caps text-label-caps mt-1">Discover</span>
+</a>
+</li>
+<li>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim translate-y-[-2px] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view" data-weight="fill" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+<span class="font-label-caps text-label-caps mt-1">Catalog</span>
+</a>
+</li>
+<li>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-caps text-label-caps mt-1">Samples</span>
+</a>
+</li>
+<li>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="architecture">architecture</span>
+<span class="font-label-caps text-label-caps mt-1">Studio</span>
+</a>
+</li>
+</ul>
+</nav>
+</body></html>
+
+<!-- Sample Box -->
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Atelier - Sample Box</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&amp;family=Karla:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed-variant": "#7b2f0e",
+                        "inverse-surface": "#31312d",
+                        "on-primary-fixed": "#1d1b19",
+                        "primary-fixed": "#e7e1de",
+                        "tertiary-container": "#2c2a26",
+                        "tertiary": "#171612",
+                        "surface": "#fcf9f3",
+                        "on-background": "#1c1c18",
+                        "outline": "#7c766f",
+                        "surface-bright": "#fcf9f3",
+                        "on-tertiary-fixed": "#1d1b18",
+                        "on-primary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-surface-variant": "#4b4640",
+                        "on-primary-container": "#95918e",
+                        "background": "#fcf9f3",
+                        "primary": "#171614",
+                        "outline-variant": "#cdc5bd",
+                        "on-surface": "#1c1c18",
+                        "inverse-primary": "#cac5c2",
+                        "on-primary-fixed-variant": "#494644",
+                        "primary-container": "#2c2a28",
+                        "surface-container": "#f0eee8",
+                        "inverse-on-surface": "#f3f0ea",
+                        "surface-dim": "#dcdad4",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed": "#380d00",
+                        "tertiary-fixed": "#e7e1dc",
+                        "surface-container-high": "#ebe8e2",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#494642",
+                        "surface-variant": "#e5e2dc",
+                        "secondary": "#9a4523",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f6f3ed",
+                        "secondary-fixed": "#ffdbcf",
+                        "on-tertiary-container": "#95918c",
+                        "secondary-container": "#ff946c",
+                        "primary-fixed-dim": "#cac5c2",
+                        "secondary-fixed-dim": "#ffb59a",
+                        "tertiary-fixed-dim": "#cbc6c0",
+                        "on-secondary-container": "#772b0a",
+                        "surface-tint": "#615e5b",
+                        "surface-container-highest": "#e5e2dc",
+                        "on-tertiary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "unit": "4px",
+                        "margin-desktop": "64px",
+                        "margin-mobile": "24px",
+                        "section-gap": "48px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Karla"],
+                        "caption": ["Karla"],
+                        "headline-lg": ["Fraunces"],
+                        "headline-md": ["Fraunces"],
+                        "display": ["Fraunces"],
+                        "body-lg": ["Karla"],
+                        "label-caps": ["Karla"],
+                        "headline-lg-mobile": ["Fraunces"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "caption": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "400"}],
+                        "display": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "300"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .slide-up-enter { transform: translateY(100%); }
+        .slide-up-enter-active { transform: translateY(0); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .overlay-enter { opacity: 0; }
+        .overlay-enter-active { opacity: 1; transition: opacity 0.4s ease; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-md text-body-md antialiased min-h-screen flex items-end justify-center md:items-center">
+<!-- Mock Background Content to show overlay effect -->
+<div class="fixed inset-0 z-0 p-margin-desktop md:p-margin-desktop flex flex-col pointer-events-none opacity-40">
+<div class="w-full h-64 bg-surface-variant rounded-lg mb-8"></div>
+<div class="flex gap-4">
+<div class="w-1/3 h-48 bg-surface-variant rounded-lg"></div>
+<div class="w-1/3 h-48 bg-surface-variant rounded-lg"></div>
+<div class="w-1/3 h-48 bg-surface-variant rounded-lg"></div>
+</div>
+</div>
+<!-- Overlay Backdrop -->
+<div aria-hidden="true" class="fixed inset-0 bg-primary/20 backdrop-blur-sm z-40 overlay-enter-active"></div>
+<!-- Modal Container -->
+<div class="fixed inset-x-0 bottom-0 md:relative md:w-full md:max-w-xl md:bottom-auto z-50 bg-background rounded-t-xl md:rounded-xl shadow-[0_-20px_40px_rgba(23,22,20,0.15)] flex flex-col max-h-[795px] slide-up-enter-active">
+<!-- Header -->
+<header class="flex justify-between items-center px-margin-mobile py-6 border-b border-outline-variant/30 md:px-8">
+<h2 class="font-headline-md text-headline-md text-primary tracking-tight">Sample Box</h2>
+<button aria-label="Close modal" class="text-on-surface-variant hover:text-primary transition-colors p-2 -mr-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">close</span>
+</button>
+</header>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto px-margin-mobile md:px-8 py-6">
+<!-- Items List -->
+<ul class="flex flex-col">
+<!-- Item 1 -->
+<li class="flex items-start gap-6 py-6 border-b border-outline-variant/30 group">
+<div class="w-20 h-20 shrink-0 border border-outline-variant/20 rounded relative overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Close up macro shot of a luxurious, heavy textured boucle fabric in a warm off-white oat color, showing the intricate weave and loops, brightly lit with a soft studio light from the side to emphasize texture, minimal background, high end interior design style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBktRz7XUG3OSkOZwYmXk0LGYrbar5r6kn0jS4rxIM0frFiQ4RkprINPgW8bMU15cwxNZJjuac9uJBnK7OlScKpxtHpGPojAC_hNdiog_83_qdk9qBB4iqe5yWk7j72Ey0rT0FA1cfg89XM5iWWShzkmfui820Gw6CkC1lrEJsScXWoNONzwGUqvFbwJSaPHidSE6Mfq9Lk9W_qzSUfPqYuSaRRiONK6yFO40mLK9O2Sd3t1NE_KFW"/>
+</div>
+<div class="flex-1 pt-1">
+<div class="flex justify-between items-start gap-4">
+<div>
+<h3 class="font-body-lg text-body-lg text-primary mb-1">Bouclé N° 04</h3>
+<p class="font-caption text-caption text-on-surface-variant mb-2">Oatmeal / Heavy Weight</p>
+</div>
+<button aria-label="Remove item" class="text-outline hover:text-error transition-colors p-1 opacity-0 group-hover:opacity-100 focus:opacity-100">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">delete</span>
+</button>
+</div>
+<div class="flex items-center gap-3">
+<span class="inline-block px-3 py-1 bg-surface-container rounded-sm font-label-caps text-label-caps text-on-surface-variant tracking-widest">W 140CM</span>
+<span class="inline-block px-3 py-1 bg-surface-container rounded-sm font-label-caps text-label-caps text-on-surface-variant tracking-widest">WOOL BLEND</span>
+</div>
+</div>
+</li>
+<!-- Item 2 -->
+<li class="flex items-start gap-6 py-6 border-b border-outline-variant/30 group">
+<div class="w-20 h-20 shrink-0 border border-outline-variant/20 rounded relative overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Close up photography of smooth, high thread count linen fabric in a deep rich charcoal ink color, subtle natural wrinkles, soft diffused lighting highlighting the matte sheen, minimalist editorial presentation, pure texture focus" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAubMIT0qwwWjIuGbaSIAEGkYmhSEByFFClOcxxW6bU7D0EOG7IRJfazZDay71M59rxSUEnA3hWCGXM25a-2oNc3O42Jy3goro5uHE4Jl94_Ad5w4j878qg3QK2G7XgGqCrcYR4CS-HRexlizjhAM7Ar9ZRgjf6_SBrLtaj7U13GY5Q1k3xqPyG4xaJZyj9crRaYKKjivo_VGYP1_DAryU2bpf7K5_I9eGAZLMLbki3o5H75D36oAsd"/>
+</div>
+<div class="flex-1 pt-1">
+<div class="flex justify-between items-start gap-4">
+<div>
+<h3 class="font-body-lg text-body-lg text-primary mb-1">Belgian Linen</h3>
+<p class="font-caption text-caption text-on-surface-variant mb-2">Charcoal / Medium Weight</p>
+</div>
+<button aria-label="Remove item" class="text-outline hover:text-error transition-colors p-1 opacity-0 group-hover:opacity-100 focus:opacity-100">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">delete</span>
+</button>
+</div>
+<div class="flex items-center gap-3">
+<span class="inline-block px-3 py-1 bg-surface-container rounded-sm font-label-caps text-label-caps text-on-surface-variant tracking-widest">W 135CM</span>
+<span class="inline-block px-3 py-1 bg-surface-container rounded-sm font-label-caps text-label-caps text-on-surface-variant tracking-widest">100% LINEN</span>
+</div>
+</div>
+</li>
+<!-- Item 3 -->
+<li class="flex items-start gap-6 py-6 border-b border-outline-variant/30 group">
+<div class="w-20 h-20 shrink-0 border border-outline-variant/20 rounded relative overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Close up detailed shot of a soft, washed velvet fabric in a muted warm terracotta rust tone, capturing the subtle pile direction and rich color variation under directional light, high end tactile material presentation, minimalist aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBN9BXIpGb5frL-Z38vmqgOZIRz_oLp7ORIM204c7yMpm_ydQP86acs9jnBKGRiisaIw5tLSTMxbejDNEprzx_Ab4u9wTYm02-1sj3uLFePrnyLYeqCt9HXmiXBOzlCgtSi0KFiSTGJbIaYCdXo5-U-hd3YfUH7aGRwjlFlLQexfTqldOpsFLgN7kUbdcVy6nOXmSqXcpe3VnDOpwVwwTrQjTivJ946q-OqN0Rcm_OPbxtg4otBrv0J"/>
+</div>
+<div class="flex-1 pt-1">
+<div class="flex justify-between items-start gap-4">
+<div>
+<h3 class="font-body-lg text-body-lg text-primary mb-1">Washed Velvet</h3>
+<p class="font-caption text-caption text-on-surface-variant mb-2">Terracotta / Medium Weight</p>
+</div>
+<button aria-label="Remove item" class="text-outline hover:text-error transition-colors p-1 opacity-0 group-hover:opacity-100 focus:opacity-100">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">delete</span>
+</button>
+</div>
+<div class="flex items-center gap-3">
+<span class="inline-block px-3 py-1 bg-surface-container rounded-sm font-label-caps text-label-caps text-on-surface-variant tracking-widest">W 140CM</span>
+<span class="inline-block px-3 py-1 bg-surface-container rounded-sm font-label-caps text-label-caps text-on-surface-variant tracking-widest">COTTON</span>
+</div>
+</div>
+</li>
+</ul>
+<!-- Summary -->
+<div class="mt-8 flex flex-col items-end gap-3 pb-8">
+<div class="flex justify-between w-full max-w-[200px] text-on-surface-variant font-caption text-caption">
+<span>Subtotal (3)</span>
+<span>Free</span>
+</div>
+<div class="flex justify-between w-full max-w-[200px] text-on-surface-variant font-caption text-caption">
+<span>Shipping</span>
+<span>Calculated at next step</span>
+</div>
+<div class="flex justify-between w-full max-w-[200px] text-primary font-body-lg text-body-lg mt-2 pt-4 border-t border-outline-variant/30">
+<span>Total</span>
+<span>Free</span>
+</div>
+</div>
+</div>
+<!-- Sticky Footer CTA -->
+<div class="px-margin-mobile md:px-8 py-6 border-t border-outline-variant/20 bg-background/95 backdrop-blur-md">
+<button class="w-full h-[56px] bg-primary text-on-primary font-label-caps text-label-caps tracking-widest rounded flex items-center justify-center hover:opacity-90 transition-opacity focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:outline-none">
+                Request Samples
+            </button>
+</div>
+</div>
+</body></html>
+
+<!-- Design System -->
+<svg width="200" height="40" viewBox="0 0 200 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <text x="50%" y="28" text-anchor="middle" font-family="'Fraunces', serif" font-weight="400" font-size="20" fill="#2C2A28" letter-spacing="-0.02em">THE ATELIER</text>
+</svg>

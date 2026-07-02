@@ -1,14 +1,15 @@
 import "server-only";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { isAllowedAdminEmail } from "@/lib/admin-allowlist";
 
 /**
- * Autorización del admin: sesión de Supabase Auth + allowlist de correos.
+ * Autorización del admin: sesión de Supabase Auth + allowlist de correos
+ * (ver `lib/admin-allowlist.ts`).
  *
  * La sesión sola NO basta: un proyecto de Supabase permite sign-up público
  * por default, así que cualquiera podría crearse una cuenta. `ADMIN_EMAILS`
- * (variable SOLO de servidor, separada por comas) define quién administra.
- * Sin allowlist configurada, nadie está autorizado — seguro por default.
+ * (variable SOLO de servidor) define quién administra.
  */
 export type SesionAdmin = {
   user: User | null;
@@ -21,15 +22,8 @@ export async function getSesionAdmin(): Promise<SesionAdmin> {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user?.email) return { user: null, autorizado: false };
-
-  const allowlist = (process.env.ADMIN_EMAILS ?? "")
-    .split(",")
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-
   return {
     user,
-    autorizado: allowlist.includes(user.email.toLowerCase()),
+    autorizado: isAllowedAdminEmail(user?.email, process.env.ADMIN_EMAILS),
   };
 }

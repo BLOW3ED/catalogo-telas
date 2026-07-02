@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, MessageCircle } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { getTelaPorSlug } from "@/lib/queries";
 import { publicImageUrl } from "@/lib/supabase/storage";
 import { TelaImage } from "@/components/TelaImage";
