@@ -22,7 +22,7 @@ export function AddToCart({ variante }: { variante: CatalogoTela }) {
   return (
     <div className="mt-6 flex flex-col gap-3">
       <Hint id="detalle-metros">
-        Elige cuántos metros necesitas (de medio en medio) y toca “Agregar”. Se
+        Elige cuántos metros necesitas y toca “Agregar”. Se
         guarda en tu cotización.
       </Hint>
       <div className="flex flex-col gap-3 sm:flex-row">

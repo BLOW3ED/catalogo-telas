@@ -25,7 +25,7 @@ const PASOS: Paso[] = [
     icon: Search,
     titulo: "1. Explora las telas",
     texto:
-      "Toca cualquier tela para verla en grande y descubrir todos sus colores y su precio.",
+      "Toca cualquier tela para verla y descubrir todos sus colores.",
   },
   {
     icon: ShoppingBag,

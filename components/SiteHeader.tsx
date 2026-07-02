@@ -24,7 +24,7 @@ export function SiteHeader() {
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="group flex flex-col">
           <p className="text-label-caps text-[10px] text-amber-soft sm:text-xs">
-            Fresnillo · Telas al menudeo
+            Fresnillo
           </p>
           <h1 className="font-display text-2xl text-ink transition-colors group-hover:text-amber sm:text-3xl">
             Telas La Jalisciense
