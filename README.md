@@ -22,7 +22,8 @@ pnpm install
 cp .env.example .env.local
 # Llena las llaves desde Supabase → Project Settings → API:
 #   NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
-# y el número de WhatsApp del negocio (formato internacional sin '+', ej. 5249xxxxxxxx).
+# el número de WhatsApp del negocio (formato internacional sin '+', ej. 5249xxxxxxxx)
+# y ADMIN_EMAILS para el panel /admin (ver "Administrar el catálogo").
 
 # 3. Esquema de la base de datos
 # En Supabase → SQL Editor, pega y corre `catalogo_telas_supabase.sql`.
@@ -58,24 +59,37 @@ El flujo es en dos pasos a propósito — primero revisas, luego subes:
    de `tela` → `variante` → `foto`. Es idempotente: correrlo dos veces no
    duplica nada. Respeta SKUs existentes y **nunca inventa SKUs**.
 
-## Editar precios, stock y telas HOY (admin provisional)
+## Administrar el catálogo
 
-Aún no existe el panel `/admin` (fase 6 del roadmap). Mientras tanto, la forma
-segura de editar el catálogo es el **Table Editor de Supabase Studio** — no
-requiere código y las escrituras pasan por el dashboard, nunca por la llave
-pública:
+### Precios y stock: panel `/admin`
 
-1. Entra a [supabase.com](https://supabase.com) → tu proyecto → **Table Editor**.
-2. Para **precios y stock**: abre la tabla **`variante`** y edita las columnas
-   `precio_metro` (MXN por metro) y `stock` (metros disponibles). Cada fila es
-   un color/SKU concreto.
-3. Para **nombres y descripciones**: tabla **`tela`** (campos `nombre`,
-   `descripcion`).
-4. Para **colores, categorías, usos y ocasiones**: tablas `color`, `categoria`,
-   `caso_uso`, `oportunidad`.
+El panel en **`/admin`** permite editar **precio por metro y stock** de cada
+variante, con búsqueda por tela/color/SKU. Los cambios salen al sitio público
+**al instante** (invalida el caché con `revalidateTag`). Deja un campo vacío
+para "a consultar" — no es lo mismo que 0.
 
-Los cambios aparecen en el sitio en **menos de 60 segundos** (las lecturas del
-catálogo se cachean 60s; ver `lib/queries.ts`).
+Para habilitarlo (una sola vez):
+
+1. En Supabase → **Authentication → Users → Add user**: crea el usuario del
+   admin (correo + contraseña, marca "Auto Confirm User").
+2. En `.env.local` (y en las variables del hosting) agrega ese correo a
+   `ADMIN_EMAILS` (separados por comas si son varios).
+
+La sesión sola no basta: solo los correos de `ADMIN_EMAILS` pueden administrar
+(los proyectos de Supabase permiten registro público por default). Sin la
+variable, nadie entra.
+
+### Todo lo demás: Supabase Studio
+
+Altas de telas, fotos, nombres y catálogos de apoyo se editan en el
+**Table Editor de Supabase Studio** (o vía `pnpm ingest` para fotos):
+
+- **Nombres y descripciones**: tabla **`tela`**.
+- **Colores, categorías, usos y ocasiones**: tablas `color`, `categoria`,
+  `caso_uso`, `oportunidad`.
+
+Estos cambios aparecen en el sitio en **menos de 60 segundos** (caché de
+lecturas; ver `lib/queries.ts`).
 
 > ⚠️ La vista `catalogo_telas` es de solo lectura — edita siempre las tablas
 > base (`variante`, `tela`, etc.).
@@ -118,7 +132,7 @@ lookups: color (con hex), categoria, acabado
 3. ✅ Script de ingesta (manifest CSV → upload)
 4. ⏳ Filtros + detalle + selector de color (detalle y selector listos; filtros pendientes)
 5. ⏳ Cotización + WhatsApp (carrito y envío listos; pulido pendiente)
-6. Admin con Auth (mientras tanto: Supabase Studio, ver arriba)
-7. Pulido visual, rendimiento, README
+6. ✅ Admin con Auth (mínimo: precio/stock en `/admin`; altas siguen en Studio)
+7. ⏳ Pulido visual, rendimiento, tests
 
 Más contexto para desarrollo (convenciones, paleta, fases) en [`CLAUDE.md`](./CLAUDE.md).

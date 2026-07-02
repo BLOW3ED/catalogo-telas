@@ -44,9 +44,9 @@ uso: cliente final que navega, y vendedor en tablet que arma cotizaciones.
 
 ## Orden de trabajo (por fases, mostrar antes de avanzar)
 1. ✅ Esquema SQL (`catalogo_telas_supabase.sql`)
-2. ⏳ Scaffolding + conexión lectura + grid mínimo
-3. Script de ingesta (manifest CSV primero)
-4. Filtros + detalle + selector de color
-5. Cotización + WhatsApp
-6. Admin con Auth
-7. Pulido visual, rendimiento, README
+2. ✅ Scaffolding + conexión lectura + grid mínimo
+3. ✅ Script de ingesta (manifest CSV primero)
+4. ⏳ Filtros + detalle + selector de color (detalle y selector listos; filtros pendientes)
+5. ⏳ Cotización + WhatsApp (carrito y envío listos; pulido pendiente)
+6. ✅ Admin con Auth (mínimo: precio/stock en `/admin` con allowlist `ADMIN_EMAILS`)
+7. ⏳ Pulido visual, rendimiento, tests (README listo)
