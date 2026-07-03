@@ -145,6 +145,11 @@ export default async function TelaDetallePage({
             <h1 className="font-display text-3xl text-ink sm:text-4xl">
               {nombre}
             </h1>
+            {seleccionada.descripcion && (
+              <p className="mt-2 text-sm leading-relaxed text-ink/70 sm:text-base">
+                {seleccionada.descripcion}
+              </p>
+            )}
           </div>
 
           <ColorSelector
