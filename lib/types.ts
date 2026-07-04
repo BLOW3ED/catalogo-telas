@@ -2,6 +2,27 @@
  * Tipos del dominio. `CatalogoTela` refleja 1:1 la vista `catalogo_telas`
  * (una fila por variante/SKU).
  */
+
+/** Un tamaño derivado de una foto: ruta dentro del bucket + dimensiones reales. */
+export type DerivadoImagen = {
+  ruta: string;
+  ancho: number;
+  alto: number;
+};
+
+/**
+ * Contenido de `foto.derivados` (jsonb): versiones WebP pre-generadas del
+ * original (sm=grid, md=detalle, lg=zoom/WhatsApp). Todas las claves son
+ * opcionales para tolerar fotos procesadas con estrategias anteriores.
+ */
+export type DerivadosFoto = {
+  sm?: DerivadoImagen;
+  md?: DerivadoImagen;
+  lg?: DerivadoImagen;
+  /** ISO timestamp de cuándo se generaron (auditoría/reproceso). */
+  generado_en?: string;
+};
+
 export type CatalogoTela = {
   variante_id: string;
   tela_id: string;
@@ -33,6 +54,12 @@ export type CatalogoTela = {
    * queries caen a ordenar por nombre de color si aún no está.
    */
   variante_orden?: number | null;
+  /**
+   * Derivados WebP de la foto principal. Opcional porque la columna solo
+   * existe tras correr la sección 12 del SQL; sin ella el frontend cae al
+   * original vía next/image.
+   */
+  foto_principal_derivados?: DerivadosFoto | null;
   /**
    * NO viene de la vista: lo añade `aplicarPreciosDemo` cuando rellena un
    * precio vacío con uno de referencia. Permite que la UI y el mensaje de

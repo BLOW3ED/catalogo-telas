@@ -438,5 +438,79 @@ alter table movimiento_inventario enable row level security;
   left join acabado ac    on ac.id = v.acabado_id;
 
 -- ============================================================================
+-- 12. Derivados de imagen (pipeline sharp) — REQUIERE haber corrido la 11
+--     (la vista de abajo incluye variante_orden).
+--
+--     `foto.derivados` (jsonb) guarda las versiones WebP pre-generadas del
+--     original, que NO se toca:
+--       { "sm": {"ruta": "derivados/sm/….webp", "ancho": 800,  "alto": 533},
+--         "md": {…}, "lg": {…}, "generado_en": "2026-07-03T…" }
+--     Las genera lib/images/derivados.ts (subida en /admin, ingesta y
+--     `pnpm backfill:derivados`). NULL = pendiente de procesar.
+-- ============================================================================
+alter table foto add column if not exists derivados jsonb;
+
+comment on column foto.derivados is
+  'Versiones WebP pre-generadas (sm/md/lg) bajo derivados/ en el bucket. NULL = sin procesar.';
+
+-- La vista vuelve a crecer SOLO por el final (create or replace no permite
+-- reordenar columnas): se añade foto_principal_derivados tras variante_orden.
+create or replace view catalogo_telas as
+select
+    v.id                       as variante_id,
+    t.id                       as tela_id,
+    t.slug                     as tela_slug,
+    t.nombre                   as tela_nombre,
+    t.descripcion              as descripcion,
+    cat.nombre                 as categoria,
+    cat.slug                   as categoria_slug,
+    v.sku                      as sku,
+    col.nombre                 as color_nombre,
+    col.slug                   as color_slug,
+    col.hex                    as color_hex,
+    ac.nombre                  as acabado,
+    v.precio_metro             as precio_metro,
+    v.gramaje                  as gramaje,
+    v.stock                    as stock,
+    v.es_bordado               as es_bordado,
+    v.es_brillante             as es_brillante,
+    v.es_traslucida            as es_traslucida,
+    v.es_tornasol              as es_tornasol,
+    (select f.ruta
+      from foto f
+      where f.variante_id = v.id
+      order by f.orden asc, f.created_at asc
+      limit 1)                 as foto_principal,
+    coalesce((
+      select array_agg(cu.slug order by cu.nombre)
+        from tela_caso_uso tcu
+        join caso_uso cu on cu.id = tcu.caso_uso_id
+      where tcu.tela_id = t.id
+    ), '{}')                   as casos_uso,
+    coalesce((
+      select array_agg(o.slug order by o.nombre)
+        from tela_oportunidad tox
+        join oportunidad o on o.id = tox.oportunidad_id
+      where tox.tela_id = t.id
+    ), '{}')                   as oportunidades,
+    t.created_at               as created_at,
+    t.updated_at               as updated_at,
+    v.orden                    as variante_orden,
+    -- derivados de la MISMA foto que foto_principal (mismo order by)
+    (select f.derivados
+      from foto f
+      where f.variante_id = v.id
+      order by f.orden asc, f.created_at asc
+      limit 1)                 as foto_principal_derivados
+  from variante v
+  join tela t       on t.id = v.tela_id
+  left join categoria cat on cat.id = t.categoria_id
+  left join color col     on col.id = v.color_id
+  left join acabado ac    on ac.id = v.acabado_id;
+
+-- PostgREST cachea el esquema: avisarle que cambió.
+notify pgrst, 'reload schema';
+
+-- ============================================================================
 -- FIN del esquema
 -- ============================================================================

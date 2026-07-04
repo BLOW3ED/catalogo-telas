@@ -9,7 +9,8 @@
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "ingest": "tsx scripts/ingest-images.ts"
+    "ingest": "tsx scripts/ingest-images.ts",
+    "backfill:derivados": "tsx scripts/backfill-derivados.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
@@ -18,6 +19,7 @@
     "next": "^15.0.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "sharp": "^0.35.3",
     "zustand": "^5.0.14"
   },
   "devDependencies": {

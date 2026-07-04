@@ -24,6 +24,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { config as loadEnv } from "dotenv";
+import { procesarFoto } from "../lib/images/derivados";
 
 // Cargar variables: .env.local tiene prioridad (igual que Next), luego .env
 loadEnv({ path: ".env.local" });
@@ -321,7 +322,7 @@ async function modoUpload() {
   const telaCache = new Map<string, string>();     // slug -> id
 
   const ctx = {
-    contadores: { telas: new Set<string>(), variantes: 0, fotos: 0, sinSku: 0, errores: [] as string[] },
+    contadores: { telas: new Set<string>(), variantes: 0, fotos: 0, derivados: 0, sinSku: 0, errores: [] as string[] },
   };
 
   for (const fila of filas) {
@@ -434,14 +435,26 @@ async function modoUpload() {
     });
     if (upErr) throw new Error(`storage ${ruta}: ${upErr.message}`);
 
-    const { error: fotoErr } = await supabase
+    const { data: fotoFila, error: fotoErr } = await supabase
       .from("foto")
       .upsert(
         { variante_id: varianteId, ruta, orden: 0, alt: `${modelo}${fila.color ? " " + fila.color : ""}` },
         { onConflict: "variante_id,ruta" }
-      );
-    if (fotoErr) throw new Error(`foto ${ruta}: ${fotoErr.message}`);
+      )
+      .select("id")
+      .single();
+    if (fotoErr || !fotoFila) throw new Error(`foto ${ruta}: ${fotoErr?.message ?? "sin datos"}`);
     ctx.contadores.fotos++;
+
+    // 4b) derivados WebP (sm/md/lg) con el buffer ya en memoria. Si falla
+    //     (p.ej. falta la sección 12 del SQL), la foto queda con
+    //     derivados=null y `pnpm backfill:derivados` la recoge después.
+    try {
+      await procesarFoto(supabase, { fotoId: fotoFila.id, ruta, original: buffer });
+      ctx.contadores.derivados++;
+    } catch (e) {
+      ctx.contadores.errores.push(`derivados ${ruta}: ${(e as Error).message}`);
+    }
 
     // 5) casos de uso (N:N) — lista separada por ; o ,
     const casos = (fila.casos_uso ?? "").split(/[;,]/).map((s) => s.trim()).filter(Boolean);
@@ -460,6 +473,7 @@ async function modoUpload() {
   console.log(`   telas (modelos) : ${c.telas.size}`);
   console.log(`   variantes (SKU) : ${c.variantes}`);
   console.log(`   fotos subidas   : ${c.fotos}`);
+  console.log(`   derivados web   : ${c.derivados}${c.derivados < c.fotos ? "  ← faltantes: pnpm backfill:derivados" : ""}`);
   console.log(`   variantes sin SKU: ${c.sinSku}  ${c.sinSku ? "← requieren tu atención" : ""}`);
   if (c.errores.length) {
     console.log(`\n⚠ ${c.errores.length} errores:`);

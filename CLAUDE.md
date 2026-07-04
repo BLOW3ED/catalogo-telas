@@ -17,6 +17,8 @@ uso: cliente final que navega, y vendedor en tablet que arma cotizaciones.
 - `pnpm build` / `pnpm start` — producción
 - `pnpm ingest` — genera `catalog-manifest.csv` (revisión manual, NO sube nada)
 - `pnpm ingest --upload` — tras aprobar el CSV: sube fotos al bucket y hace upsert idempotente
+- `pnpm backfill:derivados` — genera derivados WebP para fotos con `derivados IS NULL`
+  (idempotente; acepta `--limit=N`)
 
 ## Modelo de datos (ver `catalogo_telas_supabase.sql`)
 `tela` (modelo) → `variante` (SKU/color, con precio/stock/propiedades ópticas) → `foto`
@@ -28,9 +30,18 @@ uso: cliente final que navega, y vendedor en tablet que arma cotizaciones.
   drag & drop en `/admin/tela/[id]` y la vista lo expone como `variante_orden`.
 - Búsqueda full-text con `f_unaccent` + `pg_trgm` (insensible a acentos, soporta substrings).
 
-## Storage
+## Storage e imágenes
 - Bucket **`telas`** (público). En la BD se guarda la **ruta relativa** dentro del bucket,
   no la URL absoluta. El frontend construye la URL pública con el cliente de Supabase.
+- **Pipeline de derivados** (`lib/images/derivados.ts`, sección 12 del SQL): por cada
+  original se generan WebP sm/800px, md/1600px, lg/2400px (sRGB forzado, sharpen
+  post-resize) bajo el prefijo `derivados/{tamano}/` — el original NUNCA se toca.
+  Corre solo: en `/admin` vía `after()` (server action `subirFotos`) y en la ingesta;
+  fallos dejan `derivados = null` y los recoge `pnpm backfill:derivados`.
+- `foto.derivados` (jsonb) guarda rutas + dimensiones reales; la vista lo expone como
+  `foto_principal_derivados`. `TelaImage` usa `<img srcset>` directo al CDN de Supabase
+  (sin recompresión de next/image) y cae a `next/image` sobre el original si es null.
+  El `lg` también es para el agente de WhatsApp (n8n), que lee Storage directo.
 
 ## Convenciones
 - Paleta (tokens en `app/globals.css`): tinta `#1A1714`, fondo hueso `#FAF8F5`,

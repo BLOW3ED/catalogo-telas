@@ -121,6 +121,8 @@ export default async function AdminPage({
                 <div className="w-12 shrink-0 overflow-hidden rounded-lg border border-line">
                   <TelaImage
                     src={publicImageUrl(v.foto_principal)}
+                    derivados={v.foto_principal_derivados}
+                    sizes="48px"
                     alt={
                       v.color_nombre
                         ? `${v.tela_nombre} ${v.color_nombre}`

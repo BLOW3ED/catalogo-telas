@@ -121,6 +121,8 @@ export default async function TelaDetallePage({
           <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-sm">
             <TelaImage
               src={foto}
+              derivados={seleccionada.foto_principal_derivados}
+              sizes="(max-width: 1023px) 100vw, 50vw"
               alt={
                 seleccionada.color_nombre
                   ? `${nombre} ${seleccionada.color_nombre}`

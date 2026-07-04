@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { CatalogoTela } from './types';
+import type { CatalogoTela, DerivadosFoto } from './types';
 
 export type CartItem = {
   id: string; // variante_id
@@ -12,6 +12,8 @@ export type CartItem = {
   precio_referencia?: boolean;
   cantidad: number;
   foto_principal: string | null;
+  /** Opcional: carritos persistidos antes del pipeline de derivados no lo traen. */
+  foto_derivados?: DerivadosFoto | null;
 };
 
 type CartState = {
@@ -52,6 +54,7 @@ export const useCartStore = create<CartState>()(
                 precio_referencia: variante.precio_es_referencia ?? false,
                 cantidad,
                 foto_principal: variante.foto_principal,
+                foto_derivados: variante.foto_principal_derivados ?? null,
               },
             ],
             isOpen: true,

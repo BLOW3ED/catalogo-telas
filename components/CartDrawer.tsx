@@ -94,6 +94,8 @@ export function CartDrawer() {
                   <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-line bg-surface">
                     <TelaImage
                       src={publicImageUrl(item.foto_principal)}
+                      derivados={item.foto_derivados}
+                      sizes="80px"
                       alt={item.tela_nombre}
                     />
                   </div>

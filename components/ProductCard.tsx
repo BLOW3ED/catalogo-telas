@@ -47,6 +47,7 @@ export function ProductCard({
         <div className="transition-transform duration-300 group-hover:scale-[1.03]">
           <TelaImage
             src={foto}
+            derivados={principal?.foto_principal_derivados}
             alt={principal?.color_nombre ? `${tela.tela_nombre} ${principal.color_nombre}` : tela.tela_nombre}
             priority={priority}
           />

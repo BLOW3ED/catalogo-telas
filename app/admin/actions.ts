@@ -1,11 +1,13 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getSesionAdmin } from "@/lib/admin-auth";
-import { STORAGE_BUCKET } from "@/lib/supabase/storage";
+import { STORAGE_BUCKET, rutasDerivados } from "@/lib/supabase/storage";
+import { procesarFoto } from "@/lib/images/derivados";
 import { slugify } from "@/lib/slug";
 import { aplicarMovimiento, esTipoMovimiento } from "@/lib/inventario";
 
@@ -302,7 +304,7 @@ export async function eliminarVariante(formData: FormData) {
     .select("ruta")
     .eq("variante_id", varianteId);
 
-  const rutas = (fotos ?? []).map((f) => f.ruta);
+  const rutas = (fotos ?? []).flatMap((f) => [f.ruta, ...rutasDerivados(f.ruta)]);
   if (rutas.length) {
     await supabase.storage.from(STORAGE_BUCKET).remove(rutas);
   }
@@ -398,6 +400,8 @@ export async function subirFotos(formData: FormData) {
     .limit(1);
   let orden = (existentes?.[0]?.orden ?? -1) + 1;
 
+  const pendientes: { fotoId: string; ruta: string }[] = [];
+
   for (const archivo of archivos) {
     const ext = EXTENSIONES_IMAGEN[archivo.type];
     if (!ext) {
@@ -411,19 +415,39 @@ export async function subirFotos(formData: FormData) {
       .upload(ruta, archivo, { contentType: archivo.type, upsert: false });
     if (errorSubida) throw new Error(`No se pudo subir "${archivo.name}": ${errorSubida.message}`);
 
-    const { error: errorFila } = await supabase.from("foto").insert({
-      variante_id: varianteId,
-      ruta,
-      orden,
-      alt: textoOpcional(formData.get("alt")),
-    });
-    if (errorFila) {
+    const { data: fila, error: errorFila } = await supabase
+      .from("foto")
+      .insert({
+        variante_id: varianteId,
+        ruta,
+        orden,
+        alt: textoOpcional(formData.get("alt")),
+      })
+      .select("id")
+      .single();
+    if (errorFila || !fila) {
       // No dejar archivos huérfanos si la fila no se pudo registrar.
       await supabase.storage.from(STORAGE_BUCKET).remove([ruta]);
-      throw new Error(`La imagen subió pero no se pudo registrar: ${errorFila.message}`);
+      throw new Error(`La imagen subió pero no se pudo registrar: ${errorFila?.message ?? "sin datos"}`);
     }
+    pendientes.push({ fotoId: fila.id, ruta });
     orden += 1;
   }
+
+  // Derivados DESPUÉS de responder (after): quien sube no espera los ~2-4s de
+  // sharp por foto. Sin reintentos a propósito: si falla, la foto queda con
+  // derivados=null (el frontend cae al original) y `pnpm backfill:derivados`
+  // la recoge. El error queda en los logs de Vercel.
+  after(async () => {
+    for (const pendiente of pendientes) {
+      try {
+        await procesarFoto(supabase, pendiente);
+      } catch (e) {
+        console.error(`[derivados] ${pendiente.ruta}:`, e);
+      }
+    }
+    refrescarCatalogo(telaId);
+  });
 
   refrescarCatalogo(telaId);
 }
@@ -440,7 +464,9 @@ export async function eliminarFoto(formData: FormData) {
   if (error) throw new Error(`No se pudo eliminar la foto: ${error.message}`);
 
   if (foto?.ruta) {
-    await supabase.storage.from(STORAGE_BUCKET).remove([foto.ruta]);
+    await supabase.storage
+      .from(STORAGE_BUCKET)
+      .remove([foto.ruta, ...rutasDerivados(foto.ruta)]);
   }
 
   refrescarCatalogo(telaId);
