@@ -32,14 +32,16 @@ export function ColorSelector({
 
   return (
     <div>
-      <p className="mb-2 text-sm font-medium text-ink/70">
-        Color:{" "}
-        <span className="text-ink">
+      <div className="mb-4 flex items-baseline justify-between border-b border-line-strong/30 pb-2">
+        <p className="text-label-caps text-xs text-ink-deep">
+          Tonos disponibles
+        </p>
+        <span className="text-sm text-ink-soft">
           {variantes.find((v) => v.color_slug === selectedSlug)?.color_nombre ??
             ""}
         </span>
-      </p>
-      <div className="flex flex-wrap gap-2">
+      </div>
+      <div className="flex flex-wrap gap-4">
         {conColor.map((v) => (
           <button
             key={v.color_slug}
@@ -47,12 +49,12 @@ export function ColorSelector({
             onClick={() => seleccionar(v.color_slug!)}
             aria-label={`Ver color ${v.color_nombre}`}
             aria-pressed={v.color_slug === selectedSlug}
-            className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2"
+            className="rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2"
           >
             <ColorSwatch
               hex={v.color_hex}
               nombre={v.color_nombre}
-              size="md"
+              size="lg"
               selected={v.color_slug === selectedSlug}
             />
           </button>

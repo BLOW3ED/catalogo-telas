@@ -118,7 +118,7 @@ export default async function TelaDetallePage({
       <div className="grid gap-8 lg:grid-cols-2">
         {/* Imagen y Disclaimer */}
         <div className="flex flex-col gap-4">
-          <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-sm">
+          <div className="overflow-hidden rounded border border-line-strong/20 bg-white p-px">
             <TelaImage
               src={foto}
               derivados={seleccionada.foto_principal_derivados}
@@ -131,28 +131,55 @@ export default async function TelaDetallePage({
               priority
             />
           </div>
-          <p className="px-4 text-center text-sm text-ink/60">
+          <p className="px-4 text-center text-sm text-ink-soft">
             📸 <strong>Nota:</strong> Las fotografías fueron tomadas bajo luz natural del sol. Los tonos reales pueden variar ligeramente dependiendo de tu pantalla.
           </p>
         </div>
 
         {/* Información */}
-        <div className="flex flex-col gap-5">
-          <div>
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-2">
             {seleccionada.categoria && (
-              <span className="text-label-caps text-xs text-amber-soft">
+              <span className="text-label-caps text-xs text-ink-soft">
                 {seleccionada.categoria}
               </span>
             )}
-            <h1 className="font-display text-3xl text-ink sm:text-4xl">
-              {nombre}
-            </h1>
-            {seleccionada.descripcion && (
-              <p className="mt-2 text-sm leading-relaxed text-ink/70 sm:text-base">
-                {seleccionada.descripcion}
+            <div className="flex items-start justify-between gap-4">
+              <h1 className="font-display text-3xl text-ink-deep sm:text-4xl">
+                {nombre}
+              </h1>
+              {seleccionada.precio_metro != null ? (
+                <p className="shrink-0 pt-1 text-lg leading-7 text-ink-deep">
+                  {pesos.format(seleccionada.precio_metro)}/m
+                </p>
+              ) : (
+                <p className="shrink-0 pt-1 text-sm leading-7 text-ink-soft">
+                  Precio a consultar
+                </p>
+              )}
+            </div>
+            {seleccionada.precio_es_referencia && (
+              <p className="text-label-caps text-[10px] text-ink-soft/70">
+                precio de referencia · confirmamos por WhatsApp
               </p>
             )}
           </div>
+
+          {/* Descripción técnica/sensorial en bloques cortos: los párrafos se
+              separan con líneas en blanco en la BD (los casos de uso van
+              aparte, como tags). */}
+          {seleccionada.descripcion && (
+            <div className="space-y-4">
+              {seleccionada.descripcion
+                .split(/\n\s*\n/)
+                .filter((p) => p.trim())
+                .map((parrafo, i) => (
+                  <p key={i} className="text-base leading-6 text-ink-soft">
+                    {parrafo.trim()}
+                  </p>
+                ))}
+            </div>
+          )}
 
           <ColorSelector
             variantes={variantes}
@@ -168,38 +195,23 @@ export default async function TelaDetallePage({
 
           <AttributeBadges atributos={atributos} />
 
-          {/* Precio */}
-          <div className="rounded-2xl border border-line bg-surface p-5">
-            {seleccionada.precio_metro != null ? (
-              <>
-                <p className="text-2xl font-semibold text-amber">
-                  {pesos.format(seleccionada.precio_metro)}
-                  <span className="text-base font-normal text-ink/50">
-                    {" "}
-                    / metro
-                  </span>
-                </p>
-                {seleccionada.precio_es_referencia && (
-                  <p className="mt-0.5 text-xs uppercase tracking-wide text-ink/40">
-                    precio de referencia · confirmamos por WhatsApp
-                  </p>
-                )}
-              </>
-            ) : (
-              <p className="text-lg text-ink/50">Precio a consultar</p>
-            )}
-
-            <dl className="mt-3 space-y-1 text-sm text-ink/70">
+          {/* Ficha técnica en cuadrícula tipo bento */}
+          {(seleccionada.sku || seleccionada.stock != null) && (
+            <dl className="grid grid-cols-2 gap-4">
               {seleccionada.sku && (
-                <div className="flex gap-2">
-                  <dt className="text-ink/50">SKU:</dt>
-                  <dd>{seleccionada.sku}</dd>
+                <div className="rounded border border-line-strong/30 bg-surface p-4">
+                  <dt className="text-label-caps text-xs text-ink-soft">SKU</dt>
+                  <dd className="mt-1 text-base text-ink-deep">
+                    {seleccionada.sku}
+                  </dd>
                 </div>
               )}
               {seleccionada.stock != null && (
-                <div className="flex gap-2">
-                  <dt className="text-ink/50">Disponibilidad:</dt>
-                  <dd>
+                <div className="rounded border border-line-strong/30 bg-surface p-4">
+                  <dt className="text-label-caps text-xs text-ink-soft">
+                    Disponibilidad
+                  </dt>
+                  <dd className="mt-1 text-base text-ink-deep">
                     {seleccionada.stock > 0
                       ? `${seleccionada.stock} m en existencia`
                       : "Sin existencia"}
@@ -207,19 +219,24 @@ export default async function TelaDetallePage({
                 </div>
               )}
             </dl>
-          </div>
+          )}
 
           {/* Tags de uso / ocasión */}
           {tags.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {tags.map((t) => (
-                <span
-                  key={t}
-                  className="rounded-full border border-line bg-surface/60 px-2.5 py-0.5 text-xs capitalize text-ink/60"
-                >
-                  {t.replace(/-/g, " ")}
-                </span>
-              ))}
+            <div className="flex flex-col gap-3">
+              <p className="border-b border-line-strong/30 pb-2 text-label-caps text-xs text-ink-deep">
+                Ideal para
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {tags.map((t) => (
+                  <span
+                    key={t}
+                    className="rounded border border-line-strong/30 bg-chip px-2.5 py-0.5 text-xs capitalize text-ink-soft"
+                  >
+                    {t.replace(/-/g, " ")}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
 

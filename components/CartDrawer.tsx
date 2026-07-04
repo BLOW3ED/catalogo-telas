@@ -91,7 +91,7 @@ export function CartDrawer() {
             <ul className="space-y-6">
               {items.map((item) => (
                 <li key={item.id} className="flex gap-4">
-                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-line bg-surface">
+                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded border border-line-strong/30 bg-white p-px">
                     <TelaImage
                       src={publicImageUrl(item.foto_principal)}
                       derivados={item.foto_derivados}
@@ -107,16 +107,16 @@ export function CartDrawer() {
                       </p>
                     </div>
                     <div className="mt-2 flex items-center justify-between">
-                      <div className="flex items-center rounded-lg border border-line bg-surface p-1">
+                      <div className="flex items-center rounded border border-line-strong/30 bg-chip p-1">
                         <button
                           onClick={() => updateQuantity(item.id, Math.max(0.5, item.cantidad - 0.5))}
-                          className="flex h-9 w-9 items-center justify-center rounded-md text-lg text-ink/60 transition-colors hover:bg-line/30 hover:text-amber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+                          className="flex h-9 w-9 items-center justify-center rounded text-lg text-ink-soft transition-colors hover:bg-surface-high hover:text-amber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
                           aria-label="Disminuir medio metro"
                         >-</button>
                         <span className="w-12 text-center text-sm font-medium">{item.cantidad}m</span>
                         <button
                           onClick={() => updateQuantity(item.id, item.cantidad + 0.5)}
-                          className="flex h-9 w-9 items-center justify-center rounded-md text-lg text-ink/60 transition-colors hover:bg-line/30 hover:text-amber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+                          className="flex h-9 w-9 items-center justify-center rounded text-lg text-ink-soft transition-colors hover:bg-surface-high hover:text-amber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
                           aria-label="Aumentar medio metro"
                         >+</button>
                       </div>

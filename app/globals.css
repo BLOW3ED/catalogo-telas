@@ -10,12 +10,17 @@
 --------------------------------------------------------------------------- */
 @theme {
   --color-ink: #1c1c18; /* on-surface: texto principal */
+  --color-ink-deep: #171614; /* marca, chips activos y app bars (Figma) */
+  --color-ink-soft: #4b4640; /* texto secundario cálido (Figma) */
+  --color-charcoal: #2c2a28; /* CTA oscura principal (Figma) */
   --color-bg: #fcf9f3; /* surface: fondo cálido hueso */
   --color-surface: #f6f3ed; /* surface-container-low: tarjetas y paneles */
   --color-surface-high: #ebe8e2; /* surface-container-high: hover/activo sutil */
+  --color-chip: #f0eee8; /* fondo de chips de filtro (Figma) */
   --color-amber: #9a4523; /* secondary: acento terracota cálido */
   --color-amber-soft: #a8551b; /* tono intermedio para eyebrows/labels */
-  --color-line: #e5e2dc; /* outline-variant suave: bordes */
+  --color-line: #eee9e3; /* hairline: #cdc5bd al 30% pre-mezclado sobre bg */
+  --color-line-strong: #cdc5bd; /* base de borde Figma; usar con alfa /20 /30 */
   --color-whatsapp: #25d366; /* verde de marca WhatsApp (CTA del canal) */
   --color-whatsapp-dark: #1da851; /* hover del botón WhatsApp */
 
@@ -51,6 +56,8 @@ body {
   font-family: var(--font-display), Georgia, serif;
   font-weight: 400;
   letter-spacing: -0.01em;
+  /* Ejes variables de Fraunces según el Figma: sin soft, con wonk editorial */
+  font-variation-settings: "SOFT" 0, "WONK" 1;
 }
 
 /* Label caps: eyebrows y etiquetas en mayúsculas (Karla, tracking amplio).

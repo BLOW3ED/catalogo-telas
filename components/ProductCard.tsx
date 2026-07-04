@@ -41,26 +41,50 @@ export function ProductCard({
   return (
     <Link
       href={`/tela/${tela.tela_slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg focus-visible:-translate-y-1"
+      className="group flex flex-col gap-3"
     >
-      <div className="overflow-hidden">
-        <div className="transition-transform duration-300 group-hover:scale-[1.03]">
-          <TelaImage
-            src={foto}
-            derivados={principal?.foto_principal_derivados}
-            alt={principal?.color_nombre ? `${tela.tela_nombre} ${principal.color_nombre}` : tela.tela_nombre}
-            priority={priority}
-          />
+      {/* Foto enmarcada tipo muestra montada: marco blanco de 1px sobre borde
+          suave, esquinas casi rectas; el texto vive fuera del marco. */}
+      <div className="overflow-hidden rounded border border-line-strong/20 bg-white p-px transition-shadow duration-300 group-hover:shadow-md">
+        <div className="overflow-hidden">
+          <div className="transition-transform duration-300 group-hover:scale-[1.03]">
+            <TelaImage
+              src={foto}
+              derivados={principal?.foto_principal_derivados}
+              alt={principal?.color_nombre ? `${tela.tela_nombre} ${principal.color_nombre}` : tela.tela_nombre}
+              priority={priority}
+            />
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col gap-2 p-4">
-        {tela.categoria && (
-          <span className="text-label-caps text-xs text-amber-soft">
-            {tela.categoria}
-          </span>
+      <div className="flex flex-1 flex-col gap-1.5">
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="font-display text-sm leading-[1.25] text-ink sm:text-base">
+            {tela.tela_nombre}
+          </h3>
+          {tela.precio_desde != null ? (
+            <p className="shrink-0 text-sm leading-6 text-ink-soft">
+              <span className="text-ink-soft/70">desde </span>
+              {pesos.format(tela.precio_desde)}/m
+            </p>
+          ) : (
+            <p className="shrink-0 text-sm leading-6 text-ink-soft/70">
+              a consultar
+            </p>
+          )}
+        </div>
+
+        {(tela.categoria || tela.precio_desde_es_referencia) && (
+          <p className="text-label-caps text-xs text-ink-soft/70">
+            {[
+              tela.categoria,
+              tela.precio_desde_es_referencia ? "precio de referencia" : null,
+            ]
+              .filter(Boolean)
+              .join(" • ")}
+          </p>
         )}
-        <h3 className="font-display text-lg leading-tight">{tela.tela_nombre}</h3>
 
         {swatches.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
@@ -68,33 +92,12 @@ export function ProductCard({
               <ColorSwatch key={v.color_hex} hex={v.color_hex} nombre={v.color_nombre} size="sm" />
             ))}
             {swatches.length > 8 && (
-              <span className="text-xs text-ink/50">+{swatches.length - 8}</span>
+              <span className="text-xs text-ink-soft/70">+{swatches.length - 8}</span>
             )}
           </div>
         )}
 
         <AttributeBadges atributos={atributos} />
-
-        <div className="mt-auto pt-1">
-          {tela.precio_desde != null ? (
-            <>
-              <p className="text-sm">
-                <span className="text-ink/50">desde </span>
-                <span className="font-semibold text-amber">
-                  {pesos.format(tela.precio_desde)}
-                </span>
-                <span className="text-ink/50"> /metro</span>
-              </p>
-              {tela.precio_desde_es_referencia && (
-                <p className="text-[10px] uppercase tracking-wide text-ink/40">
-                  precio de referencia
-                </p>
-              )}
-            </>
-          ) : (
-            <p className="text-sm text-ink/40">Precio a consultar</p>
-          )}
-        </div>
       </div>
     </Link>
   );

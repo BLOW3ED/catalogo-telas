@@ -16,24 +16,24 @@ type Variant = "primary" | "whatsapp" | "secondary" | "ghost";
 type Size = "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-xl font-medium " +
+  "inline-flex items-center justify-center gap-2 rounded text-label-caps " +
   "transition-colors focus-visible:outline-none focus-visible:ring-2 " +
   "focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-amber text-white shadow-sm hover:bg-amber/90 focus-visible:ring-amber",
+    "bg-charcoal text-bg hover:bg-ink-deep focus-visible:ring-ink-deep",
   whatsapp:
-    "bg-whatsapp text-white shadow-sm hover:bg-whatsapp-dark focus-visible:ring-whatsapp",
+    "bg-whatsapp text-white hover:bg-whatsapp-dark focus-visible:ring-whatsapp",
   secondary:
-    "border border-line bg-surface text-ink shadow-sm hover:bg-line/30 focus-visible:ring-amber",
+    "border border-line-strong/30 bg-chip text-ink-soft hover:bg-surface-high focus-visible:ring-ink-deep",
   ghost:
-    "text-ink/70 hover:bg-line/40 hover:text-ink focus-visible:ring-amber",
+    "text-ink-soft hover:bg-line/60 hover:text-ink focus-visible:ring-ink-deep",
 };
 
 const sizes: Record<Size, string> = {
-  md: "h-12 px-5 text-sm",
-  lg: "h-16 px-6 text-lg",
+  md: "h-12 px-5 text-xs",
+  lg: "h-16 px-6 text-sm",
 };
 
 type CommonProps = {

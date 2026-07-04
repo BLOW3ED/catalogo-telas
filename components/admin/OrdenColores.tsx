@@ -128,7 +128,7 @@ export function OrdenColores({
             ) : (
               <span
                 className="h-7 w-7 shrink-0 rounded-lg border border-line"
-                style={{ backgroundColor: c.hex ?? "#E7E1D8" }}
+                style={{ backgroundColor: c.hex ?? "var(--color-line)" }}
                 aria-hidden
               />
             )}

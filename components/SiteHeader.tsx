@@ -20,13 +20,13 @@ export function SiteHeader() {
   const itemCount = items.length;
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-line bg-bg/90 backdrop-blur-md">
+    <header className="sticky top-0 z-40 w-full border-b border-line-strong/30 bg-bg/90 backdrop-blur-md">
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="group flex flex-col">
-          <p className="text-label-caps text-[10px] text-amber-soft sm:text-xs">
+          <p className="text-label-caps text-[10px] text-ink-soft sm:text-xs">
             Fresnillo
           </p>
-          <h1 className="font-display text-2xl text-ink transition-colors group-hover:text-amber sm:text-3xl">
+          <h1 className="font-display text-2xl tracking-tight text-ink-deep transition-colors group-hover:text-amber sm:text-3xl">
             Telas La Jalisciense
           </h1>
         </Link>

@@ -26,11 +26,11 @@ export function AddToCart({ variante }: { variante: CatalogoTela }) {
         guarda en tu cotización.
       </Hint>
       <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="flex items-center justify-between rounded-xl border border-line bg-surface p-1 shadow-sm sm:w-40">
+        <div className="flex items-center justify-between rounded border border-line-strong/30 bg-chip p-1 sm:w-40">
           <button
             type="button"
             onClick={() => setCantidad((prev) => Math.max(0.5, prev - 0.5))}
-            className="flex h-14 w-14 items-center justify-center rounded-lg text-xl text-ink/60 transition-colors hover:bg-line/30 hover:text-amber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+            className="flex h-14 w-14 items-center justify-center rounded text-xl text-ink-soft transition-colors hover:bg-surface-high hover:text-amber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
             aria-label="Menos medio metro"
           >
             -
@@ -42,7 +42,7 @@ export function AddToCart({ variante }: { variante: CatalogoTela }) {
           <button
             type="button"
             onClick={() => setCantidad((prev) => prev + 0.5)}
-            className="flex h-14 w-14 items-center justify-center rounded-lg text-xl text-ink/60 transition-colors hover:bg-line/30 hover:text-amber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+            className="flex h-14 w-14 items-center justify-center rounded text-xl text-ink-soft transition-colors hover:bg-surface-high hover:text-amber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
             aria-label="Más medio metro"
           >
             +
