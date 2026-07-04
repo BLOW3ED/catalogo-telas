@@ -33,6 +33,22 @@
   --radius-lg: 0.25rem;
   --radius-xl: 0.5rem;
   --radius-2xl: 0.75rem;
+
+  /* Manita de la invitación a deslizar la foto (detalle de tela). */
+  --animate-swipe-nudge: swipe-nudge 1.8s ease-in-out infinite;
+
+  @keyframes swipe-nudge {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    30% {
+      transform: translateX(8px);
+    }
+    70% {
+      transform: translateX(-8px);
+    }
+  }
 }
 
 html {

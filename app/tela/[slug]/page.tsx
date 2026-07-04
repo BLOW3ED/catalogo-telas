@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { getTelaPorSlug } from "@/lib/queries";
 import { publicImageUrl } from "@/lib/supabase/storage";
 import { TelaImage } from "@/components/TelaImage";
+import { TelaImageCarousel, type SlideColor } from "@/components/TelaImageCarousel";
 import { ColorSelector } from "@/components/ColorSelector";
 import { AttributeBadges } from "@/components/AttributeBadges";
 import { AddToCart } from "@/components/AddToCart";
@@ -105,6 +106,28 @@ export default async function TelaDetallePage({
 
   const tags = [...seleccionada.casos_uso, ...seleccionada.oportunidades];
 
+  // Slides del carrusel: una foto por color, mismo filtro y orden que los
+  // swatches del ColorSelector (color real con hex) para que deslizar y picar
+  // recorran la misma lista. Dedupe por slug: si dos SKUs comparten color,
+  // `?color=` de todos modos resuelve al primero.
+  const slides: SlideColor[] = Array.from(
+    new Map(
+      variantes
+        .filter((v) => v.color_slug && v.color_hex)
+        .map((v) => [v.color_slug!, v])
+    ).values()
+  ).map((v) => ({
+    slug: v.color_slug!,
+    src: publicImageUrl(v.foto_principal),
+    derivados: v.foto_principal_derivados ?? null,
+    colorNombre: v.color_nombre,
+  }));
+
+  // Solo hay swipe si hay ≥2 colores y la variante seleccionada es uno de
+  // ellos (una variante sin color quedaría fuera del carrusel).
+  const usarCarrusel =
+    slides.length > 1 && slides.some((s) => s.slug === seleccionada.color_slug);
+
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
       <Link
@@ -119,17 +142,25 @@ export default async function TelaDetallePage({
         {/* Imagen y Disclaimer */}
         <div className="flex flex-col gap-4">
           <div className="overflow-hidden rounded border border-line-strong/20 bg-white p-px">
-            <TelaImage
-              src={foto}
-              derivados={seleccionada.foto_principal_derivados}
-              sizes="(max-width: 1023px) 100vw, 50vw"
-              alt={
-                seleccionada.color_nombre
-                  ? `${nombre} ${seleccionada.color_nombre}`
-                  : nombre
-              }
-              priority
-            />
+            {usarCarrusel ? (
+              <TelaImageCarousel
+                slides={slides}
+                selectedSlug={seleccionada.color_slug!}
+                telaNombre={nombre}
+              />
+            ) : (
+              <TelaImage
+                src={foto}
+                derivados={seleccionada.foto_principal_derivados}
+                sizes="(max-width: 1023px) 100vw, 50vw"
+                alt={
+                  seleccionada.color_nombre
+                    ? `${nombre} ${seleccionada.color_nombre}`
+                    : nombre
+                }
+                priority
+              />
+            )}
           </div>
           <p className="px-4 text-center text-sm text-ink-soft">
             📸 <strong>Nota:</strong> Las fotografías fueron tomadas bajo luz natural del sol. Los tonos reales pueden variar ligeramente dependiendo de tu pantalla.
@@ -188,8 +219,8 @@ export default async function TelaDetallePage({
 
           {variantes.length > 1 && (
             <Hint id="detalle-color" arrow="up">
-              Puedes cambiar el color picando estos botones. La foto y el precio
-              se actualizan solos.
+              Puedes cambiar el color picando estos botones o deslizando la
+              foto. El precio se actualiza solo.
             </Hint>
           )}
 

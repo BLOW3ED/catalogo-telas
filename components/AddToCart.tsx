@@ -48,7 +48,10 @@ export function AddToCart({ variante }: { variante: CatalogoTela }) {
             +
           </button>
         </div>
-        <Button variant="primary" size="lg" fullWidth onClick={handleAdd} className="flex-1">
+        {/* `sm:flex-1` y no `flex-1`: en el layout móvil (flex-col) un flex-basis
+            de 0 colapsa la ALTURA del botón y lo deja casi invisible; solo en
+            fila (sm+) queremos que crezca a lo ancho junto al stepper. */}
+        <Button variant="primary" size="lg" fullWidth onClick={handleAdd} className="sm:flex-1">
           <ShoppingBag className="h-5 w-5" aria-hidden="true" />
           Agregar a mi cotización
         </Button>
