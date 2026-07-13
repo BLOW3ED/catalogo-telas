@@ -5,7 +5,6 @@ import { ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import type { CatalogoTela } from "@/lib/types";
 import { Button } from "@/components/ui/Button";
-import { Hint } from "@/components/Hint";
 
 export function AddToCart({ variante }: { variante: CatalogoTela }) {
   const [cantidad, setCantidad] = useState<number>(1);
@@ -24,12 +23,6 @@ export function AddToCart({ variante }: { variante: CatalogoTela }) {
 
   return (
     <div className="mt-6 flex flex-col gap-3">
-      {!agotado && (
-        <Hint id="detalle-metros">
-          Elige cuántos metros necesitas y toca “Agregar”. Se
-          guarda en tu cotización.
-        </Hint>
-      )}
       <div className="flex flex-col gap-3 sm:flex-row">
         <div className="flex items-center justify-between rounded border border-line-strong/30 bg-chip p-1 sm:w-40">
           <button

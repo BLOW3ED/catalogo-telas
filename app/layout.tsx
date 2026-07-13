@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces, Karla } from "next/font/google";
 import { SiteHeader } from "@/components/SiteHeader";
 import { CartDrawer } from "@/components/CartDrawer";
-import { WelcomeGuide } from "@/components/WelcomeGuide";
+import { TutorialModal } from "@/components/tutorial/TutorialModal";
 import "./globals.css";
 
 // Fraunces: serif editorial variable — display/headlines ("The Atelier").
@@ -44,7 +44,7 @@ export default function RootLayout({
         <SiteHeader />
         <div className="flex-1">{children}</div>
         <CartDrawer />
-        <WelcomeGuide />
+        <TutorialModal />
       </body>
     </html>
   );

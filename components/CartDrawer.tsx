@@ -7,7 +7,6 @@ import { publicImageUrl } from "@/lib/supabase/storage";
 import { buildQuoteMessage, pesos } from "@/lib/whatsapp-message";
 import { TelaImage } from "./TelaImage";
 import { Button } from "@/components/ui/Button";
-import { Hint } from "@/components/Hint";
 import { ShareCatalog } from "@/components/ShareCatalog";
 
 export function CartDrawer() {
@@ -177,10 +176,6 @@ export function CartDrawer() {
               <ArrowLeft className="h-4 w-4" aria-hidden />
               Seguir comprando
             </Button>
-            <Hint id="cart-enviar" className="mt-3">
-              Al tocar el botón se abre WhatsApp con tu pedido ya escrito. Solo
-              envíalo y te contestamos.
-            </Hint>
           </div>
         )}
       </div>

@@ -11,7 +11,7 @@ export function SiteHeader() {
   const [mounted, setMounted] = useState(false);
   const items = useCartStore((state) => state.items);
   const setIsOpen = useCartStore((state) => state.setIsOpen);
-  const openWelcome = useGuideStore((state) => state.openWelcome);
+  const openTutorial = useGuideStore((state) => state.openTutorial);
 
   useEffect(() => {
     setMounted(true);
@@ -32,10 +32,10 @@ export function SiteHeader() {
         </Link>
 
         <div className="flex items-center gap-1 sm:gap-2">
-          {/* ¿Cómo funciona? — reabre la guía de bienvenida */}
+          {/* ¿Cómo funciona? — reabre el tutorial de slides */}
           <button
             type="button"
-            onClick={openWelcome}
+            onClick={openTutorial}
             className="flex items-center gap-1.5 rounded-full p-2 text-ink-soft transition-colors hover:bg-line/50 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:px-3"
             aria-label="Cómo funciona el catálogo"
           >

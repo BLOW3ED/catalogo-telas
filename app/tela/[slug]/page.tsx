@@ -9,7 +9,6 @@ import { TelaImageCarousel, type SlideColor } from "@/components/TelaImageCarous
 import { ColorSelector } from "@/components/ColorSelector";
 import { AttributeBadges } from "@/components/AttributeBadges";
 import { AddToCart } from "@/components/AddToCart";
-import { Hint } from "@/components/Hint";
 
 // Página dinámica (lee `searchParams`); la lectura de la tela se cachea 60s
 // en lib/queries.ts (unstable_cache), igual que el listado del inicio.
@@ -216,13 +215,6 @@ export default async function TelaDetallePage({
             variantes={variantes}
             selectedSlug={seleccionada.color_slug}
           />
-
-          {variantes.length > 1 && (
-            <Hint id="detalle-color" arrow="up">
-              Puedes cambiar el color picando estos botones o deslizando la
-              foto. El precio se actualiza solo.
-            </Hint>
-          )}
 
           <AttributeBadges atributos={atributos} />
 

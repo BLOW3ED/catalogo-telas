@@ -53,6 +53,19 @@
       transform: translateX(-8px);
     }
   }
+
+  /* Halo que señala el elemento explicado en las maquetas del tutorial. */
+  --animate-halo: halo-pulse 2.2s ease-in-out infinite;
+
+  @keyframes halo-pulse {
+    0%,
+    100% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
 }
 
 html {
@@ -69,6 +82,19 @@ body {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/* Quien pidió menos movimiento (mareo, vértigo, migraña) no debe recibir el
+   halo del tutorial ni la manita del carrusel latiendo en bucle. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Títulos display/headline con Fraunces (serif editorial) */

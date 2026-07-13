@@ -51,7 +51,7 @@ export function TelaImageCarousel({
   const dismissHint = useGuideStore((s) => s.dismissHint);
 
   // La invitación lee localStorage (guide-store): renderizarla solo tras
-  // montar evita mismatch de hidratación, igual que en <Hint>.
+  // montar evita mismatch de hidratación.
   const [mounted, setMounted] = useState(false);
   const [expired, setExpired] = useState(false);
   useEffect(() => {
