@@ -34,7 +34,7 @@ export function SearchBar() {
   return (
     <div className="relative">
       <Search
-        className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-ink/40"
+        className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-ink-soft"
         aria-hidden
       />
       <input
@@ -43,14 +43,14 @@ export function SearchBar() {
         onChange={(e) => setValor(e.target.value)}
         placeholder="Buscar por nombre, color o SKU…"
         aria-label="Buscar telas"
-        className="w-full rounded border border-line-strong/30 bg-chip py-3 pl-12 pr-10 text-ink placeholder:text-ink-soft/70 focus:border-ink-deep focus:outline-none focus:ring-1 focus:ring-ink-deep"
+        className="w-full rounded border border-line-strong/30 bg-chip py-3 pl-12 pr-12 text-ink placeholder:text-ink-soft focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
       />
       {valor && (
         <button
           type="button"
           onClick={() => setValor("")}
           aria-label="Limpiar búsqueda"
-          className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-ink/40 transition-colors hover:text-ink"
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-2 text-ink-soft transition-colors hover:text-ink"
         >
           <X className="h-4 w-4" aria-hidden />
         </button>

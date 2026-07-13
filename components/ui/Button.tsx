@@ -22,18 +22,18 @@ const base =
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-charcoal text-bg hover:bg-ink-deep focus-visible:ring-ink-deep",
+    "bg-primary text-white hover:bg-primary-deep focus-visible:ring-primary",
   whatsapp:
     "bg-whatsapp text-white hover:bg-whatsapp-dark focus-visible:ring-whatsapp",
   secondary:
-    "border border-line-strong/30 bg-chip text-ink-soft hover:bg-surface-high focus-visible:ring-ink-deep",
+    "border border-line-strong/30 bg-chip text-ink-soft hover:bg-surface-high focus-visible:ring-primary",
   ghost:
-    "text-ink-soft hover:bg-line/60 hover:text-ink focus-visible:ring-ink-deep",
+    "text-ink-soft hover:bg-line/60 hover:text-ink focus-visible:ring-primary",
 };
 
 const sizes: Record<Size, string> = {
-  md: "h-12 px-5 text-xs",
-  lg: "h-16 px-6 text-sm",
+  md: "h-12 px-5 text-sm",
+  lg: "h-16 px-6 text-base",
 };
 
 type CommonProps = {

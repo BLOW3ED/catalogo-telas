@@ -1,28 +1,32 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   Tokens "The Atelier" (ver design-system/design-system.html) — paleta cálida
-   y neutra tipo M3, con terracota como acento y tipografía editorial
+   Tokens "The Atelier" (ver design-system/design-system.html) — paleta
+   "Añil + ámbar": neutros marfil, añil #3730A3 como primario de interacción
+   (links, CTAs, seleccionado, focus) y ámbar como acento de precios, con
+   tipografía editorial
    (Fraunces para display/headlines, Karla para cuerpo/labels). Radios de
    esquina casi rectos: la calidez viene de la foto y el color, no de curvas.
    En Tailwind v4 los tokens se declaran con @theme y generan utilidades
    automáticamente (bg-bg, text-ink, text-amber, border-line, font-display...).
 --------------------------------------------------------------------------- */
 @theme {
-  --color-ink: #1c1c18; /* on-surface: texto principal */
-  --color-ink-deep: #171614; /* marca, chips activos y app bars (Figma) */
-  --color-ink-soft: #4b4640; /* texto secundario cálido (Figma) */
-  --color-charcoal: #2c2a28; /* CTA oscura principal (Figma) */
-  --color-bg: #fcf9f3; /* surface: fondo cálido hueso */
-  --color-surface: #f6f3ed; /* surface-container-low: tarjetas y paneles */
-  --color-surface-high: #ebe8e2; /* surface-container-high: hover/activo sutil */
-  --color-chip: #f0eee8; /* fondo de chips de filtro (Figma) */
-  --color-amber: #9a4523; /* secondary: acento terracota cálido */
-  --color-amber-soft: #a8551b; /* tono intermedio para eyebrows/labels */
-  --color-line: #eee9e3; /* hairline: #cdc5bd al 30% pre-mezclado sobre bg */
-  --color-line-strong: #cdc5bd; /* base de borde Figma; usar con alfa /20 /30 */
-  --color-whatsapp: #25d366; /* verde de marca WhatsApp (CTA del canal) */
-  --color-whatsapp-dark: #1da851; /* hover del botón WhatsApp */
+  --color-ink: #1b1e26; /* on-surface: texto principal (16.3:1 sobre bg) */
+  --color-ink-deep: #14161d; /* marca, chips activos y app bars */
+  --color-ink-soft: #474a52; /* texto secundario (7.8:1 sobre bg) */
+  --color-bg: #f8f7f2; /* surface: fondo marfil */
+  --color-surface: #f1f0ea; /* surface-container-low: tarjetas y paneles */
+  --color-surface-high: #e7e6df; /* surface-container-high: hover/activo sutil */
+  --color-chip: #efeee8; /* fondo de chips de filtro */
+  --color-primary: #3730a3; /* añil: links, CTAs, seleccionado, focus (9.3:1) */
+  --color-primary-deep: #312a8e; /* hover del primario */
+  --color-amber: #a84d08; /* acento ámbar: precios, eyebrows (4.9:1 incluso sobre surface) */
+  --color-amber-soft: #92400e; /* ámbar oscuro para labels pequeños (6.6:1) */
+  --color-success: #157a3a; /* disponibilidad/stock (4.7:1 sobre surface) */
+  --color-line: #e9e8e1; /* hairline pre-mezclado sobre bg */
+  --color-line-strong: #c9c8c0; /* base de borde; usar con alfa /20 /30 /60 */
+  --color-whatsapp: #0e7a3f; /* verde WhatsApp accesible (blanco: 5.4:1) */
+  --color-whatsapp-dark: #0b6534; /* hover del botón WhatsApp */
 
   --font-display: var(--font-fraunces);
   --font-sans: var(--font-karla);
@@ -62,7 +66,7 @@ body {
 
 /* Foco visible y accesible en toda la app */
 :focus-visible {
-  outline: 2px solid var(--color-amber);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
   border-radius: 4px;
 }

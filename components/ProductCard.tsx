@@ -41,11 +41,11 @@ export function ProductCard({
   return (
     <Link
       href={`/tela/${tela.tela_slug}`}
-      className="group flex flex-col gap-3"
+      className="group flex flex-col gap-3 rounded-lg bg-surface p-2 shadow-sm transition-shadow duration-300 hover:shadow-md sm:p-3"
     >
       {/* Foto enmarcada tipo muestra montada: marco blanco de 1px sobre borde
           suave, esquinas casi rectas; el texto vive fuera del marco. */}
-      <div className="overflow-hidden rounded border border-line-strong/20 bg-white p-px transition-shadow duration-300 group-hover:shadow-md">
+      <div className="overflow-hidden rounded border border-line-strong/20 bg-white p-px">
         <div className="overflow-hidden">
           <div className="transition-transform duration-300 group-hover:scale-[1.03]">
             <TelaImage
@@ -58,25 +58,12 @@ export function ProductCard({
         </div>
       </div>
 
+      {/* Jerarquía: eyebrow → título grande → precio con peso. Cada dato en su
+          renglón para que en mobile no compitan título y precio en la misma
+          fila (la retícula de 2 columnas se leía densa y gris). */}
       <div className="flex flex-1 flex-col gap-1.5">
-        <div className="flex items-start justify-between gap-2">
-          <h3 className="font-display text-sm leading-[1.25] text-ink sm:text-base">
-            {tela.tela_nombre}
-          </h3>
-          {tela.precio_desde != null ? (
-            <p className="shrink-0 text-sm leading-6 text-ink-soft">
-              <span className="text-ink-soft/70">desde </span>
-              {pesos.format(tela.precio_desde)}/m
-            </p>
-          ) : (
-            <p className="shrink-0 text-sm leading-6 text-ink-soft/70">
-              a consultar
-            </p>
-          )}
-        </div>
-
         {(tela.categoria || tela.precio_desde_es_referencia) && (
-          <p className="text-label-caps text-xs text-ink-soft/70">
+          <p className="text-label-caps text-sm text-ink-soft">
             {[
               tela.categoria,
               tela.precio_desde_es_referencia ? "precio de referencia" : null,
@@ -86,13 +73,26 @@ export function ProductCard({
           </p>
         )}
 
+        <h3 className="font-display text-base leading-[1.25] text-ink transition-colors group-hover:text-primary sm:text-lg">
+          {tela.tela_nombre}
+        </h3>
+
+        {tela.precio_desde != null ? (
+          <p className="text-base font-semibold text-amber">
+            <span className="text-sm font-normal text-ink-soft">desde </span>
+            {pesos.format(tela.precio_desde)}/m
+          </p>
+        ) : (
+          <p className="text-sm leading-6 text-ink-soft">a consultar</p>
+        )}
+
         {swatches.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {swatches.slice(0, 8).map((v) => (
               <ColorSwatch key={v.color_hex} hex={v.color_hex} nombre={v.color_nombre} size="sm" />
             ))}
             {swatches.length > 8 && (
-              <span className="text-xs text-ink-soft/70">+{swatches.length - 8}</span>
+              <span className="text-sm text-ink-soft">+{swatches.length - 8}</span>
             )}
           </div>
         )}

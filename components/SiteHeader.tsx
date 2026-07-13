@@ -23,10 +23,10 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 w-full border-b border-line-strong/30 bg-bg/90 backdrop-blur-md">
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="group flex flex-col">
-          <p className="text-label-caps text-[10px] text-ink-soft sm:text-xs">
+          <p className="text-label-caps text-xs text-ink-soft">
             Fresnillo
           </p>
-          <h1 className="font-display text-2xl tracking-tight text-ink-deep transition-colors group-hover:text-amber sm:text-3xl">
+          <h1 className="font-display text-2xl tracking-tight text-ink-deep transition-colors group-hover:text-primary sm:text-3xl">
             Telas La Jalisciense
           </h1>
         </Link>
@@ -36,7 +36,7 @@ export function SiteHeader() {
           <button
             type="button"
             onClick={openWelcome}
-            className="flex items-center gap-1.5 rounded-full p-2 text-ink/70 transition-colors hover:bg-line/50 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber sm:px-3"
+            className="flex items-center gap-1.5 rounded-full p-2 text-ink-soft transition-colors hover:bg-line/50 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:px-3"
             aria-label="Cómo funciona el catálogo"
           >
             <HelpCircle className="h-6 w-6" aria-hidden="true" />
@@ -51,12 +51,12 @@ export function SiteHeader() {
           <button
             type="button"
             onClick={() => setIsOpen(true)}
-            className="relative flex items-center justify-center rounded-full p-2 text-ink transition-colors hover:bg-line/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+            className="relative flex items-center justify-center rounded-full p-2 text-ink transition-colors hover:bg-line/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             aria-label="Ver mi cotización"
           >
             <ShoppingBag className="h-6 w-6" aria-hidden="true" />
             {mounted && itemCount > 0 && (
-              <span className="absolute right-0 top-0 flex h-5 w-5 items-center justify-center rounded-full bg-amber text-[10px] font-bold text-white shadow-sm ring-2 ring-bg">
+              <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-xs font-bold text-white shadow-sm ring-2 ring-bg">
                 {itemCount}
               </span>
             )}

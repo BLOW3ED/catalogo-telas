@@ -132,7 +132,7 @@ export default async function TelaDetallePage({
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
       <Link
         href="/"
-        className="mb-6 inline-flex items-center gap-1.5 text-sm text-ink/60 transition-colors hover:text-amber"
+        className="mb-6 inline-flex items-center gap-1.5 text-sm text-ink-soft transition-colors hover:text-primary"
       >
         <ArrowLeft className="h-4 w-4" aria-hidden />
         Volver al catálogo
@@ -171,7 +171,7 @@ export default async function TelaDetallePage({
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
             {seleccionada.categoria && (
-              <span className="text-label-caps text-xs text-ink-soft">
+              <span className="text-label-caps text-sm text-ink-soft">
                 {seleccionada.categoria}
               </span>
             )}
@@ -180,7 +180,7 @@ export default async function TelaDetallePage({
                 {nombre}
               </h1>
               {seleccionada.precio_metro != null ? (
-                <p className="shrink-0 pt-1 text-lg leading-7 text-ink-deep">
+                <p className="shrink-0 pt-1 text-xl font-semibold leading-7 text-amber">
                   {pesos.format(seleccionada.precio_metro)}/m
                 </p>
               ) : (
@@ -190,7 +190,7 @@ export default async function TelaDetallePage({
               )}
             </div>
             {seleccionada.precio_es_referencia && (
-              <p className="text-label-caps text-[10px] text-ink-soft/70">
+              <p className="text-label-caps text-xs text-ink-soft">
                 precio de referencia · confirmamos por WhatsApp
               </p>
             )}
@@ -205,7 +205,7 @@ export default async function TelaDetallePage({
                 .split(/\n\s*\n/)
                 .filter((p) => p.trim())
                 .map((parrafo, i) => (
-                  <p key={i} className="text-base leading-6 text-ink-soft">
+                  <p key={i} className="text-lg leading-relaxed text-ink-soft">
                     {parrafo.trim()}
                   </p>
                 ))}
@@ -231,7 +231,7 @@ export default async function TelaDetallePage({
             <dl className="grid grid-cols-2 gap-4">
               {seleccionada.sku && (
                 <div className="rounded border border-line-strong/30 bg-surface p-4">
-                  <dt className="text-label-caps text-xs text-ink-soft">SKU</dt>
+                  <dt className="text-label-caps text-sm text-ink-soft">SKU</dt>
                   <dd className="mt-1 text-base text-ink-deep">
                     {seleccionada.sku}
                   </dd>
@@ -239,14 +239,18 @@ export default async function TelaDetallePage({
               )}
               {seleccionada.stock != null && (
                 <div className="rounded border border-line-strong/30 bg-surface p-4">
-                  <dt className="text-label-caps text-xs text-ink-soft">
+                  <dt className="text-label-caps text-sm text-ink-soft">
                     Disponibilidad
                   </dt>
-                  <dd className="mt-1 text-base text-ink-deep">
-                    {seleccionada.stock > 0
-                      ? `${seleccionada.stock} m en existencia`
-                      : "Sin existencia"}
-                  </dd>
+                  {seleccionada.stock > 0 ? (
+                    <dd className="mt-1 text-base font-medium text-success">
+                      {seleccionada.stock} m en existencia
+                    </dd>
+                  ) : (
+                    <dd className="mt-1 text-base text-ink-soft">
+                      Sin existencia
+                    </dd>
+                  )}
                 </div>
               )}
             </dl>
@@ -255,14 +259,14 @@ export default async function TelaDetallePage({
           {/* Tags de uso / ocasión */}
           {tags.length > 0 && (
             <div className="flex flex-col gap-3">
-              <p className="border-b border-line-strong/30 pb-2 text-label-caps text-xs text-ink-deep">
+              <p className="border-b border-line-strong/30 pb-2 text-label-caps text-sm text-ink-deep">
                 Ideal para
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {tags.map((t) => (
                   <span
                     key={t}
-                    className="rounded border border-line-strong/30 bg-chip px-2.5 py-0.5 text-xs capitalize text-ink-soft"
+                    className="rounded border border-line-strong/30 bg-chip px-2.5 py-1 text-sm capitalize text-ink-soft"
                   >
                     {t.replace(/-/g, " ")}
                   </span>

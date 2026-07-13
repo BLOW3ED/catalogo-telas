@@ -53,7 +53,7 @@ export default async function HomePage({
           <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber" aria-hidden />
           <div>
             <p className="font-semibold">No se pudo leer el catálogo</p>
-            <p className="text-ink/60">{error}</p>
+            <p className="text-ink-soft">{error}</p>
           </div>
         </div>
       )}
@@ -101,7 +101,7 @@ function IntroPasos() {
           <h2 className="font-display text-xl text-ink sm:text-2xl">
             Pide tus telas en 3 pasos
           </h2>
-          <p className="mt-1 text-sm text-ink/60">
+          <p className="mt-1 text-sm text-ink-soft">
             Sin prisas y sin compromiso: arma tu pedido y te atendemos por WhatsApp.
           </p>
         </div>
@@ -119,7 +119,7 @@ function IntroPasos() {
             </span>
             <div>
               <p className="font-semibold leading-tight text-ink">{titulo}</p>
-              <p className="text-sm text-ink/60">{texto}</p>
+              <p className="text-sm text-ink-soft">{texto}</p>
             </div>
           </li>
         ))}
@@ -135,7 +135,7 @@ function SetupNotice() {
         <Settings className="h-5 w-5" aria-hidden />
         <h2 className="font-display text-xl">Falta conectar Supabase</h2>
       </div>
-      <ol className="list-inside list-decimal space-y-1.5 text-sm text-ink/70">
+      <ol className="list-inside list-decimal space-y-1.5 text-sm text-ink-soft">
         <li>Crea un proyecto en Supabase y corre <code className="rounded bg-line/60 px-1">catalogo_telas_supabase.sql</code>.</li>
         <li>Crea el bucket público <code className="rounded bg-line/60 px-1">telas</code> en Storage.</li>
         <li>Copia <code className="rounded bg-line/60 px-1">.env.example</code> a <code className="rounded bg-line/60 px-1">.env.local</code> y llena las llaves.</li>
@@ -148,9 +148,9 @@ function SetupNotice() {
 function NoResults({ termino }: { termino: string }) {
   return (
     <div className="rounded border border-dashed border-line-strong/40 bg-surface/60 p-10 text-center">
-      <SearchX className="mx-auto mb-3 h-8 w-8 text-ink/30" aria-hidden />
-      <p className="font-display text-2xl text-ink/70">Sin resultados</p>
-      <p className="mt-1 text-sm text-ink/50">
+      <SearchX className="mx-auto mb-3 h-8 w-8 text-ink-soft" aria-hidden />
+      <p className="font-display text-2xl text-ink-soft">Sin resultados</p>
+      <p className="mt-1 text-sm text-ink-soft">
         No encontramos telas para “{termino}”. Prueba con otro nombre, color o SKU.
       </p>
     </div>
@@ -160,8 +160,8 @@ function NoResults({ termino }: { termino: string }) {
 function EmptyState() {
   return (
     <div className="rounded border border-dashed border-line-strong/40 bg-surface/60 p-10 text-center">
-      <p className="font-display text-2xl text-ink/70">Aún no hay telas</p>
-      <p className="mt-1 text-sm text-ink/50">
+      <p className="font-display text-2xl text-ink-soft">Aún no hay telas</p>
+      <p className="mt-1 text-sm text-ink-soft">
         Corre <code className="rounded bg-line/60 px-1">npm run ingest</code> y luego{" "}
         <code className="rounded bg-line/60 px-1">npm run ingest -- --upload</code> para poblar el catálogo.
       </p>

@@ -35,7 +35,7 @@ export function TelaImage({
 
   if (!src) {
     return (
-      <div className="flex aspect-[3/4] w-full items-center justify-center rounded-t-2xl bg-line/50 text-ink/30">
+      <div className="flex aspect-[3/4] w-full items-center justify-center rounded-t-2xl bg-line/50 text-ink-soft">
         <ImageOff className="h-8 w-8" aria-hidden />
       </div>
     );

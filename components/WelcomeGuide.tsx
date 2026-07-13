@@ -85,7 +85,7 @@ export function WelcomeGuide() {
           <button
             type="button"
             onClick={cerrar}
-            className="rounded-full p-1.5 text-ink/50 transition-colors hover:bg-line/50 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+            className="rounded-full p-1.5 text-ink-soft transition-colors hover:bg-line/50 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             aria-label="Cerrar"
           >
             <X className="h-5 w-5" />
@@ -99,7 +99,7 @@ export function WelcomeGuide() {
           <h2 id="welcome-title" className="font-display text-2xl text-ink">
             {actual.titulo}
           </h2>
-          <p className="mx-auto mt-3 max-w-xs text-base leading-relaxed text-ink/70">
+          <p className="mx-auto mt-3 max-w-xs text-base leading-relaxed text-ink-soft">
             {actual.texto}
           </p>
         </div>
@@ -120,7 +120,7 @@ export function WelcomeGuide() {
           <button
             type="button"
             onClick={cerrar}
-            className="text-sm text-ink/50 transition-colors hover:text-ink focus-visible:outline-none focus-visible:underline"
+            className="text-sm text-ink-soft transition-colors hover:text-ink focus-visible:outline-none focus-visible:underline"
           >
             Saltar
           </button>

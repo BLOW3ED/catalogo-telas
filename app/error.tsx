@@ -26,7 +26,7 @@ export default function Error({
         <AlertTriangle className="h-7 w-7" aria-hidden />
       </span>
       <h1 className="font-display text-3xl text-ink">Algo salió mal</h1>
-      <p className="mt-2 max-w-md text-sm text-ink/60">
+      <p className="mt-2 max-w-md text-sm text-ink-soft">
         No pudimos cargar esta parte del catálogo. Suele resolverse
         reintentando; si sigue fallando, vuelve a intentarlo en un momento.
       </p>

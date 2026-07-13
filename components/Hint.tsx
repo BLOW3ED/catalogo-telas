@@ -41,14 +41,14 @@ export function Hint({
   return (
     <div className={`relative ${className}`}>
       {arrow === "up" && <Arrow direction="up" />}
-      <div className="flex items-start gap-2.5 rounded-xl border border-amber/25 bg-amber/5 px-3.5 py-2.5 text-sm text-ink/80 shadow-sm">
+      <div className="flex items-start gap-2.5 rounded-xl border border-amber/25 bg-amber/5 px-3.5 py-2.5 text-sm text-ink shadow-sm">
         <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-amber" aria-hidden />
         <p className="flex-1 leading-snug">{children}</p>
         {id && (
           <button
             type="button"
             onClick={() => dismissHint(id)}
-            className="-mr-1 -mt-0.5 shrink-0 rounded-full p-1 text-ink/40 transition-colors hover:bg-amber/10 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+            className="-mr-1 -mt-0.5 shrink-0 rounded-full p-1.5 text-ink-soft transition-colors hover:bg-amber/10 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             aria-label="Entendido, ocultar esta pista"
           >
             <X className="h-4 w-4" />
