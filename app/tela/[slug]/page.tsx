@@ -161,6 +161,16 @@ export default async function TelaDetallePage({
               />
             )}
           </div>
+          {/* En mobile, "Tonos disponibles" va justo bajo la foto (antes de
+              la nota) para que cambiar de color no requiera bajar toda la
+              ficha. En desktop se queda en su lugar original, junto a la
+              descripción. */}
+          <div className="lg:hidden">
+            <ColorSelector
+              variantes={variantes}
+              selectedSlug={seleccionada.color_slug}
+            />
+          </div>
           <p className="px-4 text-center text-sm text-ink-soft">
             📸 <strong>Nota:</strong> Las fotografías fueron tomadas bajo luz natural del sol. Los tonos reales pueden variar ligeramente dependiendo de tu pantalla.
           </p>
@@ -211,10 +221,12 @@ export default async function TelaDetallePage({
             </div>
           )}
 
-          <ColorSelector
-            variantes={variantes}
-            selectedSlug={seleccionada.color_slug}
-          />
+          <div className="hidden lg:block">
+            <ColorSelector
+              variantes={variantes}
+              selectedSlug={seleccionada.color_slug}
+            />
+          </div>
 
           <AttributeBadges atributos={atributos} />
 
