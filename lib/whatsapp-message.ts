@@ -1,4 +1,5 @@
 import type { CartItem } from "./store";
+import { cantidadLarga } from "./unidades";
 
 export const pesos = new Intl.NumberFormat("es-MX", {
   style: "currency",
@@ -11,6 +12,10 @@ export const pesos = new Intl.NumberFormat("es-MX", {
  * Honestidad de precios: si hay artículos sin precio o con precio de
  * referencia (demo), el mensaje lo dice explícito para que el cliente no
  * llegue citando un total que la tienda no fijó.
+ *
+ * Las cantidades van CON SU UNIDAD y con todas las letras ("2 bolsas
+ * (25 pz c/u)", no "2m"): este texto lo lee la persona que va a surtir el
+ * pedido, y de este lado del mostrador "2m de Piedra 1404" no se puede surtir.
  */
 export function buildQuoteMessage(items: CartItem[]): string {
   const total = items.reduce(
@@ -22,7 +27,7 @@ export function buildQuoteMessage(items: CartItem[]): string {
 
   let msg = "Hola, me interesa cotizar el siguiente pedido:\n\n";
   items.forEach((item) => {
-    msg += `- ${item.cantidad}m de ${item.tela_nombre}`;
+    msg += `- ${cantidadLarga(item.cantidad, item.unidad_venta, item.piezas_por_unidad)} de ${item.tela_nombre}`;
     if (item.color_nombre) msg += ` color ${item.color_nombre}`;
     if (item.sku) msg += ` (SKU: ${item.sku})`;
     if (item.precio == null) msg += " — precio por confirmar";

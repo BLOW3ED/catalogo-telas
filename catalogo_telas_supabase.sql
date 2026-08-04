@@ -512,5 +512,138 @@ select
 notify pgrst, 'reload schema';
 
 -- ============================================================================
+-- 13. Mercería / avíos: unidad de venta — REQUIERE haber corrido la 12
+--
+--     El catálogo dejó de ser solo tela: entraron avíos (pedrería, flores,
+--     copas, botones, cinta bies) que NO se venden por metro sino por pieza,
+--     par o bolsa ("bolsa de 12 pz — $42"). Dos cambios:
+--
+--       a) `variante.precio_metro` → `variante.precio`. El precio siempre fue
+--          "precio por unidad de venta"; el nombre solo asumía que la unidad
+--          era el metro. La vista sigue exponiendo `precio_metro` como ALIAS
+--          para no romper las lecturas del frontend (ver nota abajo).
+--       b) `unidad_venta` + `piezas_por_unidad` describen QUÉ se está
+--          cobrando. El agente de WhatsApp los necesita para cotizar bien:
+--          sin esto, "$42" de una bolsa de 12 pz se lee como "$42 el metro".
+-- ============================================================================
+
+-- (a) Renombre idempotente: solo actúa si la columna vieja sigue ahí.
+do $$
+begin
+  if exists (
+    select 1 from information_schema.columns
+     where table_schema = 'public' and table_name = 'variante'
+       and column_name = 'precio_metro'
+  ) then
+    alter table variante rename column precio_metro to precio;
+  end if;
+end $$;
+
+comment on column variante.precio is
+  'Precio en MXN por UNIDAD DE VENTA (ver unidad_venta), no necesariamente por metro.';
+
+-- El índice heredó el nombre viejo; renombrarlo también (idempotente).
+alter index if exists idx_variante_precio_metro rename to idx_variante_precio;
+
+-- (b) Unidad de venta. Default 'metro' → las telas existentes no cambian.
+alter table variante add column if not exists unidad_venta text not null default 'metro';
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint where conname = 'variante_unidad_venta_check'
+  ) then
+    alter table variante add constraint variante_unidad_venta_check
+      check (unidad_venta in ('metro','pieza','par','bolsa','rollo','juego'));
+  end if;
+end $$;
+
+comment on column variante.unidad_venta is
+  'Cómo se cobra: metro (tela), pieza, par (copas), bolsa (pedrería surtida), rollo (cinta), juego.';
+
+-- Cuántas piezas trae la unidad, cuando aplica: "bolsa de 12 pz" → 12.
+-- NULL para tela por metro y para piezas sueltas.
+alter table variante add column if not exists piezas_por_unidad integer
+  check (piezas_por_unidad is null or piezas_por_unidad > 0);
+
+comment on column variante.piezas_por_unidad is
+  'Piezas que trae la unidad de venta (bolsa de 12 pz → 12). NULL si no aplica.';
+
+create index if not exists idx_variante_unidad on variante(unidad_venta);
+
+-- Categorías de mercería (las de tela ya están sembradas en la sección 8).
+insert into categoria (nombre, slug) values
+  ('Pedrería',   'pedreria'),
+  ('Aplicaciones','aplicaciones'),
+  ('Flores',     'flores'),
+  ('Botones',    'botones'),
+  ('Hebillas',   'hebillas'),
+  ('Copas',      'copas'),
+  ('Cintas',     'cintas'),
+  ('Corchetes',  'corchetes')
+on conflict (slug) do nothing;
+
+-- La vista: `precio_metro` se conserva como ALIAS DEPRECADO de v.precio para
+-- que las lecturas existentes del frontend no se rompan (create or replace no
+-- permite quitar ni reordenar columnas). Lo nuevo se añade al final.
+-- Al migrar el código a `precio`, borrar el alias con un drop/create de la vista.
+create or replace view catalogo_telas as
+select
+    v.id                       as variante_id,
+    t.id                       as tela_id,
+    t.slug                     as tela_slug,
+    t.nombre                   as tela_nombre,
+    t.descripcion              as descripcion,
+    cat.nombre                 as categoria,
+    cat.slug                   as categoria_slug,
+    v.sku                      as sku,
+    col.nombre                 as color_nombre,
+    col.slug                   as color_slug,
+    col.hex                    as color_hex,
+    ac.nombre                  as acabado,
+    v.precio                   as precio_metro,   -- alias deprecado (ver nota)
+    v.gramaje                  as gramaje,
+    v.stock                    as stock,
+    v.es_bordado               as es_bordado,
+    v.es_brillante             as es_brillante,
+    v.es_traslucida            as es_traslucida,
+    v.es_tornasol              as es_tornasol,
+    (select f.ruta
+      from foto f
+      where f.variante_id = v.id
+      order by f.orden asc, f.created_at asc
+      limit 1)                 as foto_principal,
+    coalesce((
+      select array_agg(cu.slug order by cu.nombre)
+        from tela_caso_uso tcu
+        join caso_uso cu on cu.id = tcu.caso_uso_id
+      where tcu.tela_id = t.id
+    ), '{}')                   as casos_uso,
+    coalesce((
+      select array_agg(o.slug order by o.nombre)
+        from tela_oportunidad tox
+        join oportunidad o on o.id = tox.oportunidad_id
+      where tox.tela_id = t.id
+    ), '{}')                   as oportunidades,
+    t.created_at               as created_at,
+    t.updated_at               as updated_at,
+    v.orden                    as variante_orden,
+    (select f.derivados
+      from foto f
+      where f.variante_id = v.id
+      order by f.orden asc, f.created_at asc
+      limit 1)                 as foto_principal_derivados,
+    v.precio                   as precio,
+    v.unidad_venta             as unidad_venta,
+    v.piezas_por_unidad        as piezas_por_unidad
+  from variante v
+  join tela t       on t.id = v.tela_id
+  left join categoria cat on cat.id = t.categoria_id
+  left join color col     on col.id = v.color_id
+  left join acabado ac    on ac.id = v.acabado_id;
+
+notify pgrst, 'reload schema';
+
+-- ============================================================================
 -- FIN del esquema
 -- ============================================================================

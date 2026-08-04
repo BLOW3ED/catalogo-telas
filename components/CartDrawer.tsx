@@ -5,6 +5,7 @@ import { X, Trash2, MessageCircle, ArrowLeft } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { publicImageUrl } from "@/lib/supabase/storage";
 import { buildQuoteMessage, pesos } from "@/lib/whatsapp-message";
+import { unidadDe, cantidadCorta } from "@/lib/unidades";
 import { TelaImage } from "./TelaImage";
 import { Button } from "@/components/ui/Button";
 import { ShareCatalog } from "@/components/ShareCatalog";
@@ -69,9 +70,11 @@ export function CartDrawer() {
         <div className="flex-1 overflow-y-auto p-4 sm:p-6">
           {items.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center text-center">
-              <p className="font-display text-xl text-ink-soft">Aún no agregas telas</p>
+              {/* Copy neutral: el catálogo ya no es solo tela por metro, también
+                  hay mercería que se vende por pieza y por bolsa. */}
+              <p className="font-display text-xl text-ink-soft">Aún no agregas nada</p>
               <p className="mt-2 max-w-xs text-sm text-ink-soft">
-                Explora el catálogo, elige tus metros y agrégalos aquí. Luego lo
+                Explora el catálogo, elige lo que necesitas y agrégalo aquí. Luego lo
                 envías por WhatsApp y te atendemos.
               </p>
               <Button
@@ -107,16 +110,30 @@ export function CartDrawer() {
                     </div>
                     <div className="mt-2 flex items-center justify-between">
                       <div className="flex items-center rounded border border-line-strong/30 bg-chip p-1">
+                        {/* Mismo paso que el stepper del detalle: la tela baja
+                            de medio en medio metro, lo demás de uno en uno. */}
                         <button
-                          onClick={() => updateQuantity(item.id, Math.max(0.5, item.cantidad - 0.5))}
+                          onClick={() =>
+                            updateQuantity(
+                              item.id,
+                              Math.max(
+                                unidadDe(item.unidad_venta).minimo,
+                                item.cantidad - unidadDe(item.unidad_venta).paso
+                              )
+                            )
+                          }
                           className="flex h-11 w-11 items-center justify-center rounded text-lg text-ink-soft transition-colors hover:bg-surface-high hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                          aria-label="Disminuir medio metro"
+                          aria-label={`Disminuir ${unidadDe(item.unidad_venta).singular} de ${item.tela_nombre}`}
                         >-</button>
-                        <span className="w-12 text-center text-sm font-medium">{item.cantidad}m</span>
+                        <span className="w-14 text-center text-sm font-medium">
+                          {cantidadCorta(item.cantidad, item.unidad_venta)}
+                        </span>
                         <button
-                          onClick={() => updateQuantity(item.id, item.cantidad + 0.5)}
+                          onClick={() =>
+                            updateQuantity(item.id, item.cantidad + unidadDe(item.unidad_venta).paso)
+                          }
                           className="flex h-11 w-11 items-center justify-center rounded text-lg text-ink-soft transition-colors hover:bg-surface-high hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                          aria-label="Aumentar medio metro"
+                          aria-label={`Aumentar ${unidadDe(item.unidad_venta).singular} de ${item.tela_nombre}`}
                         >+</button>
                       </div>
                       <div className="flex items-center gap-2">

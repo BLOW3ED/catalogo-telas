@@ -18,6 +18,8 @@ next-env.d.ts
 
 # fotos fuente de ingesta (pesadas; viven localmente y en el bucket `telas`)
 /FOTOS_TELAS/
+/Fotos_Entrada/
+/Fotos_Entrada_listas/
 *.jpg
 *.jpeg
 *.png
@@ -25,6 +27,11 @@ next-env.d.ts
 
 # manifest de revisión generado por la ingesta
 catalog-manifest.csv
+catalog-manifest.auto.json
+revision-lote.html
+
+# salida de la skill graphify (grafo de conocimiento del repo, se regenera)
+/graphify-out/
 
 # misc
 .DS_Store

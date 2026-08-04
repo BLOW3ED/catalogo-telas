@@ -10,6 +10,7 @@ import { AdminNav } from "@/components/admin/AdminNav";
 import { SubmitButton } from "@/components/admin/SubmitButton";
 import { ConfirmSubmit } from "@/components/admin/ConfirmSubmit";
 import { OrdenColores } from "@/components/admin/OrdenColores";
+import { UNIDADES_VENTA, unidadDe } from "@/lib/unidades";
 import {
   actualizarTela,
   actualizarVarianteDetalle,
@@ -34,6 +35,8 @@ type Variante = {
   color_id: string | null;
   acabado_id: string | null;
   precio_metro: number | null;
+  unidad_venta: string | null;
+  piezas_por_unidad: number | null;
   gramaje: number | null;
   stock: number | null;
   es_bordado: boolean;
@@ -451,9 +454,44 @@ function CamposVariante({
         </label>
       </div>
 
+      {/* La unidad manda sobre cómo se muestra y cómo se cuenta el producto en
+          todo el catálogo (precio, stepper, mensaje de WhatsApp), así que va
+          junto al precio y no escondida al final del formulario. */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="block">
+          <span className="mb-1 block text-xs font-medium text-ink/60">Se vende por</span>
+          <select
+            name="unidad_venta"
+            defaultValue={valores?.unidad_venta ?? "metro"}
+            className={inputClase}
+          >
+            {UNIDADES_VENTA.map((u) => (
+              <option key={u} value={u}>{unidadDe(u).singular}</option>
+            ))}
+          </select>
+        </label>
+        <label className="block">
+          <span className="mb-1 block text-xs font-medium text-ink/60">
+            Piezas por unidad
+          </span>
+          <input
+            type="number"
+            name="piezas_por_unidad"
+            defaultValue={valores?.piezas_por_unidad ?? ""}
+            min="1"
+            step="1"
+            inputMode="numeric"
+            placeholder="p. ej. 25 en una bolsa de 25 piedras"
+            className={inputClase}
+          />
+        </label>
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-3">
         <label className="block">
-          <span className="mb-1 block text-xs font-medium text-ink/60">Precio/m (MXN)</span>
+          <span className="mb-1 block text-xs font-medium text-ink/60">
+            Precio {unidadDe(valores?.unidad_venta).sufijoPrecio} (MXN)
+          </span>
           <input
             type="number"
             name="precio_metro"
@@ -466,13 +504,15 @@ function CamposVariante({
           />
         </label>
         <label className="block">
-          <span className="mb-1 block text-xs font-medium text-ink/60">Stock (m)</span>
+          <span className="mb-1 block text-xs font-medium text-ink/60">
+            Stock ({unidadDe(valores?.unidad_venta).abreviatura})
+          </span>
           <input
             type="number"
             name="stock"
             defaultValue={valores?.stock ?? ""}
             min="0"
-            step="0.5"
+            step={unidadDe(valores?.unidad_venta).paso}
             inputMode="decimal"
             placeholder="—"
             className={inputClase}

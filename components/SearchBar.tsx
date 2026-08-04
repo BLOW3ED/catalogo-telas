@@ -8,6 +8,9 @@ import { Search, X } from "lucide-react";
  * Caja de búsqueda. El estado vive en la URL (`?q=`) para que sea compartible
  * y que el Server Component vuelva a consultar el catálogo. Debounce de 300ms
  * para no navegar en cada tecla.
+ *
+ * Al navegar CONSERVA el resto del querystring: los chips de filtro viven ahí
+ * mismo, y reescribir la URL entera los borraría en cada tecla.
  */
 export function SearchBar() {
   const router = useRouter();
@@ -15,6 +18,9 @@ export function SearchBar() {
   const searchParams = useSearchParams();
   const [valor, setValor] = useState(searchParams.get("q") ?? "");
   const primera = useRef(true);
+  // El objeto de searchParams cambia de identidad en cada render; su texto no.
+  // Dependemos del texto para no re-disparar el efecto sin que nada cambie.
+  const qsActual = searchParams.toString();
 
   useEffect(() => {
     // El primer render ya refleja la URL: no re-navegar.
@@ -24,12 +30,18 @@ export function SearchBar() {
     }
     const t = setTimeout(() => {
       const v = valor.trim();
-      router.replace(v ? `${pathname}?q=${encodeURIComponent(v)}` : pathname, {
-        scroll: false,
-      });
+      const params = new URLSearchParams(qsActual);
+      if (v) params.set("q", v);
+      else params.delete("q");
+      // Otra búsqueda son otros resultados: volver a la primera página. Sin
+      // esto, quien venía de picar "Ver más" tres veces se traería ese `ver`
+      // a una búsqueda de dos resultados.
+      params.delete("ver");
+      const qs = params.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
     }, 300);
     return () => clearTimeout(t);
-  }, [valor, pathname, router]);
+  }, [valor, pathname, router, qsActual]);
 
   return (
     <div className="relative">

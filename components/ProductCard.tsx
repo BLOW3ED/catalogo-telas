@@ -4,6 +4,7 @@ import { publicImageUrl } from "@/lib/supabase/storage";
 import { TelaImage } from "@/components/TelaImage";
 import { ColorSwatch } from "@/components/ColorSwatch";
 import { AttributeBadges } from "@/components/AttributeBadges";
+import { unidadDe } from "@/lib/unidades";
 
 const pesos = new Intl.NumberFormat("es-MX", {
   style: "currency",
@@ -80,7 +81,8 @@ export function ProductCard({
         {tela.precio_desde != null ? (
           <p className="text-base font-semibold text-amber">
             <span className="text-sm font-normal text-ink-soft">desde </span>
-            {pesos.format(tela.precio_desde)}/m
+            {pesos.format(tela.precio_desde)}
+            {unidadDe(tela.precio_desde_unidad).sufijoPrecio}
           </p>
         ) : (
           <p className="text-sm leading-6 text-ink-soft">a consultar</p>

@@ -9,6 +9,7 @@ import { TelaImage } from "@/components/TelaImage";
 import { ColorSwatch } from "@/components/ColorSwatch";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { SubmitButton } from "@/components/admin/SubmitButton";
+import { unidadDe } from "@/lib/unidades";
 import { actualizarVariante, logout } from "./actions";
 import type { CatalogoTela } from "@/lib/types";
 
@@ -85,7 +86,9 @@ export default async function AdminPage({
       </form>
 
       <p className="mb-6 text-xs text-ink/50">
-        Precio en MXN por metro; stock en metros. Deja el campo{" "}
+        Precio y stock en la UNIDAD DE VENTA de cada variante (metro, pieza,
+        bolsa…), que se indica bajo cada campo y se cambia en el editor del
+        modelo. Deja el campo{" "}
         <strong>vacío</strong> para “a consultar” (no es lo mismo que 0). Si el
         modo de precios demo está activo, los campos vacíos se muestran al
         público con un precio de referencia.
@@ -152,7 +155,7 @@ export default async function AdminPage({
 
               <div className="flex items-end gap-2">
                 <label className="flex flex-col gap-1 text-xs font-medium text-ink/60">
-                  Precio/m
+                  Precio {unidadDe(v.unidad_venta).sufijoPrecio}
                   <input
                     type="number"
                     name="precio_metro"
@@ -165,13 +168,13 @@ export default async function AdminPage({
                   />
                 </label>
                 <label className="flex flex-col gap-1 text-xs font-medium text-ink/60">
-                  Stock (m)
+                  Stock ({unidadDe(v.unidad_venta).abreviatura})
                   <input
                     type="number"
                     name="stock"
                     defaultValue={v.stock ?? ""}
                     min="0"
-                    step="0.5"
+                    step={unidadDe(v.unidad_venta).paso}
                     inputMode="decimal"
                     placeholder="—"
                     className="h-10 w-24 rounded-xl border border-line bg-surface px-3 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"

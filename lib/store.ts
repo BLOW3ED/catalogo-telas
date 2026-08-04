@@ -14,6 +14,15 @@ export type CartItem = {
   foto_principal: string | null;
   /** Opcional: carritos persistidos antes del pipeline de derivados no lo traen. */
   foto_derivados?: DerivadosFoto | null;
+  /**
+   * En qué se cuenta `cantidad` (metro | pieza | bolsa | …). Opcional porque
+   * el carrito se guarda en localStorage: los que ya estaban ahí antes de esta
+   * columna no la traen y `unidadDe(undefined)` los deja en metro, que es
+   * justo como se venían contando. Nadie ve cambiar su pedido.
+   */
+  unidad_venta?: string | null;
+  /** Piezas por empaque, para que el mensaje de WhatsApp diga "(25 pz c/u)". */
+  piezas_por_unidad?: number | null;
 };
 
 type CartState = {
@@ -55,6 +64,8 @@ export const useCartStore = create<CartState>()(
                 cantidad,
                 foto_principal: variante.foto_principal,
                 foto_derivados: variante.foto_principal_derivados ?? null,
+                unidad_venta: variante.unidad_venta ?? null,
+                piezas_por_unidad: variante.piezas_por_unidad ?? null,
               },
             ],
             isOpen: true,

@@ -5,9 +5,14 @@ import { ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import type { CatalogoTela } from "@/lib/types";
 import { Button } from "@/components/ui/Button";
+import { unidadDe } from "@/lib/unidades";
 
 export function AddToCart({ variante }: { variante: CatalogoTela }) {
-  const [cantidad, setCantidad] = useState<number>(1);
+  // El stepper se mueve en la unidad del producto: la tela se corta a medios
+  // metros, pero un botón no se parte a la mitad. Antes todo iba de 0.5 en 0.5
+  // y se podía mandar "0.5 botones" a cotizar.
+  const unidad = unidadDe(variante.unidad_venta);
+  const [cantidad, setCantidad] = useState<number>(unidad.clave === "metro" ? 1 : unidad.minimo);
   const addItem = useCartStore((state) => state.addItem);
 
   // Solo stock === 0 es agotado; stock null significa "no capturado".
@@ -17,9 +22,16 @@ export function AddToCart({ variante }: { variante: CatalogoTela }) {
     if (cantidad > 0) {
       addItem(variante, cantidad);
       // Opcionalmente podemos resetear la cantidad local
-      setCantidad(1);
+      setCantidad(unidad.clave === "metro" ? 1 : unidad.minimo);
     }
   };
+
+  // "Menos medio metro" solo es cierto para la tela; para lo demás el lector
+  // de pantalla debe oír "Menos una pieza".
+  const etiquetaMenos =
+    unidad.clave === "metro" ? "Menos medio metro" : `Menos ${unidad.singular}`;
+  const etiquetaMas =
+    unidad.clave === "metro" ? "Más medio metro" : `Más ${unidad.singular}`;
 
   return (
     <div className="mt-6 flex flex-col gap-3">
@@ -28,22 +40,22 @@ export function AddToCart({ variante }: { variante: CatalogoTela }) {
           <button
             type="button"
             disabled={agotado}
-            onClick={() => setCantidad((prev) => Math.max(0.5, prev - 0.5))}
+            onClick={() => setCantidad((prev) => Math.max(unidad.minimo, prev - unidad.paso))}
             className="flex h-14 w-14 items-center justify-center rounded text-xl text-ink-soft transition-colors hover:bg-surface-high hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
-            aria-label="Menos medio metro"
+            aria-label={etiquetaMenos}
           >
             -
           </button>
           <div className="flex flex-1 flex-col items-center justify-center px-2">
             <span className="font-medium leading-none text-ink">{cantidad}</span>
-            <span className="mt-1 text-xs uppercase text-ink-soft">metros</span>
+            <span className="mt-1 text-xs uppercase text-ink-soft">{unidad.plural}</span>
           </div>
           <button
             type="button"
             disabled={agotado}
-            onClick={() => setCantidad((prev) => prev + 0.5)}
+            onClick={() => setCantidad((prev) => prev + unidad.paso)}
             className="flex h-14 w-14 items-center justify-center rounded text-xl text-ink-soft transition-colors hover:bg-surface-high hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
-            aria-label="Más medio metro"
+            aria-label={etiquetaMas}
           >
             +
           </button>

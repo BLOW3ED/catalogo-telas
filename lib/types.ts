@@ -36,7 +36,21 @@ export type CatalogoTela = {
   color_slug: string | null;
   color_hex: string | null;
   acabado: string | null;
+  /**
+   * ALIAS DEPRECADO de `precio`. El nombre engaña desde el lote de mercería:
+   * es el precio por UNIDAD DE VENTA, que solo es el metro cuando
+   * `unidad_venta === "metro"`. La vista sigue exponiendo ambos con el mismo
+   * valor; para saber de qué unidad se habla, ver `unidad_venta`.
+   */
   precio_metro: number | null;
+  /**
+   * Cómo se cobra y cómo se cuenta: metro | pieza | par | bolsa | rollo |
+   * juego. Opcional porque la columna solo existe tras correr la sección 13
+   * del SQL; sin ella todo se trata como metro, que es como se trataba antes.
+   */
+  unidad_venta?: string | null;
+  /** Piezas que trae cada unidad empaquetada (una bolsa de 25 piedras). */
+  piezas_por_unidad?: number | null;
   gramaje: number | null;
   stock: number | null;
   es_bordado: boolean;
@@ -80,6 +94,12 @@ export type TelaAgrupada = {
   precio_desde: number | null;
   /** ¿El `precio_desde` proviene de un precio demo (no capturado en la BD)? */
   precio_desde_es_referencia: boolean;
+  /**
+   * Unidad de la variante que puso el `precio_desde` — no la del modelo: es el
+   * precio de ESA variante el que se muestra, así que el sufijo tiene que ser
+   * el suyo o la card diría "$18/m" de algo que se cobra por bolsa.
+   */
+  precio_desde_unidad: string | null;
   variantes: CatalogoTela[];
 };
 
@@ -97,6 +117,7 @@ export function agruparPorModelo(filas: CatalogoTela[]): TelaAgrupada[] {
         categoria: fila.categoria,
         precio_desde: null,
         precio_desde_es_referencia: false,
+        precio_desde_unidad: null,
         variantes: [],
       };
       mapa.set(fila.tela_id, grupo);
@@ -109,6 +130,7 @@ export function agruparPorModelo(filas: CatalogoTela[]): TelaAgrupada[] {
       if (grupo.precio_desde == null || fila.precio_metro < grupo.precio_desde) {
         grupo.precio_desde = fila.precio_metro;
         grupo.precio_desde_es_referencia = fila.precio_es_referencia ?? false;
+        grupo.precio_desde_unidad = fila.unidad_venta ?? null;
       }
     }
   }

@@ -9,7 +9,12 @@
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
+    "preparar": "tsx scripts/preparar-fotos.ts",
     "ingest": "tsx scripts/ingest-images.ts",
+    "etiquetas:bolsitas": "tsx scripts/etiquetas-bolsitas.ts",
+    "nombres-provisionales": "tsx scripts/nombres-provisionales.ts",
+    "clasificar": "tsx scripts/clasificar.ts",
+    "hoja": "tsx scripts/hoja-revision.ts",
     "backfill:derivados": "tsx scripts/backfill-derivados.ts"
   },
   "dependencies": {

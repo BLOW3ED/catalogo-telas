@@ -9,6 +9,7 @@ import { TelaImageCarousel, type SlideColor } from "@/components/TelaImageCarous
 import { ColorSelector } from "@/components/ColorSelector";
 import { AttributeBadges } from "@/components/AttributeBadges";
 import { AddToCart } from "@/components/AddToCart";
+import { unidadDe } from "@/lib/unidades";
 
 // Página dinámica (lee `searchParams`); la lectura de la tela se cachea 60s
 // en lib/queries.ts (unstable_cache), igual que el listado del inicio.
@@ -190,7 +191,8 @@ export default async function TelaDetallePage({
               </h1>
               {seleccionada.precio_metro != null ? (
                 <p className="shrink-0 pt-1 text-xl font-semibold leading-7 text-amber">
-                  {pesos.format(seleccionada.precio_metro)}/m
+                  {pesos.format(seleccionada.precio_metro)}
+                  {unidadDe(seleccionada.unidad_venta).sufijoPrecio}
                 </p>
               ) : (
                 <p className="shrink-0 pt-1 text-sm leading-7 text-ink-soft">

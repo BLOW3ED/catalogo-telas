@@ -4,7 +4,7 @@
  * ===========================================================================
  * Dos modos:
  *
- *   pnpm ingest                  → MODO MANIFEST (default)
+ *   pnpm ingest                  → MODO MANIFEST (default, FUSIONA)
  *       Escanea las fotos, parsea cada nombre (SKU/modelo/color de forma
  *       defensiva) y escribe `catalog-manifest.csv` para revisión MANUAL.
  *       NO sube nada ni toca la BD.
@@ -14,10 +14,16 @@
  *       y hace upsert idempotente contra el esquema (tela, variante, foto, N:N).
  *       Respeta SKUs existentes: upsert por SKU, no duplica.
  *
+ * Volver a correr el modo manifest NO borra lo capturado: si el CSV ya existe,
+ * se fusiona por `archivo` y lo tecleado gana sobre lo deducido del nombre de
+ * archivo. Para regenerar desde cero, `--forzar`.
+ *
  * Flags:
  *   --dir=<ruta>   carpeta de fotos (default: ./FOTOS_TELAS si existe, si no ./)
  *   --sep=<char>   separador preferido para el SKU (default autodetecta '-','_',' ')
  *   --out=<ruta>   ruta del CSV (default: ./catalog-manifest.csv)
+ *   --forzar       regenera el manifest desde cero (descarta lo capturado)
+ *   --validar      revisa el CSV con las reglas de --upload SIN escribir nada
  * ===========================================================================
  */
 
@@ -25,6 +31,8 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { config as loadEnv } from "dotenv";
 import { procesarFoto } from "../lib/images/derivados";
+import { interpretaFlor, interpretaFamilia, modeloFlor, tablaDeColores } from "../lib/ingesta/nombres";
+import { fusionaFila, registroAuto, type Procedencia } from "../lib/ingesta/fusion";
 
 // Cargar variables: .env.local tiene prioridad (igual que Next), luego .env
 loadEnv({ path: ".env.local" });
@@ -36,6 +44,11 @@ loadEnv({ path: ".env" });
 const argv = process.argv.slice(2);
 const flags = {
   upload: argv.includes("--upload"),
+  // Regenera el manifest desde cero, tirando lo ya capturado a mano. Sin este
+  // flag el CSV existente se fusiona (ver modoManifest).
+  forzar: argv.includes("--forzar"),
+  // Revisa el CSV con las reglas de la subida sin escribir nada.
+  validar: argv.includes("--validar"),
   dir: argChar("--dir"),
   sep: argChar("--sep"),
   out: argChar("--out") ?? "catalog-manifest.csv",
@@ -62,6 +75,23 @@ const COLORES: { nombre: string; slug: string; hex: string }[] = [
   { nombre: "Magenta", slug: "magenta", hex: "#C2186A" },
   { nombre: "Negro", slug: "negro", hex: "#1A1714" },
   { nombre: "Cedrón", slug: "cedron", hex: "#E8743B" },
+  // Colores que traen los nombres de archivo de mercería (grupo "Flor*").
+  // Los hex son de arranque: se afinan luego desde /admin contra la pieza real.
+  { nombre: "Blanco", slug: "blanco", hex: "#FFFFFF" },
+  { nombre: "Blush", slug: "blush", hex: "#E8C4BC" },
+  { nombre: "Champagne", slug: "champagne", hex: "#E4CFA8" },
+  { nombre: "Palo de Rosa", slug: "palo-de-rosa", hex: "#C48A82" },
+  { nombre: "Amarillo", slug: "amarillo", hex: "#F2C744" },
+  { nombre: "Oro", slug: "oro", hex: "#C9A227" },
+  { nombre: "Verde Botella", slug: "verde-botella", hex: "#1B4D3E" },
+  { nombre: "Mauve", slug: "mauve", hex: "#9C7C8C" },
+  { nombre: "Rosado", slug: "rosado", hex: "#EFA3B8" },
+  { nombre: "Rosa Pastel", slug: "rosa-pastel", hex: "#F4C2C2" },
+  { nombre: "Humo", slug: "humo", hex: "#8C8C8C" },
+  { nombre: "Melón", slug: "melon", hex: "#F2A477" },
+  { nombre: "Plata", slug: "plata", hex: "#C0C0C0" },
+  { nombre: "Verde Olivo", slug: "verde-olivo", hex: "#6B7B3A" },
+  { nombre: "Piedra", slug: "piedra", hex: "#B0A79A" },
 ];
 
 const COLOR_POR_NORM = new Map(COLORES.map((c) => [normaliza(c.nombre), c]));
@@ -115,24 +145,151 @@ function pareceSku(seg: string): boolean {
 // ---------------------------------------------------------------------------
 type Parseado = {
   archivo: string;
+  /** Base sin contador de cámara: agrupa las tomas del mismo producto. */
+  grupo: string;
+  /** Número de toma de la cámara; ordena las fotos de un mismo producto. */
+  toma: number | null;
   sku: string | null;
   modelo: string;
   color: string;
   colorSlug: string;
+  categoria: string;
+  unidad: string;
   esBordado: boolean;
   notas: string[];
 };
 
-function parseNombre(archivo: string): Parseado {
-  const ext = path.extname(archivo);
-  const base = path.basename(archivo, ext);
+// Las reglas de negocio del nombrado (cómo se descompone "Flor348Humo", qué
+// prefijos son qué familia) viven en lib/ingesta/nombres.ts, con pruebas.
+
+/**
+ * Quita el contador de 5 dígitos que la cámara pega al nombre
+ * ("BNK231500004" → "BNK2315" + toma 4) y el sufijo "(1)" que deja el
+ * navegador al bajar dos veces el mismo archivo.
+ *
+ * El corte es ambiguo cuando el SKU mismo termina en dígitos: "BNK203823"
+ * podría ser el SKU completo o "BNK" + toma 3823. Se decide por corpus — si
+ * otro archivo de la carpeta comparte el prefijo recortado, era un contador —
+ * y cuando no hay evidencia se recorta igual pero se marca en `notas`, que es
+ * justo para lo que existe el paso de revisión manual del CSV.
+ */
+function separarToma(
+  base: string, corpus: Set<string>
+): { grupo: string; toma: number | null; notas: string[] } {
   const notas: string[] = [];
 
-  // 1) Separar por el separador preferido (default '-').
+  const dup = /^(.*)\(\d+\)$/.exec(base);
+  if (dup) {
+    base = dup[1];
+    notas.push("descarga duplicada: mismo producto que el archivo sin (n)");
+  }
+
+  const m = /^(.+?)(\d{5})$/.exec(base);
+  if (!m) return { grupo: base, toma: null, notas };
+
+  const [, prefijo, contador] = m;
+  const cortePorDigito = /\d$/.test(prefijo);
+  const corroborado = [...corpus].some((otro) => otro !== base && otro.startsWith(prefijo));
+
+  // Una toma real viene rellenada con ceros y es un número bajo ("00004"): la
+  // cámara arranca en 1 y una sesión de producto no pasa de unas decenas. Un
+  // sufijo que fuera parte del SKU no se escribiría así. Cuando el contador no
+  // cumple las dos cosas (p.ej. "03823", rellenado pero demasiado alto para
+  // ser una toma) el corte sí es dudoso y hay que confirmarlo a mano.
+  const tomaPlausible = contador.startsWith("0") && parseInt(contador, 10) < 1000;
+  if (cortePorDigito && !corroborado && !tomaPlausible) {
+    notas.push(`corte SKU/toma dudoso: "${prefijo}" + "${contador}" — confirmar`);
+  }
+
+  return { grupo: prefijo, toma: parseInt(contador, 10), notas };
+}
+
+function parseNombre(
+  archivo: string, corpus: Set<string>, coloresFlor: Map<string, string>
+): Parseado {
+  const ext = path.extname(archivo);
+  const nombreBase = path.basename(archivo, ext);
+  const { grupo: base, toma, notas } = separarToma(nombreBase, corpus);
+
+  // 1) Flores: el diámetro define el modelo y el color la variante.
+  const flor = interpretaFlor(base, coloresFlor);
+  if (flor) {
+    const hit = flor.color ? COLOR_POR_NORM.get(normaliza(flor.color)) : undefined;
+    if (!flor.color) {
+      notas.push(`sin nombre de color en el archivo — poner el del código ${flor.codigoColor}`);
+    } else if (!hit) {
+      notas.push(`color "${flor.color}" no está en el catálogo — se dará de alta`);
+    }
+    notas.push(`diámetro ${flor.diametro}, código de color ${flor.codigoColor} (del nombre de archivo)`);
+    return {
+      archivo,
+      grupo: base,
+      toma,
+      // Sin SKU: el nombre trae diámetro y código de color, no un SKU de la
+      // tienda. La variante queda identificada por (modelo, color), que aquí
+      // sí es única — dos flores del mismo diámetro y color son la misma.
+      sku: null,
+      modelo: modeloFlor(flor.diametro),
+      color: hit?.nombre ?? flor.color,
+      colorSlug: hit?.slug ?? slugify(flor.color),
+      categoria: "Flores",
+      unidad: "pieza",
+      esBordado: false,
+      notas,
+    };
+  }
+  if (/^Flor/i.test(base)) {
+    notas.push("empieza con 'Flor' pero no sigue el patrón diámetro+código de color — asignar modelo a mano");
+  }
+
+  // 2) Familias por prefijo (botones, corchetes): el código sí es el SKU.
+  const fam = interpretaFamilia(base);
+  if (fam) {
+    notas.push(`nombre derivado del prefijo (${fam.categoria.toLowerCase()}) — renombrar si la tienda lo llama de otro modo`);
+    return {
+      archivo,
+      grupo: fam.codigo,
+      toma,
+      sku: fam.codigo,
+      modelo: fam.modelo,
+      color: "",
+      colorSlug: "",
+      categoria: fam.categoria,
+      unidad: "pieza",
+      esBordado: false,
+      notas,
+    };
+  }
+
+  // 3) Separar por el separador preferido (default '-').
   const sep = flags.sep ?? "-";
   const segs = base.split(sep).filter(Boolean);
 
-  // 2) Detectar SKU "desde la cola": run final de segmentos con pinta de SKU,
+  // 4) Caso "el archivo ES el SKU y nada más" (BNK2315, tgl4238, T4L): las
+  //    fotos de mercería vienen nombradas solo con el código, sin nada
+  //    descriptivo. El detector "desde la cola" de abajo no aplica porque
+  //    exige dejar un segmento descriptivo al frente, y aquí no lo hay.
+  //    Se normaliza a mayúsculas para que "TGL254" y "tgl254" no terminen
+  //    como dos variantes distintas del mismo producto.
+  if (segs.length === 1 && (pareceSku(base) || /^[a-z]{1,4}\d{2,8}$/.test(base))) {
+    if (base !== base.toUpperCase()) notas.push(`SKU normalizado a mayúsculas desde "${base}"`);
+    notas.push("sin nombre de producto en el archivo");
+    return {
+      archivo,
+      grupo: base.toUpperCase(),
+      toma,
+      sku: base.toUpperCase(),
+      modelo: "",
+      color: "",
+      colorSlug: "",
+      categoria: "",
+      unidad: "",
+      esBordado: false,
+      notas,
+    };
+  }
+
+  // 3) Detectar SKU "desde la cola": run final de segmentos con pinta de SKU,
   //    siempre dejando al menos un segmento descriptivo al frente.
   let corte = segs.length;
   while (corte > 1 && pareceSku(segs[corte - 1])) corte--;
@@ -141,11 +298,11 @@ function parseNombre(archivo: string): Parseado {
   const sku = skuParts.length > 0 && tieneAlpha ? skuParts.join("-") : null;
   if (!sku) notas.push("sin SKU en archivo");
 
-  // 3) Parte descriptiva = lo que quedó al frente, partido por CamelCase.
+  // 4) Parte descriptiva = lo que quedó al frente, partido por CamelCase.
   const descriptivo = segs.slice(0, corte).join(" ");
   const palabras = partirCamel(descriptivo);
 
-  // 4) Color: matchear la cola (1..3 palabras) contra el diccionario.
+  // 5) Color: matchear la cola (1..3 palabras) contra el diccionario.
   let color = "";
   let colorSlug = "";
   let palabrasModelo = palabras;
@@ -171,18 +328,24 @@ function parseNombre(archivo: string): Parseado {
   const modelo = palabrasModelo.join(" ").trim() || descriptivo;
   const esBordado = /bordado/i.test(base);
 
-  return { archivo, sku, modelo, color, colorSlug, esBordado, notas };
+  return {
+    archivo, grupo: base, toma, sku, modelo, color, colorSlug,
+    categoria: "", unidad: "", esBordado, notas,
+  };
 }
 
 // ---------------------------------------------------------------------------
 // CSV (escritura y lectura robusta con campos entrecomillados)
 // ---------------------------------------------------------------------------
 const COLUMNAS = [
-  "archivo", "sku", "modelo", "color",
-  "precio_metro", "gramaje", "stock",
+  "archivo", "grupo", "orden", "sku", "modelo", "color",
+  "precio", "unidad_venta", "piezas_por_unidad", "gramaje", "stock",
   "es_bordado", "es_brillante", "es_traslucida", "es_tornasol",
   "categoria", "casos_uso", "notas",
 ] as const;
+
+/** Debe coincidir con el CHECK de variante.unidad_venta (sección 13 del SQL). */
+const UNIDADES = new Set(["metro", "pieza", "par", "bolsa", "rollo", "juego"]);
 
 function escCsv(v: string): string {
   return /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
@@ -228,6 +391,11 @@ async function resolverDir(): Promise<string> {
   }
 }
 
+/** Sidecar con lo que dedujo el parser; vive junto al CSV. */
+function rutaAuto(): string {
+  return flags.out.replace(/\.csv$/i, "") + ".auto.json";
+}
+
 async function listarImagenes(dir: string): Promise<string[]> {
   const entradas = await fs.readdir(dir);
   return entradas
@@ -247,45 +415,108 @@ async function modoManifest() {
     process.exit(1);
   }
 
-  const parseados = imagenes.map(parseNombre);
+  const corpus = new Set(imagenes.map((f) => path.basename(f, path.extname(f))));
+  // La tabla de colores se arma sobre los GRUPOS, no sobre los nombres de
+  // archivo: con el contador de cámara pegado, "Flor420Blanco00008" enseñaría
+  // que el código 20 es el color "Blanco00008".
+  const coloresFlor = tablaDeColores(
+    [...corpus].map((b) => separarToma(b, corpus).grupo)
+  );
+  const parseados = imagenes.map((f) => parseNombre(f, corpus, coloresFlor));
 
+  // Las fotos del mismo grupo van juntas y en orden de toma: así el CSV se
+  // llena por bloques (un producto, sus N fotos) en vez de saltando, y `orden`
+  // sale determinista — la foto 0 de cada grupo será la principal del catálogo.
+  parseados.sort((a, b) =>
+    a.grupo.localeCompare(b.grupo) || (a.toma ?? 0) - (b.toma ?? 0) || a.archivo.localeCompare(b.archivo)
+  );
+  const ordenEnGrupo = new Map<string, number>();
+
+  // Si ya hay un CSV, se FUSIONA en vez de sobrescribirlo. Llenar los ~115
+  // nombres y precios a mano cuesta horas, y volver a correr la ingesta es
+  // normal (llegan fotos nuevas, se reprocesa un lote): sobrescribir borraría
+  // ese trabajo sin avisar. Lo tecleado gana SIEMPRE; lo deducido del nombre de
+  // archivo solo rellena celdas vacías. Con `--forzar` se regenera desde cero.
+  const previo = new Map<string, Record<string, string>>();
+  let autoPrevio: Procedencia = {};
+  if (!flags.forzar) {
+    try {
+      for (const f of parseCsv(await fs.readFile(flags.out, "utf8"))) {
+        if (f.archivo) previo.set(f.archivo.trim(), f);
+      }
+    } catch { /* no existe todavía: primera corrida */ }
+    // Lo que dedujo el parser la vez pasada. Va en un archivo aparte y no en
+    // una columna del CSV para no meterle ruido a lo que la tienda edita.
+    try {
+      autoPrevio = JSON.parse(await fs.readFile(rutaAuto(), "utf8")) as Procedencia;
+    } catch { /* sin registro: se conserva todo lo no vacío, que es lo prudente */ }
+  }
+  const autoAhora: Procedencia = {};
+
+  let conservadas = 0;
   const lineas = [COLUMNAS.join(",")];
   for (const p of parseados) {
+    const n = ordenEnGrupo.get(p.grupo) ?? 0;
+    ordenEnGrupo.set(p.grupo, n + 1);
+
     const row: Record<string, string> = {
       archivo: p.archivo,
+      grupo: p.grupo,
+      orden: String(n),
       sku: p.sku ?? "",
       modelo: p.modelo,
       color: p.color,
-      precio_metro: "",
+      precio: "",
+      unidad_venta: p.unidad,   // vacío → 'metro' (el default de la tabla)
+      piezas_por_unidad: "",
       gramaje: "",
       stock: "",
       es_bordado: p.esBordado ? "true" : "",
       es_brillante: "",
       es_traslucida: "",
       es_tornasol: "",
-      categoria: "",
+      categoria: p.categoria,
       casos_uso: "",
-      notas: p.notas.join("; "),
+      notas: "",
     };
-    lineas.push(COLUMNAS.map((c) => escCsv(row[c])).join(","));
+
+    autoAhora[p.archivo] = registroAuto(row);
+    const { fila, conservo } = fusionaFila(
+      row, previo.get(p.archivo), p.notas, autoPrevio[p.archivo]
+    );
+    if (conservo) conservadas++;
+
+    lineas.push(COLUMNAS.map((c) => escCsv(fila[c])).join(","));
   }
 
   await fs.writeFile(flags.out, lineas.join("\n") + "\n", "utf8");
+  await fs.writeFile(rutaAuto(), JSON.stringify(autoAhora, null, 1), "utf8");
 
-  // Resumen
-  const sinSku = parseados.filter((p) => !p.sku);
-  const sinColor = parseados.filter((p) => !p.color);
-  const modelos = new Set(parseados.map((p) => slugify(p.modelo)));
+  // Resumen. Las cuentas se hacen sobre lo que QUEDÓ en el CSV, no sobre lo
+  // deducido: si no, una fila ya completada a mano se seguiría reportando como
+  // faltante y el resumen no serviría para saber cuánto falta de verdad.
+  const finales = parseCsv(await fs.readFile(flags.out, "utf8"));
+  const porGrupo = new Map<string, Record<string, string>>();
+  for (const f of finales) if (!porGrupo.has(f.grupo)) porGrupo.set(f.grupo, f);
+  const grupos = [...porGrupo.values()];
+  const sinSku = finales.filter((f) => !f.sku);
+  const sinModelo = grupos.filter((f) => !f.modelo);
+  const sinPrecio = grupos.filter((f) => !f.precio);
+  const dudosos = parseados.filter((p) => p.notas.some((n) => n.startsWith("corte SKU/toma")));
 
   console.log("\n📋 Manifest generado:");
   console.log(`   archivo : ${path.resolve(flags.out)}`);
-  console.log(`   fotos   : ${parseados.length}`);
-  console.log(`   modelos : ${modelos.size} (estimado por nombre)`);
-  console.log(`   sin SKU : ${sinSku.length}  ${sinSku.length ? "← requieren tu atención" : ""}`);
-  console.log(`   sin color detectado: ${sinColor.length}`);
-  if (sinSku.length) {
-    console.log("\n   Archivos sin SKU:");
-    sinSku.forEach((p) => console.log(`     · ${p.archivo}`));
+  console.log(`   fotos   : ${finales.length}`);
+  console.log(`   grupos  : ${grupos.length} (producto detectado por nombre de archivo)`);
+  if (previo.size) {
+    console.log(`   fusionado con el CSV anterior: ${conservadas} filas conservaron datos tuyos`);
+  }
+  console.log(`   fotos sin SKU : ${sinSku.length}`);
+  console.log(`   grupos sin nombre : ${sinModelo.length}  ${sinModelo.length ? "← hay que ponérselo a mano" : ""}`);
+  console.log(`   grupos sin precio : ${sinPrecio.length}`);
+  if (dudosos.length) {
+    console.log(`\n⚠ ${dudosos.length} con corte SKU/toma dudoso (confirmar antes de subir):`);
+    dudosos.forEach((p) => console.log(`     · ${p.archivo} → grupo "${p.grupo}"`));
   }
   console.log("\n👉 Revisa y completa el CSV. Cuando esté listo: pnpm ingest --upload\n");
 }
@@ -320,6 +551,8 @@ async function modoUpload() {
   const catCache = new Map<string, string>();      // slug -> id
   const casoCache = new Map<string, string>();     // slug -> id
   const telaCache = new Map<string, string>();     // slug -> id
+  // variante id -> datos de la primera fila que la reclamó (guardia anti-colapso)
+  const huellaPorVariante = new Map<string, { huella: string; archivo: string }>();
 
   const ctx = {
     contadores: { telas: new Set<string>(), variantes: 0, fotos: 0, derivados: 0, sinSku: 0, errores: [] as string[] },
@@ -368,8 +601,12 @@ async function modoUpload() {
       });
     }
 
-    // 2) tela (por slug del modelo)
-    const modelo = fila.modelo?.trim() || path.basename(archivo, path.extname(archivo));
+    // 2) tela (por slug del modelo). Sin modelo se aborta la fila en vez de
+    //    caer al nombre del archivo: en este lote los nombres son códigos de
+    //    cámara ("BNK231500004") y ese fallback sembraría el catálogo de telas
+    //    basura, con slugs que después hay que borrar a mano.
+    const modelo = fila.modelo?.trim();
+    if (!modelo) throw new Error("falta 'modelo' — ponle nombre al producto en el CSV");
     const telaSlug = slugify(modelo);
     let telaId: string;
     const telaCached = telaCache.get(telaSlug);
@@ -390,11 +627,20 @@ async function modoUpload() {
     // 3) variante — upsert por SKU si existe; si no, por (tela_id,color_id)
     const sku = fila.sku?.trim() || null;
     if (!sku) ctx.contadores.sinSku++;
+    // Vacío → 'metro', el default de la tabla: así el CSV de una ingesta de
+    // telas se puede dejar sin tocar esta columna.
+    const unidad = fila.unidad_venta?.trim().toLowerCase() || "metro";
+    if (!UNIDADES.has(unidad)) {
+      throw new Error(`unidad_venta "${unidad}" inválida (${[...UNIDADES].join(", ")})`);
+    }
+
     const varPayload = {
       tela_id: telaId,
       sku,
       color_id: colorId,
-      precio_metro: numero(fila.precio_metro),
+      precio: numero(fila.precio),
+      unidad_venta: unidad,
+      piezas_por_unidad: entero(fila.piezas_por_unidad),
       gramaje: entero(fila.gramaje),
       stock: numero(fila.stock),
       es_bordado: bool(fila.es_bordado),
@@ -423,6 +669,28 @@ async function modoUpload() {
         varianteId = data.id;
       }
     }
+
+    // Guardia anti-colapso. Dos filas pueden legítimamente caer en la misma
+    // variante: son dos tomas del mismo producto, y entonces traen los MISMOS
+    // datos. Si caen en la misma variante con datos distintos, no son dos
+    // tomas: son dos productos distintos que van a pisarse — gana el último y
+    // los demás quedan como fotos sueltas colgando de una variante ajena.
+    //
+    // Pasa de verdad con este catálogo: la tienda escribe el mismo código
+    // ("#1404") en bolsas de contenido y cantidad distintos, y con SKU vacío
+    // la deduplicación por (tela, color) mete todas las bolsas en una. Mejor
+    // reventar la fila y que se corrija el CSV que perder productos en
+    // silencio.
+    const huella = JSON.stringify([sku, modelo, fila.color?.trim() ?? "",
+      varPayload.precio, varPayload.piezas_por_unidad, varPayload.unidad_venta]);
+    const previa = huellaPorVariante.get(varianteId);
+    if (previa && previa.huella !== huella) {
+      throw new Error(
+        `chocaría con "${previa.archivo}": ambos caen en la misma variante pero ` +
+        `con datos distintos. Dales SKU (o modelo) propio en el CSV.`
+      );
+    }
+    huellaPorVariante.set(varianteId, { huella, archivo });
     ctx.contadores.variantes++;
 
     // 4) subir imagen al bucket (idempotente con upsert) + fila foto
@@ -435,10 +703,19 @@ async function modoUpload() {
     });
     if (upErr) throw new Error(`storage ${ruta}: ${upErr.message}`);
 
+    // `orden` viene del CSV: una variante con varias tomas necesita un orden
+    // estable, porque la vista elige foto_principal con `order by orden`.
+    // Con todas en 0 la foto de portada la decidiría el desempate por
+    // created_at, o sea el azar de la concurrencia de subida.
     const { data: fotoFila, error: fotoErr } = await supabase
       .from("foto")
       .upsert(
-        { variante_id: varianteId, ruta, orden: 0, alt: `${modelo}${fila.color ? " " + fila.color : ""}` },
+        {
+          variante_id: varianteId,
+          ruta,
+          orden: entero(fila.orden) ?? 0,
+          alt: `${modelo}${fila.color ? " " + fila.color : ""}`,
+        },
         { onConflict: "variante_id,ruta" }
       )
       .select("id")
@@ -487,9 +764,83 @@ function numero(v: string): number | null { const n = parseFloat(v); return Numb
 function entero(v: string): number | null { const n = parseInt(v, 10); return Number.isFinite(n) ? n : null; }
 function bool(v: string): boolean { return /^(true|1|si|sí|x)$/i.test(v.trim()); }
 
+// ===========================================================================
+// MODO VALIDAR
+// ===========================================================================
+/**
+ * Revisa el CSV con las MISMAS reglas que hacen fallar a `--upload`, sin tocar
+ * nada. Existe porque la subida es fila por fila contra producción: sin esto,
+ * los problemas se descubren a media carga, con parte del lote ya escrito y el
+ * resto no. Aquí se ven todos juntos y antes de empezar.
+ */
+async function modoValidar() {
+  const filas = parseCsv(await fs.readFile(flags.out, "utf8"));
+
+  const sinModelo: string[] = [];
+  const unidadMala: string[] = [];
+  // Clave de la variante a la que caería cada fila, igual que en la subida:
+  // por SKU si lo hay, si no por (modelo, color).
+  const porVariante = new Map<string, { archivo: string; huella: string }[]>();
+
+  for (const f of filas) {
+    const archivo = (f.archivo ?? "").trim();
+    if (!archivo) continue;
+
+    const modelo = (f.modelo ?? "").trim();
+    if (!modelo) { sinModelo.push(archivo); continue; }
+
+    const unidad = (f.unidad_venta ?? "").trim().toLowerCase() || "metro";
+    if (!UNIDADES.has(unidad)) unidadMala.push(`${archivo} → "${unidad}"`);
+
+    const sku = (f.sku ?? "").trim();
+    const clave = sku ? `sku:${sku}` : `tela:${slugify(modelo)}|color:${slugify((f.color ?? "").trim())}`;
+    const huella = JSON.stringify([
+      sku, modelo, (f.color ?? "").trim(),
+      numero(f.precio), entero(f.piezas_por_unidad), unidad,
+    ]);
+    if (!porVariante.has(clave)) porVariante.set(clave, []);
+    porVariante.get(clave)!.push({ archivo, huella });
+  }
+
+  // Colisión = misma variante con datos distintos. Varias fotos del MISMO
+  // producto comparten variante y traen la misma huella: eso es correcto.
+  const colisiones = [...porVariante.entries()]
+    .map(([clave, fs_]) => ({ clave, fs_, distintas: new Set(fs_.map((x) => x.huella)).size }))
+    .filter((c) => c.distintas > 1);
+
+  // En una colisión la PRIMERA fila sí entra (es la que crea la variante y
+  // fija la huella); fallan las siguientes. Contarlas todas como perdidas
+  // subestimaría lo que de verdad sube.
+  const perdidasPorChoque = colisiones.reduce((s, c) => s + c.fs_.length - 1, 0);
+  const listas = filas.length - sinModelo.length - perdidasPorChoque;
+
+  console.log("\n🔎 Validación del manifest (nada se sube):");
+  console.log(`   filas totales     : ${filas.length}`);
+  console.log(`   subirían bien     : ${Math.max(0, listas)}`);
+  console.log(`   se saltarían      : ${sinModelo.length} sin 'modelo'`);
+  console.log(`   chocarían         : ${perdidasPorChoque} en ${colisiones.length} variante(s)`);
+
+  if (sinModelo.length) {
+    console.log(`\n⚠ Sin nombre de producto (${sinModelo.length}) — la subida las rechaza fila por fila:`);
+    console.log(`   ${sinModelo.slice(0, 8).join(", ")}${sinModelo.length > 8 ? `, … y ${sinModelo.length - 8} más` : ""}`);
+  }
+  if (unidadMala.length) {
+    console.log(`\n✖ unidad_venta inválida (${unidadMala.length}): ${unidadMala.slice(0, 5).join("; ")}`);
+  }
+  for (const c of colisiones) {
+    console.log(`\n✖ ${c.fs_.length} fotos caerían en la misma variante (${c.clave}) con datos DISTINTOS:`);
+    console.log(`   ${c.fs_.slice(0, 4).map((x) => x.archivo).join(", ")}${c.fs_.length > 4 ? `, …` : ""}`);
+    console.log(`   → dales SKU propio, o modelo propio, para que sean productos separados.`);
+  }
+  console.log(sinModelo.length || colisiones.length
+    ? "\n👉 Arregla el CSV y vuelve a validar. Cuando salga limpio: pnpm ingest --upload\n"
+    : "\n✅ El manifest está listo para pnpm ingest --upload\n");
+}
+
 // ---------------------------------------------------------------------------
 (async () => {
-  if (flags.upload) await modoUpload();
+  if (flags.validar) await modoValidar();
+  else if (flags.upload) await modoUpload();
   else await modoManifest();
 })().catch((e) => {
   console.error("✖", e.message);

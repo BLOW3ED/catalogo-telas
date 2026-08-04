@@ -10,6 +10,7 @@ import { STORAGE_BUCKET, rutasDerivados } from "@/lib/supabase/storage";
 import { procesarFoto } from "@/lib/images/derivados";
 import { slugify } from "@/lib/slug";
 import { aplicarMovimiento, esTipoMovimiento } from "@/lib/inventario";
+import { UNIDADES_VENTA, type UnidadVenta } from "@/lib/unidades";
 
 // ---------------------------------------------------------------------------
 // Sesión
@@ -112,7 +113,10 @@ export async function actualizarVariante(formData: FormData) {
   const email = await requireAdmin();
   const varianteId = requireUuid(formData.get("variante_id"), "variante");
 
-  const precio_metro = parseCampoNumerico(formData.get("precio_metro"), "precio");
+  // El campo del form sigue llamándose precio_metro (así lo expone la vista);
+  // la columna se llama `precio` desde la sección 13 del SQL, porque no todo
+  // el catálogo se vende por metro.
+  const precio = parseCampoNumerico(formData.get("precio_metro"), "precio");
   const stock = parseCampoNumerico(formData.get("stock"), "stock");
 
   const supabase = createAdminClient();
@@ -126,7 +130,7 @@ export async function actualizarVariante(formData: FormData) {
 
   const { error } = await supabase
     .from("variante")
-    .update({ precio_metro, stock })
+    .update({ precio, stock })
     .eq("id", varianteId);
 
   if (error) {
@@ -237,6 +241,22 @@ export async function actualizarTela(formData: FormData) {
 // Variantes (SKU/color): alta, edición completa y baja
 // ---------------------------------------------------------------------------
 
+/**
+ * Unidad de venta validada contra el check de la sección 13 del SQL. Se valida
+ * aquí y no solo en el `<select>` porque un POST puede traer cualquier cosa;
+ * un valor fuera de la lista lo rechazaría Postgres con un error críptico.
+ */
+function parseUnidadVenta(valor: FormDataEntryValue | null): UnidadVenta {
+  const texto = String(valor ?? "").trim().toLowerCase();
+  if (texto === "") return "metro"; // default de la columna
+  if (!(UNIDADES_VENTA as readonly string[]).includes(texto)) {
+    throw new Error(
+      `Unidad de venta inválida: "${texto}". Usa una de: ${UNIDADES_VENTA.join(", ")}.`
+    );
+  }
+  return texto as UnidadVenta;
+}
+
 /** Campos de variante compartidos entre alta y edición. */
 function leerCamposVariante(formData: FormData) {
   return {
@@ -244,7 +264,9 @@ function leerCamposVariante(formData: FormData) {
     sku: textoOpcional(formData.get("sku")),
     color_id: uuidOpcional(formData.get("color_id"), "color"),
     acabado_id: uuidOpcional(formData.get("acabado_id"), "acabado"),
-    precio_metro: parseCampoNumerico(formData.get("precio_metro"), "precio"),
+    precio: parseCampoNumerico(formData.get("precio_metro"), "precio"),
+    unidad_venta: parseUnidadVenta(formData.get("unidad_venta")),
+    piezas_por_unidad: parseEntero(formData.get("piezas_por_unidad"), "piezas por unidad"),
     gramaje: parseEntero(formData.get("gramaje"), "gramaje"),
     stock: parseCampoNumerico(formData.get("stock"), "stock"),
     es_bordado: formData.get("es_bordado") === "on",
