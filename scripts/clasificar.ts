@@ -33,7 +33,7 @@
  * ===========================================================================
  */
 import { config as loadEnv } from "dotenv";
-import { categoriaDeCodigo, type Categoria } from "../lib/ingesta/categorias";
+import { categoriaDeCodigo, unidadDeCategoria, type Categoria } from "../lib/ingesta/categorias";
 import { interpretaBolsita, nombreDeBolsita } from "../lib/ingesta/nombres";
 import { slugify } from "../lib/slug";
 
@@ -42,6 +42,11 @@ loadEnv({ path: ".env" });
 
 const APLICAR = process.argv.includes("--aplicar");
 const FORZAR = process.argv.includes("--forzar");
+/** `--solo=cintillo-de-pedreria,hebilla` acota la corrección de unidades. */
+const SOLO = (process.argv.find((a) => a.startsWith("--solo="))?.slice(7) ?? "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
 
 /** Letras de desempate para bolsitas con rótulo repetido: A, B, … Z, AA… */
 function letra(i: number): string {
@@ -203,6 +208,61 @@ async function main() {
     }
   }
   console.log(`   ${renombradas} por renombrar (de ${bolsitas.length} bolsitas)`);
+
+  // ---------------------------------------------------------------------
+  // 3) Unidad de venta según la categoría
+  // ---------------------------------------------------------------------
+  // La ingesta metió todo como `metro` porque es el default de la columna,
+  // y eso puso "$89/m" en cintillos, aplicaciones y frascos de piedra: un
+  // precio que nadie puede cobrar porque esas cosas no se cortan.
+  //
+  // Solo se corrige lo que sigue en `metro` (el default no capturado). Una
+  // variante que ya diga "pieza" o "bolsa" se respeta: la puso alguien a
+  // mano desde /admin y ahí manda la tienda, no esta tabla.
+  console.log("\n── Unidad de venta ──");
+  const { data: variantes, error: eVar } = await supabase
+    .from("variante")
+    .select("id, unidad_venta, tela:tela_id(nombre, categoria:categoria_id(slug, nombre))");
+  if (eVar) throw new Error(`leyendo variantes: ${eVar.message}`);
+
+  const porArreglar = (variantes ?? []).flatMap((v: Record<string, unknown>) => {
+    const tela = v.tela as { nombre: string; categoria: { slug: string; nombre: string } | null } | null;
+    const slug = tela?.categoria?.slug;
+    // `--solo=a,b` acota a esas categorías: sirve para aplicar las que ya se
+    // revisaron y dejar pendientes las que necesitan opinión de la tienda.
+    if (SOLO.length && (!slug || !SOLO.includes(slug))) return [];
+    const debe = unidadDeCategoria(slug);
+    if (!debe || debe === v.unidad_venta) return [];
+    // Respetar lo capturado a mano: solo se pisa el default de la ingesta.
+    if (v.unidad_venta !== "metro") return [];
+    return [{ id: v.id as string, nombre: tela!.nombre, cat: tela!.categoria!.nombre, debe }];
+  });
+
+  if (porArreglar.length === 0) {
+    console.log("   Nada que corregir.");
+  } else {
+    const porCat = new Map<string, { debe: string; n: number; ejemplos: string[] }>();
+    for (const x of porArreglar) {
+      const e = porCat.get(x.cat) ?? { debe: x.debe, n: 0, ejemplos: [] };
+      e.n++;
+      if (e.ejemplos.length < 3) e.ejemplos.push(x.nombre);
+      porCat.set(x.cat, e);
+    }
+    for (const [cat, e] of porCat) {
+      console.log(`   ${String(e.n).padStart(3)}  ${cat} · metro → ${e.debe}   (${e.ejemplos.join(", ")}${e.n > 3 ? "…" : ""})`);
+    }
+    console.log(`   ${porArreglar.length} variantes por corregir`);
+
+    if (APLICAR) {
+      for (const x of porArreglar) {
+        const { error: e } = await supabase
+          .from("variante")
+          .update({ unidad_venta: x.debe })
+          .eq("id", x.id);
+        if (e) console.error(`  ✖ ${x.nombre}: ${e.message}`);
+      }
+    }
+  }
 
   console.log(
     APLICAR

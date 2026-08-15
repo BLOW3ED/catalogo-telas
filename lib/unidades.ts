@@ -32,6 +32,13 @@ export type Unidad = {
   paso: number;
   /** Lo mínimo que se puede pedir. */
   minimo: number;
+  /**
+   * La unidad viene EMPAQUETADA con un número de piezas que hay que capturar
+   * ("bolsa de 25 piedras"). Solo entonces tiene sentido `piezas_por_unidad`:
+   * "piezas por pieza" no significa nada, el metro no empaqueta y un par
+   * siempre son dos. Lo usa el alta de mercería para no preguntar de más.
+   */
+  empacada: boolean;
 };
 
 const METRO: Unidad = {
@@ -43,6 +50,7 @@ const METRO: Unidad = {
   // La tienda corta a medio metro; es el incremento con el que se despacha.
   paso: 0.5,
   minimo: 0.5,
+  empacada: false,
 };
 
 /** Todo lo que no es tela se vende entero: paso y mínimo de 1. */
@@ -50,26 +58,29 @@ function porPieza(
   clave: UnidadVenta,
   singular: string,
   plural: string,
-  abreviatura = singular
+  { abreviatura, empacada = false }: { abreviatura?: string; empacada?: boolean } = {}
 ): Unidad {
   return {
     clave,
     sufijoPrecio: `/${singular}`,
-    abreviatura,
+    abreviatura: abreviatura ?? singular,
     singular,
     plural,
     paso: 1,
     minimo: 1,
+    empacada,
   };
 }
 
 const UNIDADES: Record<UnidadVenta, Unidad> = {
   metro: METRO,
-  pieza: porPieza("pieza", "pieza", "piezas", "pz"),
+  pieza: porPieza("pieza", "pieza", "piezas", { abreviatura: "pz" }),
   par: porPieza("par", "par", "pares"),
-  bolsa: porPieza("bolsa", "bolsa", "bolsas"),
-  rollo: porPieza("rollo", "rollo", "rollos"),
-  juego: porPieza("juego", "juego", "juegos"),
+  // Las tres que se despachan en paquete: cuántas piezas trae no se puede
+  // deducir, la tienda lo captura.
+  bolsa: porPieza("bolsa", "bolsa", "bolsas", { empacada: true }),
+  rollo: porPieza("rollo", "rollo", "rollos", { empacada: true }),
+  juego: porPieza("juego", "juego", "juegos", { empacada: true }),
 };
 
 /**

@@ -99,6 +99,10 @@ export function CartDrawer() {
                       derivados={item.foto_derivados}
                       sizes="80px"
                       alt={item.tela_nombre}
+                      // El contenedor es cuadrado: con el default `retrato` el
+                      // hijo medía 78x104 dentro de 78 con overflow-hidden y se
+                      // perdía el borde inferior del producto.
+                      aspecto="cuadrado"
                     />
                   </div>
                   <div className="flex flex-1 flex-col justify-between">

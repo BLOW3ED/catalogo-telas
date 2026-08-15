@@ -46,6 +46,26 @@ describe("paso y mínimo", () => {
   });
 });
 
+describe("empacada", () => {
+  it("solo bolsa, rollo y juego traen un número de piezas que capturar", () => {
+    for (const clave of UNIDADES_VENTA) {
+      const esperado = clave === "bolsa" || clave === "rollo" || clave === "juego";
+      expect(unidadDe(clave).empacada, clave).toBe(esperado);
+    }
+  });
+
+  it("ni el metro ni la pieza empaquetan (“piezas por pieza” no significa nada)", () => {
+    expect(unidadDe("metro").empacada).toBe(false);
+    expect(unidadDe("pieza").empacada).toBe(false);
+    // Un par siempre son dos: no hay nada que preguntar.
+    expect(unidadDe("par").empacada).toBe(false);
+  });
+
+  it("un valor desconocido cae a metro, que no empaqueta", () => {
+    expect(unidadDe("caja").empacada).toBe(false);
+  });
+});
+
 describe("ajustaCantidad", () => {
   it("respeta los medios metros de la tela", () => {
     const m = unidadDe("metro");

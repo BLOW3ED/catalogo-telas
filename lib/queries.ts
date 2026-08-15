@@ -2,6 +2,7 @@ import { unstable_cache } from "next/cache";
 import { createPublicClient } from "@/lib/supabase/public";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { CatalogoTela } from "@/lib/types";
+import type { FotoVariante } from "@/lib/fotos";
 import { aplicarPreciosDemo } from "@/lib/demo-prices";
 import {
   type Filtros,
@@ -319,6 +320,56 @@ export async function getTelaPorSlug(slug: string): Promise<CatalogoTela[]> {
   try {
     const data = await telaPorSlugCached(slug);
     return aplicarPreciosDemo(data);
+  } catch {
+    return [];
+  }
+}
+
+/** Columnas de `foto`; `derivados` es de la sección 12 y puede no existir aún. */
+const COLUMNAS_FOTO = "id,variante_id,ruta,orden,alt";
+
+const fotosDeVariantesCached = unstable_cache(
+  async (varianteIds: string[]): Promise<FotoVariante[]> => {
+    const supabase = createPublicClient();
+
+    // Mismo desempate que el `foto_principal` de la vista (orden, created_at),
+    // así el primer slide es exactamente la foto que ya salía en el grid.
+    const leer = (columnas: string) =>
+      supabase
+        .from("foto")
+        .select(columnas)
+        .in("variante_id", varianteIds)
+        .order("orden", { ascending: true })
+        .order("created_at", { ascending: true });
+
+    let { data, error } = await leer(`${COLUMNAS_FOTO},derivados`);
+    if (error?.code === COLUMNA_INEXISTENTE) ({ data, error } = await leer(COLUMNAS_FOTO));
+
+    if (error) throw new Error(error.message);
+    return (data ?? []) as unknown as FotoVariante[];
+  },
+  ["catalogo-fotos"],
+  { revalidate: REVALIDATE_SEGUNDOS, tags: ["catalogo"] }
+);
+
+/**
+ * TODAS las fotos de unas variantes — no solo la principal.
+ *
+ * La vista `catalogo_telas` colapsa las N fotos de cada variante en un único
+ * `foto_principal` (`… order by orden limit 1`), así que el resto del carrete
+ * solo se puede leer de la tabla `foto`. Tiene RLS de lectura pública, igual
+ * que el resto del catálogo, así que va con la llave anon.
+ *
+ * Los ids se ordenan para que la llave de caché no dependa del orden en que
+ * llegaron las variantes. Si falla, devuelve vacío: la ficha cae a la foto
+ * principal de la vista y sigue funcionando.
+ */
+export async function getFotosDeVariantes(
+  varianteIds: string[]
+): Promise<FotoVariante[]> {
+  if (!isSupabaseConfigured() || varianteIds.length === 0) return [];
+  try {
+    return await fotosDeVariantesCached([...varianteIds].sort());
   } catch {
     return [];
   }

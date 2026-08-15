@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Search, X } from "lucide-react";
 
@@ -16,18 +16,21 @@ export function SearchBar() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [valor, setValor] = useState(searchParams.get("q") ?? "");
-  const primera = useRef(true);
+  const terminoEnUrl = searchParams.get("q") ?? "";
+  const [valor, setValor] = useState(terminoEnUrl);
   // El objeto de searchParams cambia de identidad en cada render; su texto no.
   // Dependemos del texto para no re-disparar el efecto sin que nada cambie.
   const qsActual = searchParams.toString();
 
   useEffect(() => {
-    // El primer render ya refleja la URL: no re-navegar.
-    if (primera.current) {
-      primera.current = false;
-      return;
-    }
+    // Este efecto REACCIONA a la URL y además la ESCRIBE, así que solo debe
+    // navegar cuando la caja y la URL discrepan — o sea, cuando el usuario
+    // acaba de teclear. Cualquier otra navegación ("Ver más", un chip) también
+    // cambia `qsActual` y volvería a entrar aquí: sin esta guarda, el
+    // `delete("ver")` de abajo deshace la paginación 300ms después de picarla.
+    // Cubre de paso el primer render, donde `valor` sale de la propia URL.
+    if (valor.trim() === terminoEnUrl) return;
+
     const t = setTimeout(() => {
       const v = valor.trim();
       const params = new URLSearchParams(qsActual);
@@ -41,7 +44,7 @@ export function SearchBar() {
       router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
     }, 300);
     return () => clearTimeout(t);
-  }, [valor, pathname, router, qsActual]);
+  }, [valor, pathname, router, qsActual, terminoEnUrl]);
 
   return (
     <div className="relative">

@@ -188,6 +188,121 @@ export async function crearTela(formData: FormData) {
   redirect(`/admin/tela/${data.id}`);
 }
 
+/**
+ * Alta de un producto de MERCERÍA en un solo paso: modelo + su primera
+ * variante + sus fotos.
+ * ---------------------------------------------------------------------------
+ * La tela se da de alta "vacía" y se llena en el editor porque un modelo tiene
+ * muchos colores. Un avío es al revés: la bolsita trae UN código escrito a
+ * mano, un precio y una foto, y así se captura de corrido con la bolsita en la
+ * mano. Obligar a pasar por el editor para poner el precio convertía cada
+ * bolsita en dos pantallas.
+ *
+ * El CÓDIGO de la etiqueta es la pieza central: es el SKU real (no inventado,
+ * ver CLAUDE.md), y su prefijo es lo que decide la categoría — las mismas
+ * reglas que usa `pnpm clasificar`, para que capturar a mano y clasificar en
+ * lote no den resultados distintos.
+ */
+export async function crearMerceria(formData: FormData) {
+  await requireAdmin();
+
+  // Tipo explícito en la CONSTANTE (no solo en la flecha): es lo que hace que
+  // TypeScript trate la llamada como terminal y narre lo de abajo. Sin él,
+  // cada `volverConError` necesitaría un `return` extra para convencerlo.
+  const volverConError: (mensaje: string, extra?: string) => never = (mensaje, extra = "") =>
+    redirect(`/admin/merceria/nueva?error=${encodeURIComponent(mensaje)}${extra}`);
+
+  const codigo = String(formData.get("codigo") ?? "").trim();
+  if (!codigo) volverConError("Escribe el código de la etiqueta.");
+
+  // Sin nombre comercial, el código ES el nombre: así llegó la mitad del lote
+  // de agosto y es como la tienda se refiere al producto.
+  const nombre = String(formData.get("nombre") ?? "").trim() || codigo;
+  const slugBase = slugify(nombre);
+  if (!slugBase) volverConError("El nombre debe incluir letras o números para generar su URL.");
+
+  const supabase = createAdminClient();
+
+  // El SKU es UNIQUE: comprobarlo ANTES de escribir nada. Si se creara primero
+  // la tela, un código repetido dejaría un modelo huérfano sin variantes.
+  const { data: repetido } = await supabase
+    .from("variante")
+    .select("tela_id")
+    .eq("sku", codigo)
+    .maybeSingle();
+  if (repetido) {
+    volverConError(
+      `El código "${codigo}" ya está capturado. Ábrelo para editarlo en vez de darlo de alta otra vez.`,
+      `&existe=${repetido.tela_id}`
+    );
+  }
+
+  // Un slug repetido NO debe frenar la captura: dos flores distintas se llaman
+  // igual y solo el código las distingue, así que el código desempata.
+  let creada: { id: string; slug: string } | null = null;
+  for (const slug of [slugBase, `${slugBase}-${slugify(codigo)}`]) {
+    const { data, error } = await supabase
+      .from("tela")
+      .insert({
+        nombre,
+        slug,
+        categoria_id: uuidOpcional(formData.get("categoria_id"), "categoría"),
+      })
+      .select("id")
+      .single();
+
+    if (!error) {
+      creada = { id: data.id, slug };
+      break;
+    }
+    if (error.code !== "23505") volverConError(`No se pudo crear el producto: ${error.message}.`);
+  }
+  if (!creada) {
+    volverConError(`Ya existe un producto con la URL "${slugBase}" y con el código "${codigo}".`);
+  }
+  const telaId = creada.id;
+
+  const { data: variante, error: errorVariante } = await supabase
+    .from("variante")
+    .insert({
+      tela_id: telaId,
+      sku: codigo,
+      color_id: uuidOpcional(formData.get("color_id"), "color"),
+      precio: parseCampoNumerico(formData.get("precio"), "precio"),
+      unidad_venta: parseUnidadVenta(formData.get("unidad_venta")),
+      piezas_por_unidad: parseEntero(formData.get("piezas_por_unidad"), "piezas por unidad"),
+      stock: parseCampoNumerico(formData.get("stock"), "stock"),
+    })
+    .select("id")
+    .single();
+
+  if (errorVariante || !variante) {
+    // Sin variante el modelo no existe para el catálogo (la vista es una fila
+    // POR VARIANTE): se retira para no dejar basura invisible en la tabla.
+    await supabase.from("tela").delete().eq("id", telaId);
+    volverConError(`No se pudo guardar el producto: ${errorVariante?.message ?? "sin datos"}.`);
+  }
+
+  const archivos = archivosDelForm(formData, "fotos");
+  if (archivos.length) {
+    const pendientes = await registrarFotos({
+      supabase,
+      varianteId: variante.id,
+      // Misma convención de la ingesta: carpeta = slug del modelo.
+      carpeta: creada.slug,
+      base: slugify(codigo) || "producto",
+      archivos,
+      alt: null,
+      ordenInicial: 0,
+    });
+    generarDerivadosEnSegundoPlano(supabase, pendientes, telaId);
+  }
+
+  refrescarCatalogo(telaId);
+  // Al editor: ahí se agregan más colores, más fotos y los detalles finos.
+  redirect(`/admin/tela/${telaId}?nuevo=1`);
+}
+
 export async function actualizarTela(formData: FormData) {
   await requireAdmin();
   const telaId = requireUuid(formData.get("tela_id"), "tela");
@@ -393,36 +508,40 @@ const EXTENSIONES_IMAGEN: Record<string, string> = {
   "image/webp": "webp",
 };
 
-export async function subirFotos(formData: FormData) {
-  await requireAdmin();
-  const varianteId = requireUuid(formData.get("variante_id"), "variante");
-  const telaId = requireUuid(formData.get("tela_id"), "tela");
-
-  const archivos = formData
-    .getAll("fotos")
+/** Archivos de un input `multiple`, ya sin los huecos vacíos del navegador. */
+function archivosDelForm(formData: FormData, campo: string): File[] {
+  return formData
+    .getAll(campo)
     .filter((f): f is File => f instanceof File && f.size > 0);
-  if (!archivos.length) throw new Error("Selecciona al menos una imagen (JPG, PNG o WebP).");
+}
 
-  const supabase = createAdminClient();
-
-  // Contexto para nombrar el archivo igual que la ingesta: "slug-tela/color-n.ext"
-  const { data: contexto } = await supabase
-    .from("catalogo_telas")
-    .select("tela_slug, color_slug")
-    .eq("variante_id", varianteId)
-    .single();
-  const carpeta = contexto?.tela_slug ?? "sin-modelo";
-  const base = contexto?.color_slug ?? "variante";
-
-  const { data: existentes } = await supabase
-    .from("foto")
-    .select("orden")
-    .eq("variante_id", varianteId)
-    .order("orden", { ascending: false })
-    .limit(1);
-  let orden = (existentes?.[0]?.orden ?? -1) + 1;
-
+/**
+ * Sube imágenes al bucket y registra su fila en `foto`, numerando `orden` a
+ * partir de `ordenInicial`. Compartido por la subida desde el editor y por el
+ * alta de mercería, que sube la foto en el mismo paso en que crea el producto.
+ *
+ * Devuelve las fotos registradas para que el llamador genere sus derivados en
+ * `after()`; NO los genera aquí porque quien sube no debe esperar a sharp.
+ */
+async function registrarFotos({
+  supabase,
+  varianteId,
+  carpeta,
+  base,
+  archivos,
+  alt,
+  ordenInicial,
+}: {
+  supabase: ReturnType<typeof createAdminClient>;
+  varianteId: string;
+  carpeta: string;
+  base: string;
+  archivos: File[];
+  alt: string | null;
+  ordenInicial: number;
+}): Promise<{ fotoId: string; ruta: string }[]> {
   const pendientes: { fotoId: string; ruta: string }[] = [];
+  let orden = ordenInicial;
 
   for (const archivo of archivos) {
     const ext = EXTENSIONES_IMAGEN[archivo.type];
@@ -439,12 +558,7 @@ export async function subirFotos(formData: FormData) {
 
     const { data: fila, error: errorFila } = await supabase
       .from("foto")
-      .insert({
-        variante_id: varianteId,
-        ruta,
-        orden,
-        alt: textoOpcional(formData.get("alt")),
-      })
+      .insert({ variante_id: varianteId, ruta, orden, alt })
       .select("id")
       .single();
     if (errorFila || !fila) {
@@ -456,10 +570,20 @@ export async function subirFotos(formData: FormData) {
     orden += 1;
   }
 
-  // Derivados DESPUÉS de responder (after): quien sube no espera los ~2-4s de
-  // sharp por foto. Sin reintentos a propósito: si falla, la foto queda con
-  // derivados=null (el frontend cae al original) y `pnpm backfill:derivados`
-  // la recoge. El error queda en los logs de Vercel.
+  return pendientes;
+}
+
+/**
+ * Derivados DESPUÉS de responder (after): quien sube no espera los ~2-4s de
+ * sharp por foto. Sin reintentos a propósito: si falla, la foto queda con
+ * derivados=null (el frontend cae al original) y `pnpm backfill:derivados`
+ * la recoge. El error queda en los logs de Vercel.
+ */
+function generarDerivadosEnSegundoPlano(
+  supabase: ReturnType<typeof createAdminClient>,
+  pendientes: { fotoId: string; ruta: string }[],
+  telaId: string
+) {
   after(async () => {
     for (const pendiente of pendientes) {
       try {
@@ -470,7 +594,43 @@ export async function subirFotos(formData: FormData) {
     }
     refrescarCatalogo(telaId);
   });
+}
 
+export async function subirFotos(formData: FormData) {
+  await requireAdmin();
+  const varianteId = requireUuid(formData.get("variante_id"), "variante");
+  const telaId = requireUuid(formData.get("tela_id"), "tela");
+
+  const archivos = archivosDelForm(formData, "fotos");
+  if (!archivos.length) throw new Error("Selecciona al menos una imagen (JPG, PNG o WebP).");
+
+  const supabase = createAdminClient();
+
+  // Contexto para nombrar el archivo igual que la ingesta: "slug-tela/color-n.ext"
+  const { data: contexto } = await supabase
+    .from("catalogo_telas")
+    .select("tela_slug, color_slug")
+    .eq("variante_id", varianteId)
+    .single();
+
+  const { data: existentes } = await supabase
+    .from("foto")
+    .select("orden")
+    .eq("variante_id", varianteId)
+    .order("orden", { ascending: false })
+    .limit(1);
+
+  const pendientes = await registrarFotos({
+    supabase,
+    varianteId,
+    carpeta: contexto?.tela_slug ?? "sin-modelo",
+    base: contexto?.color_slug ?? "variante",
+    archivos,
+    alt: textoOpcional(formData.get("alt")),
+    ordenInicial: (existentes?.[0]?.orden ?? -1) + 1,
+  });
+
+  generarDerivadosEnSegundoPlano(supabase, pendientes, telaId);
   refrescarCatalogo(telaId);
 }
 

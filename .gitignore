@@ -20,9 +20,12 @@ next-env.d.ts
 /FOTOS_TELAS/
 /Fotos_Entrada/
 /Fotos_Entrada_listas/
+/0Fotos_nobg/
 *.jpg
 *.jpeg
 *.png
+*.webp
+*.bak
 !/public/**
 
 # manifest de revisión generado por la ingesta

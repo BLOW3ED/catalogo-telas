@@ -53,7 +53,8 @@ La vista sigue exponiendo `precio_metro` como **alias deprecado** de `precio`.
 
 **`lib/unidades.ts` es la única fuente de esa vocabulario.** No hardcodear "/m" ni
 pasos de 0.5 en ningún lado: la unidad decide el sufijo del precio, el plural del
-stepper y —lo importante— el PASO y el MÍNIMO con que se cuenta. La tela se corta a
+stepper, el PASO y el MÍNIMO con que se cuenta, y si viene `empacada` (bolsa,
+rollo, juego: las únicas donde tiene sentido preguntar `piezas_por_unidad`). La tela se corta a
 medios metros; un botón no se parte a la mitad. Está usada en `ProductCard`,
 `/tela/[slug]`, `AddToCart`, `CartDrawer`, `lib/whatsapp-message.ts` y los dos
 formularios de `/admin`. `unidadDe(null)` cae a **metro** a propósito: es como se
@@ -117,7 +118,18 @@ carrito ya guardado en localStorage— no le cambia el pedido a nadie.
    búsqueda. Cambiar un filtro o la búsqueda resetea `ver`.
 5. ⏳ Cotización + WhatsApp (carrito y envío listos; pulido pendiente)
 6. ✅ Admin con Auth (allowlist `ADMIN_EMAILS`): precio/stock en `/admin`, editor
-   completo de telas/variantes/fotos en `/admin/tela/[id]`, altas en
-   `/admin/tela/nueva`, inventario con kardex en `/admin/inventario`
-   (tabla `movimiento_inventario`, sección 10 del SQL)
+   completo de telas/variantes/fotos en `/admin/tela/[id]`, inventario con
+   kardex en `/admin/inventario` (tabla `movimiento_inventario`, sección 10 del
+   SQL). En `/admin` cada card muestra categoría y CUÁNTAS FOTOS tiene (esto
+   último NO sale de la vista: colapsa las N fotos en `foto_principal`, así que
+   se cuenta con una lectura aparte a `foto`), y la card ENTERA abre el editor
+   —stretched link— menos los campos de captura, elevados en `z-10` para que
+   tocar el precio en la tablet no navegue.
+   **Dos altas, porque la captura es al revés:** `/admin/tela/nueva` crea el
+   modelo vacío y los colores se agregan en el editor; `/admin/merceria/nueva`
+   captura el avío completo de una sentada (código, categoría, unidad de venta,
+   precio, stock y fotos) porque una bolsita es un solo producto. Ahí el CÓDIGO
+   manda: su prefijo propone categoría y unidad con `categoriaDeCodigo` —las
+   mismas reglas de `pnpm clasificar`— y deja de opinar en cuanto la tienda
+   elige categoría a mano.
 7. ⏳ Pulido visual, rendimiento, tests (README listo)

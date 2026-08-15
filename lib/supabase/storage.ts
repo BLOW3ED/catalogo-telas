@@ -34,6 +34,25 @@ export function rutasDerivados(ruta: string): string[] {
 }
 
 /**
+ * Sello de versión del lote de derivados, para romper caché cuando se vuelven
+ * a generar.
+ *
+ * Las rutas de los derivados son deterministas, así que al re-hornear una foto
+ * la URL NO cambia — y Supabase los sirve con `cache-control: max-age=3600`.
+ * Sin esto, un visitante que ya cargó el catálogo sigue viendo la imagen vieja
+ * hasta una hora. Medido tras la re-subida: la versión cacheada de una tira
+ * traía el relleno espejo (banda superior sd 15.24) mientras el CDN ya servía
+ * la corregida (sd 0.01).
+ *
+ * `generado_en` ya lo escribe `procesarFoto` en cada pasada, así que el sello
+ * se mueve solo. Si falta, no se agrega nada (URL idéntica a la de antes).
+ */
+function sello(derivados: DerivadosFoto): string {
+  const t = Date.parse(derivados.generado_en ?? "");
+  return Number.isNaN(t) ? "" : `?v=${t}`;
+}
+
+/**
  * Arma el atributo `srcset` con los derivados disponibles usando su ancho
  * REAL (guardado al generarlos; en fotos verticales el ancho no es el lado
  * largo). Devuelve null si no hay ninguno → el caller cae al original.
@@ -42,11 +61,12 @@ export function srcsetDerivados(
   derivados: DerivadosFoto | null | undefined
 ): string | null {
   if (!derivados) return null;
+  const v = sello(derivados);
   const partes: string[] = [];
   for (const tamano of TAMANOS_DERIVADOS) {
     const d = derivados[tamano];
     const url = d && publicImageUrl(d.ruta);
-    if (d && url) partes.push(`${url} ${d.ancho}w`);
+    if (d && url) partes.push(`${url}${v} ${d.ancho}w`);
   }
   return partes.length > 0 ? partes.join(", ") : null;
 }
@@ -61,9 +81,10 @@ export function urlDerivado(
     preferido,
     ...TAMANOS_DERIVADOS.filter((t) => t !== preferido),
   ];
+  const v = sello(derivados);
   for (const tamano of orden) {
     const url = publicImageUrl(derivados[tamano]?.ruta);
-    if (url) return url;
+    if (url) return `${url}${v}`;
   }
   return null;
 }

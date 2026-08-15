@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import sharp from "sharp";
-import { calcularRecorte, recortarProducto } from "./recorte";
+import { calcularRecorte, recortarProducto, modoEncuadre } from "./recorte";
 
 /**
  * Escenas sintéticas en vez de fotos reales: el detector se prueba contra
@@ -37,6 +37,30 @@ function contiene(r: { left: number; top: number; width: number; height: number 
   return r.left <= caja.left && r.top <= caja.top
     && r.left + r.width >= caja.left + caja.w
     && r.top + r.height >= caja.top + caja.h;
+}
+
+/**
+ * Luminancia de una región del resultado. Media, máximo y desviación estándar:
+ * el MÁXIMO delata contenido brillante que no debería estar ahí (un reflejo del
+ * producto) y la DESVIACIÓN delata estructura — un fondo liso desenfocado es
+ * plano, un eco del producto no.
+ */
+async function luminancia(
+  buf: Buffer,
+  region: { left: number; top: number; width: number; height: number }
+) {
+  const { data, info } = await sharp(buf)
+    .extract(region)
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  const vals: number[] = [];
+  for (let i = 0; i < data.length; i += info.channels) {
+    vals.push(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]);
+  }
+  const media = vals.reduce((a, b) => a + b, 0) / vals.length;
+  const sd = Math.sqrt(vals.reduce((a, b) => a + (b - media) ** 2, 0) / vals.length);
+  return { media, max: Math.max(...vals), sd };
 }
 
 describe("calcularRecorte", () => {
@@ -119,8 +143,29 @@ describe("calcularRecorte", () => {
   });
 });
 
+describe("modoEncuadre", () => {
+  // Tabla pura, sin decodificar imágenes: el umbral es una decisión de producto
+  // y esto lo vuelve deliberado. DESBORDE_MAX = 0.10.
+  const casos: [string, number, "rellenar" | "encajar"][] = [
+    ["el cuadrado cabe entero", 0, "rellenar"],
+    ["se sale por menos del umbral", 0.099, "rellenar"],
+    ["se sale justo por encima", 0.101, "encajar"],
+    ["tira cruzando el encuadre", 0.22, "encajar"],
+  ];
+
+  it.each(casos)("%s (desborde %s) → %s", (_n, desborde, esperado) => {
+    // Cuadrado de 1000 que se sale `desborde*1000` px por la izquierda.
+    const lado = 1000;
+    const fuera = Math.round(desborde * lado);
+    const recorte = { left: -fuera, top: 0, width: lado, height: lado };
+    expect(modoEncuadre(recorte, 4000, lado)).toBe(esperado);
+  });
+});
+
 describe("recortarProducto — encuadre", () => {
-  it("entrega un cuadrado completo aunque el recorte se salga de la foto", async () => {
+  it("encaja un sujeto tipo tira COMPLETO en vez de recortarlo", async () => {
+    // Una tira ocupa casi todo el ancho: el cuadrado con margen se sale un 23%,
+    // muy por encima del umbral, así que se escala para caber.
     const { buffer, recortada } = await recortarProducto(
       await escena(NEGRO, [{ left: 40, top: 240, w: 720, h: 120, gris: 225 }]),
       { lado: 600 }
@@ -128,17 +173,131 @@ describe("recortarProducto — encuadre", () => {
     expect(recortada).toBe(true);
     const { width, height } = await sharp(buffer).metadata();
     expect(width).toBe(height);
+
+    // La tira entera cabe: hay producto en el centro y fondo en ambos extremos
+    // horizontales, o sea no se perdió ninguna punta.
+    const centro = await luminancia(buffer, { left: 280, top: 280, width: 40, height: 40 });
+    expect(centro.media).toBeGreaterThan(150);
+    for (const left of [0, 595]) {
+      const punta = await luminancia(buffer, { left, top: 280, width: 5, height: 40 });
+      expect(punta.media).toBeLessThan(60);
+    }
   });
 
-  it("rellena continuando el fondo, no con negro por defecto", async () => {
+  it("NO espejea el producto en la banda de relleno", async () => {
+    // Este es el test que faltaba. Con `extendWith:"mirror"` la marca brillante
+    // pegada al borde superior reaparecía reflejada dentro de la banda, y en las
+    // esquinas el reflejo se cruzaba consigo mismo formando una X. Se veía a
+    // simple vista en el grid de "Tira de pedrería".
+    const { buffer } = await recortarProducto(
+      await escena(NEGRO, [
+        { left: 50, top: 255, w: 700, h: 90, gris: 230 },
+        { left: 620, top: 0, w: 70, h: 40, gris: 255 },  // marca asimétrica
+      ]),
+      { lado: 600 }
+    );
+
+    // Mitad exterior de la banda superior, lejos de la costura: ahí el blur ya
+    // no sangra producto, así que lo que haya es relleno puro.
+    const banda = await luminancia(buffer, { left: 0, top: 0, width: 600, height: 20 });
+    expect(banda.max).toBeLessThan(60);   // medido con fondo muestreado: 15
+    expect(banda.sd).toBeLessThan(4);     // medido: 1.06 — plano. Con espejo se dispara
+  });
+
+  it("rellena con el color de fondo real, no con negro ni con un valor fijo", async () => {
     // Fondo gris claro: si el relleno fuera negro fijo, se vería una banda.
     const { buffer } = await recortarProducto(
       await escena(GRIS, [{ left: 30, top: 250, w: 740, h: 100, gris: 20 }]),
       { lado: 600 }
     );
-    const { data } = await sharp(buffer).raw().toBuffer({ resolveWithObject: true });
-    // Esquina superior izquierda: cae en la zona rellenada.
-    expect(data[0]).toBeGreaterThan(100);
+    // La banda superior debe estar cerca del gris del fondo (150), no solo
+    // "no ser negra": la aserción vieja (`> 100`) pasaba igual con espejo.
+    const banda = await luminancia(buffer, { left: 0, top: 0, width: 600, height: 20 });
+    expect(banda.media).toBeGreaterThan(138);
+    expect(banda.media).toBeLessThan(162);
+    expect(banda.sd).toBeLessThan(4);
+  });
+
+  it("en modo rellenar conserva la escala del sujeto y pinta solo el borde que falta", async () => {
+    // Desborde del 7%: por debajo del umbral, así que el cuadrado manda y solo
+    // se pinta la franja izquierda que pide fuera de la foto.
+    const { buffer } = await recortarProducto(
+      await escena(NEGRO, [{ left: 60, top: 150, w: 300, h: 300, gris: 220 }]),
+      { lado: 600 }
+    );
+    const { width, height } = await sharp(buffer).metadata();
+    expect(width).toBe(height);
+
+    const franja = await luminancia(buffer, { left: 0, top: 200, width: 10, height: 80 });
+    expect(franja.media).toBeLessThan(40);   // fondo negro, no producto estirado
+    expect(franja.sd).toBeLessThan(6);
+  });
+
+  it("en modo encajar el sujeto sobrevive la ventana 3:4 de la card", async () => {
+    // El punto del modo: la card enseña el 75% central del cuadrado, así que
+    // encajar en el cuadrado ENTERO devolvía la tira con las puntas cortadas —
+    // exactamente lo que el modo existe para evitar. Aquí se recorta la salida
+    // como lo hace `object-cover` y se comprueba que las puntas siguen ahí.
+    const { buffer } = await recortarProducto(
+      await escena(NEGRO, [{ left: 40, top: 240, w: 720, h: 120, gris: 225 }]),
+      { lado: 600 }
+    );
+    const ventana = await sharp(buffer)
+      .extract({ left: 75, top: 0, width: 450, height: 600 })
+      .toBuffer();
+
+    // Hay producto en el centro de la ventana…
+    const centro = await luminancia(ventana, { left: 205, top: 280, width: 40, height: 40 });
+    expect(centro.media).toBeGreaterThan(150);
+
+    // …y NINGÚN pixel de producto tocando los bordes verticales. Se mide con
+    // `max` y no con la media: la tira ocupa 90 de 600 filas, así que promediar
+    // la columna entera la diluye a ~40 y la aserción pasaría igual con las
+    // puntas cortadas — que fue justo el primer intento de este test.
+    for (const left of [0, 445]) {
+      const punta = await luminancia(ventana, { left, top: 0, width: 5, height: 600 });
+      expect(punta.max).toBeLessThan(60);
+    }
+  });
+
+  it("entrega un cuadrado aunque no detecte sujeto", async () => {
+    // Cierra el invariante del que depende el encuadre de la card. Antes estas
+    // fotos salían con el aspect nativo de cámara (3:2) y la ventana les comía
+    // los costados.
+    const { buffer, recortada } = await recortarProducto(await escena(NEGRO, []), { lado: 600 });
+    expect(recortada).toBe(false);
+    const { width, height } = await sharp(buffer).metadata();
+    expect(width).toBe(height);
+  });
+});
+
+describe("calcularRecorte — aire y fondo", () => {
+  it("deja más aire del que la ventana 3:4 de la card descarta", async () => {
+    // `object-cover` en aspect-[3/4] tira 12.5% del ancho por lado, 13.6% con el
+    // hover. Con MARGEN=0.28 el lado del cuadrado es 1.56x el sujeto → 17.9% de
+    // aire. El bbox detectado sale unos px más ancho que el bloque dibujado
+    // (el gradiente Sobel marca el contorno), de ahí el rango en vez del valor.
+    const caja = { left: 250, top: 150, w: 300, h: 300 };
+    const { recorte } = await calcularRecorte(await escena(NEGRO, [{ ...caja, gris: 220 }]));
+
+    expect(recorte).not.toBeNull();
+    const razon = recorte!.width / caja.w;
+    expect(razon).toBeGreaterThan(1.5);
+    expect(razon).toBeLessThan(1.75);
+  });
+
+  it("muestrea el fondo del MARCO, no el color dominante de la foto", async () => {
+    // El sujeto claro ocupa el 73% del encuadre, así que domina el histograma:
+    // `sharp().stats().dominant` devuelve (248,248,248) —el producto— mientras
+    // que la mediana del anillo devuelve el fondo real. Si alguien cambia
+    // `fondoDelMarco` por `dominant` o por la media global, este test truena.
+    const { fondo } = await calcularRecorte(
+      await escena(GRIS, [{ left: 50, top: 40, w: 700, h: 500, gris: 250 }])
+    );
+    for (const canal of [fondo.r, fondo.g, fondo.b]) {
+      expect(canal).toBeGreaterThan(142);
+      expect(canal).toBeLessThan(158);
+    }
   });
 });
 

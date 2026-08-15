@@ -173,6 +173,29 @@ type Parseado = {
  * y cuando no hay evidencia se recorta igual pero se marca en `notas`, que es
  * justo para lo que existe el paso de revisión manual del CSV.
  */
+/**
+ * ¿Este archivo es una descarga duplicada de otro que YA está en la carpeta?
+ *
+ * El navegador nombra "BNK228400003(1).jpg" al bajar dos veces el mismo
+ * archivo. `separarToma` ya recortaba el sufijo para agrupar, pero dejaba las
+ * DOS fotos, así que el producto salía con la misma imagen repetida en el
+ * carrusel. Aquí se descarta la copia.
+ *
+ * Exige que el original exista de verdad en el corpus: un "(1)" huérfano —el
+ * único archivo de ese producto— tiene que conservarse, o se perdería la foto.
+ *
+ * La comparación ignora mayúsculas porque el lote las mezcla: el original es
+ * "TGL25400004.jpg" y la copia "tgl25400004(1).jpg". En el FS de macOS son el
+ * mismo nombre, pero `slugify` las manda a rutas distintas, así que sin esto la
+ * copia se subía como una foto más del producto.
+ */
+function esDescargaDuplicada(base: string, corpus: Set<string>): boolean {
+  const dup = /^(.*)\(\d+\)$/.exec(base);
+  if (!dup) return false;
+  const original = dup[1].toLowerCase();
+  return [...corpus].some((o) => o.toLowerCase() === original);
+}
+
 function separarToma(
   base: string, corpus: Set<string>
 ): { grupo: string; toma: number | null; notas: string[] } {
@@ -422,7 +445,16 @@ async function modoManifest() {
   const coloresFlor = tablaDeColores(
     [...corpus].map((b) => separarToma(b, corpus).grupo)
   );
-  const parseados = imagenes.map((f) => parseNombre(f, corpus, coloresFlor));
+  // Las descargas duplicadas se descartan DESPUÉS de armar `corpus` y
+  // `coloresFlor`: esas dos tablas se construyen con todos los nombres a
+  // propósito, porque quitar archivos cambiaría la heurística de corte
+  // SKU/toma y la tabla de códigos de color.
+  const duplicadas = imagenes.filter((f) =>
+    esDescargaDuplicada(path.basename(f, path.extname(f)), corpus)
+  );
+  const parseados = imagenes
+    .filter((f) => !duplicadas.includes(f))
+    .map((f) => parseNombre(f, corpus, coloresFlor));
 
   // Las fotos del mismo grupo van juntas y en orden de toma: así el CSV se
   // llena por bloques (un producto, sus N fotos) en vez de saltando, y `orden`
@@ -510,6 +542,10 @@ async function modoManifest() {
   console.log(`   grupos  : ${grupos.length} (producto detectado por nombre de archivo)`);
   if (previo.size) {
     console.log(`   fusionado con el CSV anterior: ${conservadas} filas conservaron datos tuyos`);
+  }
+  if (duplicadas.length) {
+    console.log(`   descargas duplicadas ignoradas : ${duplicadas.length}`);
+    duplicadas.forEach((f) => console.log(`     · ${f}`));
   }
   console.log(`   fotos sin SKU : ${sinSku.length}`);
   console.log(`   grupos sin nombre : ${sinModelo.length}  ${sinModelo.length ? "← hay que ponérselo a mano" : ""}`);

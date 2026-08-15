@@ -42,6 +42,46 @@ export const CATEGORIAS = {
   TUL_BORDADO: { nombre: "Tul Bordado", slug: "tul-bordado" },
 } as const satisfies Record<string, Categoria>;
 
+/**
+ * Cómo se vende cada categoría.
+ * ---------------------------------------------------------------------------
+ * La forma del producto decide la unidad: una tira y un galón se cortan por
+ * metro, pero un cintillo, una aplicación o una hebilla se venden de a una, y
+ * la piedra suelta va a granel en bolsa.
+ *
+ * Existe porque la ingesta metió TODO como `metro` —era el default de la
+ * columna— y eso llenó el catálogo de precios "$89/m" en piezas sueltas, que
+ * es un precio que nadie puede cobrar. Es un DEFAULT por categoría, no una
+ * verdad absoluta: lo que la tienda capture a mano desde /admin manda.
+ */
+export const UNIDAD_POR_CATEGORIA: Record<string, string> = {
+  // Se cortan del rollo.
+  [CATEGORIAS.TIRA.slug]: "metro",
+  [CATEGORIAS.GALON.slug]: "metro",
+  [CATEGORIAS.FLECO.slug]: "metro",
+  [CATEGORIAS.CINTA.slug]: "metro",
+  [CATEGORIAS.CHIFON.slug]: "metro",
+  [CATEGORIAS.TUL.slug]: "metro",
+  [CATEGORIAS.TUL_BORDADO.slug]: "metro",
+  // Se venden de a una.
+  [CATEGORIAS.CINTILLO.slug]: "pieza",
+  [CATEGORIAS.APLICACION.slug]: "pieza",
+  [CATEGORIAS.HEBILLA.slug]: "pieza",
+  [CATEGORIAS.BOTONES.slug]: "pieza",
+  [CATEGORIAS.CORCHETES.slug]: "pieza",
+  [CATEGORIAS.FLORES.slug]: "pieza",
+  // A granel.
+  [CATEGORIAS.PIEDRA.slug]: "bolsa",
+  // Las copas van en PAR: es media prenda, no se vende una sola.
+  [CATEGORIAS.COPAS.slug]: "par",
+};
+
+/** Unidad de venta que le toca a una categoría, o `null` si no hay regla. */
+export function unidadDeCategoria(slug: string | null | undefined): string | null {
+  const k = slug?.trim();
+  return (k && UNIDAD_POR_CATEGORIA[k]) ?? null;
+}
+
 export type ReglaCategoria = {
   re: RegExp;
   categoria: Categoria;

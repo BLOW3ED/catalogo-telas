@@ -1,5 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { categoriaDeCodigo, CATEGORIAS, REGLAS_CATEGORIA } from "./categorias";
+import {
+  categoriaDeCodigo,
+  unidadDeCategoria,
+  CATEGORIAS,
+  REGLAS_CATEGORIA,
+  UNIDAD_POR_CATEGORIA,
+} from "./categorias";
+import { UNIDADES_VENTA } from "../unidades";
 import { interpretaFamilia } from "./nombres";
 
 /**
@@ -127,5 +134,50 @@ describe("categoriaDeCodigo", () => {
     for (const codigo of ["BO12", "BO635", "JR1103", "JR1130"]) {
       expect(categoriaDeCodigo(codigo)?.nombre).toBe(interpretaFamilia(codigo)?.categoria);
     }
+  });
+});
+
+describe("unidadDeCategoria", () => {
+  it("corta por metro solo lo que sale de un rollo", () => {
+    for (const c of [CATEGORIAS.TIRA, CATEGORIAS.GALON, CATEGORIAS.FLECO, CATEGORIAS.CINTA]) {
+      expect(unidadDeCategoria(c.slug), c.nombre).toBe("metro");
+    }
+    for (const c of [CATEGORIAS.CHIFON, CATEGORIAS.TUL, CATEGORIAS.TUL_BORDADO]) {
+      expect(unidadDeCategoria(c.slug), c.nombre).toBe("metro");
+    }
+  });
+
+  it("vende de a una lo que es una pieza suelta", () => {
+    // El bug que motivó esto: un cintillo a "$89/m" es un precio que nadie
+    // puede cobrar, porque la diadema no se corta.
+    for (const c of [
+      CATEGORIAS.CINTILLO, CATEGORIAS.APLICACION, CATEGORIAS.HEBILLA,
+      CATEGORIAS.BOTONES, CATEGORIAS.CORCHETES, CATEGORIAS.FLORES,
+    ]) {
+      expect(unidadDeCategoria(c.slug), c.nombre).toBe("pieza");
+    }
+  });
+
+  it("la piedra suelta va a granel y las copas en par", () => {
+    expect(unidadDeCategoria(CATEGORIAS.PIEDRA.slug)).toBe("bolsa");
+    expect(unidadDeCategoria(CATEGORIAS.COPAS.slug)).toBe("par");
+  });
+
+  it("toda categoría conocida tiene unidad: ninguna se queda en el default silencioso", () => {
+    for (const c of Object.values(CATEGORIAS)) {
+      expect(unidadDeCategoria(c.slug), `falta la unidad de "${c.nombre}"`).not.toBeNull();
+    }
+  });
+
+  it("solo usa unidades que lib/unidades.ts sabe formatear", () => {
+    // Si alguien pone "kilo" aquí, unidadDe() lo mandaría callado a metro.
+    for (const u of Object.values(UNIDAD_POR_CATEGORIA)) {
+      expect(UNIDADES_VENTA as readonly string[]).toContain(u);
+    }
+  });
+
+  it("devuelve null para lo que no conoce, en vez de adivinar", () => {
+    expect(unidadDeCategoria("categoria-inventada")).toBeNull();
+    expect(unidadDeCategoria(null)).toBeNull();
   });
 });

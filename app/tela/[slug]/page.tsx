@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { getTelaPorSlug } from "@/lib/queries";
+import { getTelaPorSlug, getFotosDeVariantes } from "@/lib/queries";
 import { publicImageUrl } from "@/lib/supabase/storage";
+import { construirSlides } from "@/lib/fotos";
 import { TelaImage } from "@/components/TelaImage";
-import { TelaImageCarousel, type SlideColor } from "@/components/TelaImageCarousel";
+import { TelaImageCarousel } from "@/components/TelaImageCarousel";
 import { ColorSelector } from "@/components/ColorSelector";
 import { AttributeBadges } from "@/components/AttributeBadges";
 import { AddToCart } from "@/components/AddToCart";
@@ -106,27 +107,15 @@ export default async function TelaDetallePage({
 
   const tags = [...seleccionada.casos_uso, ...seleccionada.oportunidades];
 
-  // Slides del carrusel: una foto por color, mismo filtro y orden que los
-  // swatches del ColorSelector (color real con hex) para que deslizar y picar
-  // recorran la misma lista. Dedupe por slug: si dos SKUs comparten color,
-  // `?color=` de todos modos resuelve al primero.
-  const slides: SlideColor[] = Array.from(
-    new Map(
-      variantes
-        .filter((v) => v.color_slug && v.color_hex)
-        .map((v) => [v.color_slug!, v])
-    ).values()
-  ).map((v) => ({
-    slug: v.color_slug!,
-    src: publicImageUrl(v.foto_principal),
-    derivados: v.foto_principal_derivados ?? null,
-    colorNombre: v.color_nombre,
-  }));
+  // Slides del carrusel. La vista `catalogo_telas` solo trae `foto_principal`
+  // (la de menor orden de cada variante), así que las demás fotos se leen de
+  // la tabla `foto`: son ~100 de las 259 del catálogo, invisibles hasta ahora
+  // para el cliente aunque en /admin sí se vieran.
+  const fotos = await getFotosDeVariantes(variantes.map((v) => v.variante_id));
+  const slides = construirSlides({ variantes, fotos, seleccionada });
 
-  // Solo hay swipe si hay ≥2 colores y la variante seleccionada es uno de
-  // ellos (una variante sin color quedaría fuera del carrusel).
-  const usarCarrusel =
-    slides.length > 1 && slides.some((s) => s.slug === seleccionada.color_slug);
+  // Con una sola foto no hay nada que recorrer: se pinta la imagen suelta.
+  const usarCarrusel = slides.length > 1;
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
@@ -141,17 +130,21 @@ export default async function TelaDetallePage({
       <div className="grid gap-8 lg:grid-cols-2">
         {/* Imagen y Disclaimer */}
         <div className="flex flex-col gap-4">
-          <div className="overflow-hidden rounded border border-line-strong/20 bg-white p-px">
-            {usarCarrusel ? (
-              <TelaImageCarousel
-                slides={slides}
-                selectedSlug={seleccionada.color_slug!}
-                telaNombre={nombre}
-              />
-            ) : (
+          {usarCarrusel ? (
+            <TelaImageCarousel
+              slides={slides}
+              selectedColorSlug={seleccionada.color_slug}
+              telaNombre={nombre}
+            />
+          ) : (
+            <div className="overflow-hidden rounded border border-line-strong/20 bg-white p-px">
               <TelaImage
-                src={foto}
-                derivados={seleccionada.foto_principal_derivados}
+                // `slides[0]` ya resolvió a qué variante mirar (incluida la
+                // caída a una hermana cuando la seleccionada quedó sin fotos).
+                src={slides[0] ? publicImageUrl(slides[0].ruta) : foto}
+                derivados={
+                  slides[0]?.derivados ?? seleccionada.foto_principal_derivados
+                }
                 sizes="(max-width: 1023px) 100vw, 50vw"
                 alt={
                   seleccionada.color_nombre
@@ -160,8 +153,8 @@ export default async function TelaDetallePage({
                 }
                 priority
               />
-            )}
-          </div>
+            </div>
+          )}
           {/* En mobile, "Tonos disponibles" va justo bajo la foto (antes de
               la nota) para que cambiar de color no requiera bajar toda la
               ficha. En desktop se queda en su lugar original, junto a la
