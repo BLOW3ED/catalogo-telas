@@ -53,13 +53,23 @@ export default async function HomePage({
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      {/* Intro hero editorial */}
+      <div className="mb-8">
+        <h1 className="font-display text-3xl sm:text-4xl text-ink-deep font-semibold tracking-tight mb-2">
+          Catálogo Textil
+        </h1>
+        <p className="text-sm sm:text-base text-ink-soft max-w-2xl">
+          Explora nuestra cuidada selección de telas, encajes, pedrería y mercería fina para tus proyectos de confección.
+        </p>
+      </div>
+
       {configurado && (
         <>
-          <div className="mb-4 max-w-xl">
+          <div className="mb-6 max-w-xl">
             <Suspense fallback={null}>
               <SearchBar />
             </Suspense>
-            <TutorialTrigger className="mt-3" />
+            <TutorialTrigger className="mt-3.5" />
           </div>
           <Filtros filtros={filtros} facetas={facetas} />
         </>
@@ -68,10 +78,10 @@ export default async function HomePage({
       {!configurado && <SetupNotice />}
 
       {configurado && error && (
-        <div className="flex items-start gap-3 rounded border border-amber/30 bg-amber/5 p-5 text-sm">
+        <div className="flex items-start gap-3 rounded-2xl border border-amber/30 bg-amber/5 p-5 text-sm shadow-sm">
           <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber" aria-hidden />
           <div>
-            <p className="font-semibold">No se pudo leer el catálogo</p>
+            <p className="font-semibold text-ink">No se pudo leer el catálogo</p>
             <p className="text-ink-soft">{error}</p>
           </div>
         </div>
@@ -83,31 +93,30 @@ export default async function HomePage({
 
       {modelos.length > 0 && (
         <>
-          {/* El conteo le dice a quien filtró que la lista corta es a propósito.
-              Cuando hay más de una página, dice cuántos se ven DE cuántos, en
-              vez de dar un número que no cuadra con la suma de los chips. */}
-          <p className="mb-4 text-sm text-ink-soft" aria-live="polite">
-            {faltan > 0
-              ? `${modelos.length} de ${totalModelos} productos`
-              : `${totalModelos} ${totalModelos === 1 ? "producto" : "productos"}`}
-          </p>
-          <section className="grid grid-cols-2 gap-x-2 gap-y-6 sm:gap-x-4 sm:gap-y-8 lg:grid-cols-3 xl:grid-cols-4">
+          {/* El conteo le dice a quien filtró que la lista corta es a propósito. */}
+          <div className="mb-5 flex items-center justify-between">
+            <p className="text-xs sm:text-sm font-medium text-ink-soft" aria-live="polite">
+              {faltan > 0
+                ? `Mostrando ${modelos.length} de ${totalModelos} productos`
+                : `${totalModelos} ${totalModelos === 1 ? "producto encontrado" : "productos encontrados"}`}
+            </p>
+          </div>
+
+          <section className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
             {modelos.map((tela, i) => (
               <ProductCard key={tela.tela_id} tela={tela} priority={i < 4} />
             ))}
           </section>
 
           {faltan > 0 && (
-            <div className="mt-10 flex justify-center">
-              {/* `scroll={false}`: el grid crece hacia abajo y quien picó "Ver
-                  más" se queda donde estaba, no de vuelta hasta arriba. */}
+            <div className="mt-12 flex justify-center pb-8">
               <Link
                 href={hrefConVer(filtros, hasta + MODELOS_POR_PAGINA)}
                 scroll={false}
-                className="inline-flex items-center gap-2 rounded-full border border-line-strong/30 bg-chip px-6 py-3 text-sm font-medium text-primary transition-colors hover:bg-surface-high focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-8 py-3.5 text-sm font-semibold text-primary shadow-sm transition-all hover:bg-surface-container hover:shadow-md active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
-                <Plus className="h-4 w-4" aria-hidden />
-                Ver {Math.min(faltan, MODELOS_POR_PAGINA)} más
+                <Plus className="h-4 w-4 text-primary" aria-hidden />
+                Ver {Math.min(faltan, MODELOS_POR_PAGINA)} productos más
               </Link>
             </div>
           )}
@@ -119,10 +128,10 @@ export default async function HomePage({
 
 function SetupNotice() {
   return (
-    <div className="rounded border border-line-strong/30 bg-surface p-6 shadow-sm">
+    <div className="rounded-2xl border border-line bg-surface p-6 shadow-sm">
       <div className="mb-3 flex items-center gap-2 text-amber">
         <Settings className="h-5 w-5" aria-hidden />
-        <h2 className="font-display text-xl">Falta conectar Supabase</h2>
+        <h2 className="font-display text-xl font-medium">Falta conectar Supabase</h2>
       </div>
       <ol className="list-inside list-decimal space-y-1.5 text-sm text-ink-soft">
         <li>Crea un proyecto en Supabase y corre <code className="rounded bg-line/60 px-1">catalogo_telas_supabase.sql</code>.</li>
@@ -134,20 +143,15 @@ function SetupNotice() {
   );
 }
 
-/**
- * Un solo vacío que se explica distinto según por qué quedó vacío: buscar algo
- * que no existe, filtrar de más, o un catálogo que aún no se ha poblado. Sin
- * esa distinción, quien combinó tres chips cree que el catálogo se rompió.
- */
 function SinResultados({ filtros }: { filtros: ReturnType<typeof leerFiltros> }) {
   const conFiltros = cuentaFiltros(filtros) > 0;
   const conBusqueda = filtros.q.length > 0;
 
   if (!conFiltros && !conBusqueda) {
     return (
-      <div className="rounded border border-dashed border-line-strong/40 bg-surface/60 p-10 text-center">
+      <div className="rounded-2xl border border-dashed border-line-strong/60 bg-surface/80 p-12 text-center shadow-sm">
         <p className="font-display text-2xl text-ink-soft">Aún no hay telas</p>
-        <p className="mt-1 text-sm text-ink-soft">
+        <p className="mt-2 text-sm text-ink-soft">
           Corre <code className="rounded bg-line/60 px-1">pnpm ingest</code> y luego{" "}
           <code className="rounded bg-line/60 px-1">pnpm ingest --upload</code> para poblar el catálogo.
         </p>
@@ -155,29 +159,27 @@ function SinResultados({ filtros }: { filtros: ReturnType<typeof leerFiltros> })
     );
   }
 
-  // Con búsqueda Y filtros, lo más probable es que sobren los filtros: se
-  // ofrece quitarlos sin perder lo que la persona escribió.
   const soloBusqueda = aQuerystring({ ...filtros, categorias: [], colores: [], propiedades: [], precioMax: null, soloDisponibles: false });
 
   return (
-    <div className="rounded border border-dashed border-line-strong/40 bg-surface/60 p-10 text-center">
+    <div className="rounded-2xl border border-dashed border-line-strong/60 bg-surface/80 p-12 text-center shadow-sm">
       {conBusqueda ? (
-        <SearchX className="mx-auto mb-3 h-8 w-8 text-ink-soft" aria-hidden />
+        <SearchX className="mx-auto mb-3 h-10 w-10 text-primary-container" aria-hidden />
       ) : (
-        <FilterX className="mx-auto mb-3 h-8 w-8 text-ink-soft" aria-hidden />
+        <FilterX className="mx-auto mb-3 h-10 w-10 text-primary-container" aria-hidden />
       )}
-      <p className="font-display text-2xl text-ink-soft">Sin resultados</p>
-      <p className="mt-1 text-sm text-ink-soft">
+      <p className="font-display text-2xl font-medium text-ink-deep">Sin resultados</p>
+      <p className="mt-2 text-sm text-ink-soft max-w-md mx-auto">
         {conBusqueda && conFiltros
-          ? `No hay nada para “${filtros.q}” con esos filtros.`
+          ? `No encontramos productos para “${filtros.q}” con los filtros seleccionados.`
           : conBusqueda
-            ? `No encontramos nada para “${filtros.q}”. Prueba con otro nombre, color o SKU.`
-            : "Ningún producto cumple con todos los filtros."}
+            ? `No encontramos nada para “${filtros.q}”. Intenta con otro término o código.`
+            : "Ningún producto cumple con todos los filtros activos."}
       </p>
       {conFiltros && (
         <Link
           href={soloBusqueda ? `/?${soloBusqueda}` : "/"}
-          className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-line-strong/30 bg-chip px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-surface-high focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+          className="mt-5 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-5 py-2.5 text-sm font-semibold text-primary shadow-sm transition-all hover:bg-surface-container active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
           <FilterX className="h-4 w-4" aria-hidden />
           Quitar los filtros

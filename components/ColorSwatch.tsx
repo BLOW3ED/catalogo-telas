@@ -38,23 +38,23 @@ export function ColorSwatch({
 }) {
   const shape =
     size === "lg"
-      ? "h-12 w-12 rounded"
+      ? "h-12 w-12 rounded-xl shadow-xs transition-transform hover:scale-105 active:scale-95"
       : size === "sm"
-        ? "h-5 w-5 rounded-full"
-        : "h-6 w-6 rounded-full";
+        ? "h-5 w-5 rounded-full shadow-2xs"
+        : "h-6 w-6 rounded-full shadow-2xs";
 
   const lum = luminancia(hex);
   const esClaro = lum > 0.6;
   // Palomita/diagonal: tinta sobre telas claras, blanco sobre oscuras.
-  const marca = lum > 0.4 ? "#1b1e26" : "#ffffff";
+  const marca = lum > 0.4 ? "#121c28" : "#ffffff";
 
   return (
     <span
       className={`relative inline-flex items-center justify-center border ${shape} ${
         selected
-          ? "border-line-strong/60 ring-2 ring-primary ring-offset-1 ring-offset-bg"
-          : "border-line-strong/60"
-      } ${esClaro ? "shadow-[inset_0_0_0_1px_rgba(27,30,38,0.12)]" : ""}`}
+          ? "border-primary/40 ring-2 ring-primary ring-offset-2 ring-offset-bg shadow-sm"
+          : "border-line"
+      } ${esClaro ? "shadow-[inset_0_0_0_1px_rgba(18,28,40,0.12)]" : ""}`}
       style={{ backgroundColor: hex ?? "transparent" }}
       title={nombre ?? undefined}
       aria-label={nombre ?? "color"}

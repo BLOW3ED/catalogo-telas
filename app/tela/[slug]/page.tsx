@@ -121,95 +121,98 @@ export default async function TelaDetallePage({
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
       <Link
         href="/"
-        className="mb-6 inline-flex items-center gap-1.5 text-sm text-ink-soft transition-colors hover:text-primary"
+        className="mb-6 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-4 py-2 text-xs font-semibold uppercase tracking-wider text-ink-soft shadow-xs transition-all hover:bg-surface-container hover:text-ink active:scale-95"
       >
         <ArrowLeft className="h-4 w-4" aria-hidden />
         Volver al catálogo
       </Link>
 
-      <div className="grid gap-8 lg:grid-cols-2">
+      <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
         {/* Imagen y Disclaimer */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-5">
           {usarCarrusel ? (
-            <TelaImageCarousel
-              slides={slides}
-              selectedColorSlug={seleccionada.color_slug}
-              telaNombre={nombre}
-            />
-          ) : (
-            <div className="overflow-hidden rounded border border-line-strong/20 bg-white p-px">
-              <TelaImage
-                // `slides[0]` ya resolvió a qué variante mirar (incluida la
-                // caída a una hermana cuando la seleccionada quedó sin fotos).
-                src={slides[0] ? publicImageUrl(slides[0].ruta) : foto}
-                derivados={
-                  slides[0]?.derivados ?? seleccionada.foto_principal_derivados
-                }
-                sizes="(max-width: 1023px) 100vw, 50vw"
-                alt={
-                  seleccionada.color_nombre
-                    ? `${nombre} ${seleccionada.color_nombre}`
-                    : nombre
-                }
-                priority
+            <div className="overflow-hidden rounded-3xl border border-line bg-surface shadow-sm">
+              <TelaImageCarousel
+                slides={slides}
+                selectedColorSlug={seleccionada.color_slug}
+                telaNombre={nombre}
               />
             </div>
+          ) : (
+            <div className="overflow-hidden rounded-3xl border border-line bg-surface p-2 shadow-sm">
+              <div className="relative aspect-square overflow-hidden rounded-2xl bg-surface-container-low">
+                <TelaImage
+                  src={slides[0] ? publicImageUrl(slides[0].ruta) : foto}
+                  derivados={
+                    slides[0]?.derivados ?? seleccionada.foto_principal_derivados
+                  }
+                  sizes="(max-width: 1023px) 100vw, 50vw"
+                  alt={
+                    seleccionada.color_nombre
+                      ? `${nombre} ${seleccionada.color_nombre}`
+                      : nombre
+                  }
+                  priority
+                />
+              </div>
+            </div>
           )}
-          {/* En mobile, "Tonos disponibles" va justo bajo la foto (antes de
-              la nota) para que cambiar de color no requiera bajar toda la
-              ficha. En desktop se queda en su lugar original, junto a la
-              descripción. */}
+          {/* En mobile, "Tonos disponibles" va justo bajo la foto */}
           <div className="lg:hidden">
             <ColorSelector
               variantes={variantes}
               selectedSlug={seleccionada.color_slug}
             />
           </div>
-          <p className="px-4 text-center text-sm text-ink-soft">
-            📸 <strong>Nota:</strong> Las fotografías fueron tomadas bajo luz natural del sol. Los tonos reales pueden variar ligeramente dependiendo de tu pantalla.
-          </p>
+          <div className="rounded-2xl border border-line bg-surface/60 p-4 text-center">
+            <p className="text-xs sm:text-sm text-ink-soft">
+              📸 <strong>Nota:</strong> Fotografías tomadas bajo luz natural del sol. Los tonos reales pueden variar ligeramente según tu pantalla.
+            </p>
+          </div>
         </div>
 
         {/* Información */}
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
             {seleccionada.categoria && (
-              <span className="text-label-caps text-sm text-ink-soft">
+              <span className="text-xs font-bold uppercase tracking-wider text-primary">
                 {seleccionada.categoria}
               </span>
             )}
             <div className="flex items-start justify-between gap-4">
-              <h1 className="font-display text-3xl text-ink-deep sm:text-4xl">
+              <h1 className="font-display text-3xl font-semibold text-ink-deep sm:text-4xl">
                 {nombre}
               </h1>
               {seleccionada.precio_metro != null ? (
-                <p className="shrink-0 pt-1 text-xl font-semibold leading-7 text-amber">
-                  {pesos.format(seleccionada.precio_metro)}
-                  {unidadDe(seleccionada.unidad_venta).sufijoPrecio}
-                </p>
+                <div className="shrink-0 text-right">
+                  <p className="text-2xl sm:text-3xl font-bold text-amber">
+                    {pesos.format(seleccionada.precio_metro)}
+                  </p>
+                  <p className="text-xs font-semibold text-ink-soft">
+                    {unidadDe(seleccionada.unidad_venta).sufijoPrecio}
+                  </p>
+                </div>
               ) : (
-                <p className="shrink-0 pt-1 text-sm leading-7 text-ink-soft">
+                <p className="shrink-0 pt-1 text-sm font-medium text-ink-soft">
                   Precio a consultar
                 </p>
               )}
             </div>
             {seleccionada.precio_es_referencia && (
-              <p className="text-label-caps text-xs text-ink-soft">
-                precio de referencia · confirmamos por WhatsApp
+              <p className="text-xs text-amber-soft font-medium">
+                * Precio de referencia · confirmamos disponibilidad por WhatsApp
               </p>
             )}
           </div>
 
-          {/* Descripción técnica/sensorial en bloques cortos: los párrafos se
-              separan con líneas en blanco en la BD (los casos de uso van
-              aparte, como tags). */}
+          {/* Descripción técnica/sensorial */}
           {seleccionada.descripcion && (
-            <div className="space-y-4">
+            <div className="space-y-4 rounded-2xl border border-line bg-surface p-5 shadow-2xs">
               {seleccionada.descripcion
                 .split(/\n\s*\n/)
                 .filter((p) => p.trim())
                 .map((parrafo, i) => (
-                  <p key={i} className="text-lg leading-relaxed text-ink-soft">
+                  <p key={i} className="text-base sm:text-lg leading-relaxed text-ink-soft">
                     {parrafo.trim()}
                   </p>
                 ))}
@@ -227,26 +230,26 @@ export default async function TelaDetallePage({
 
           {/* Ficha técnica en cuadrícula tipo bento */}
           {(seleccionada.sku || seleccionada.stock != null) && (
-            <dl className="grid grid-cols-2 gap-4">
+            <dl className="grid grid-cols-2 gap-3.5">
               {seleccionada.sku && (
-                <div className="rounded border border-line-strong/30 bg-surface p-4">
-                  <dt className="text-label-caps text-sm text-ink-soft">SKU</dt>
-                  <dd className="mt-1 text-base text-ink-deep">
+                <div className="rounded-2xl border border-line bg-surface p-4 shadow-2xs">
+                  <dt className="text-[11px] font-bold uppercase tracking-wider text-ink-soft">SKU</dt>
+                  <dd className="mt-1 text-base font-semibold text-ink-deep font-mono">
                     {seleccionada.sku}
                   </dd>
                 </div>
               )}
               {seleccionada.stock != null && (
-                <div className="rounded border border-line-strong/30 bg-surface p-4">
-                  <dt className="text-label-caps text-sm text-ink-soft">
+                <div className="rounded-2xl border border-line bg-surface p-4 shadow-2xs">
+                  <dt className="text-[11px] font-bold uppercase tracking-wider text-ink-soft">
                     Disponibilidad
                   </dt>
                   {seleccionada.stock > 0 ? (
-                    <dd className="mt-1 text-base font-medium text-success">
-                      {seleccionada.stock} m en existencia
+                    <dd className="mt-1 text-base font-bold text-success">
+                      {seleccionada.stock} {unidadDe(seleccionada.unidad_venta).plural} disponibles
                     </dd>
                   ) : (
-                    <dd className="mt-1 text-base text-ink-soft">
+                    <dd className="mt-1 text-base font-semibold text-ink-soft">
                       Sin existencia
                     </dd>
                   )}
@@ -257,15 +260,15 @@ export default async function TelaDetallePage({
 
           {/* Tags de uso / ocasión */}
           {tags.length > 0 && (
-            <div className="flex flex-col gap-3">
-              <p className="border-b border-line-strong/30 pb-2 text-label-caps text-sm text-ink-deep">
+            <div className="flex flex-col gap-2.5">
+              <p className="text-xs font-bold uppercase tracking-wider text-ink-deep">
                 Ideal para
               </p>
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-2">
                 {tags.map((t) => (
                   <span
                     key={t}
-                    className="rounded border border-line-strong/30 bg-chip px-2.5 py-1 text-sm capitalize text-ink-soft"
+                    className="rounded-full border border-line bg-surface px-3.5 py-1.5 text-xs font-medium capitalize text-ink-soft shadow-2xs"
                   >
                     {t.replace(/-/g, " ")}
                   </span>

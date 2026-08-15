@@ -47,25 +47,25 @@ export function SearchBar() {
   }, [valor, pathname, router, qsActual, terminoEnUrl]);
 
   return (
-    <div className="relative">
+    <div className="relative group">
       <Search
-        className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-ink-soft"
+        className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-ink-soft transition-colors group-focus-within:text-primary"
         aria-hidden
       />
       <input
         type="search"
         value={valor}
         onChange={(e) => setValor(e.target.value)}
-        placeholder="Buscar por nombre, color o SKU…"
-        aria-label="Buscar telas"
-        className="w-full rounded border border-line-strong/30 bg-chip py-3 pl-12 pr-12 text-ink placeholder:text-ink-soft focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+        placeholder="Buscar telas, mercería, color o SKU…"
+        aria-label="Buscar productos del catálogo"
+        className="w-full rounded-full border border-line bg-surface-container/70 py-3.5 pl-12 pr-12 text-ink placeholder:text-ink-soft shadow-inner-sm transition-all focus:bg-surface focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:shadow-md"
       />
       {valor && (
         <button
           type="button"
           onClick={() => setValor("")}
           aria-label="Limpiar búsqueda"
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-2 text-ink-soft transition-colors hover:text-ink"
+          className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-ink-soft transition-all hover:bg-surface hover:text-ink active:scale-95"
         >
           <X className="h-4 w-4" aria-hidden />
         </button>

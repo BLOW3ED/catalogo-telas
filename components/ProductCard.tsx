@@ -42,64 +42,65 @@ export function ProductCard({
   return (
     <Link
       href={`/tela/${tela.tela_slug}`}
-      className="group flex flex-col gap-3 rounded-lg bg-surface p-2 shadow-sm transition-shadow duration-300 hover:shadow-md sm:p-3"
+      className="group flex flex-col gap-3.5 rounded-2xl border border-line/80 bg-surface p-2.5 sm:p-3.5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
     >
-      {/* Foto enmarcada tipo muestra montada: marco blanco de 1px sobre borde
-          suave, esquinas casi rectas; el texto vive fuera del marco. */}
-      <div className="overflow-hidden rounded border border-line-strong/20 bg-white p-px">
-        <div className="overflow-hidden">
-          <div className="transition-transform duration-300 group-hover:scale-[1.03]">
-            <TelaImage
-              src={foto}
-              derivados={principal?.foto_principal_derivados}
-              alt={principal?.color_nombre ? `${tela.tela_nombre} ${principal.color_nombre}` : tela.tela_nombre}
-              priority={priority}
-            />
-          </div>
+      {/* Imagen con aspect ratio cuadrado, esquinas suaves y zoom al hover */}
+      <div className="relative aspect-square overflow-hidden rounded-xl bg-surface-container-low">
+        <div className="h-full w-full transition-transform duration-500 ease-out group-hover:scale-105">
+          <TelaImage
+            src={foto}
+            derivados={principal?.foto_principal_derivados}
+            alt={principal?.color_nombre ? `${tela.tela_nombre} ${principal.color_nombre}` : tela.tela_nombre}
+            priority={priority}
+          />
         </div>
       </div>
 
-      {/* Jerarquía: eyebrow → título grande → precio con peso. Cada dato en su
-          renglón para que en mobile no compitan título y precio en la misma
-          fila (la retícula de 2 columnas se leía densa y gris). */}
-      <div className="flex flex-1 flex-col gap-1.5">
-        {(tela.categoria || tela.precio_desde_es_referencia) && (
-          <p className="text-label-caps text-sm text-ink-soft">
-            {[
-              tela.categoria,
-              tela.precio_desde_es_referencia ? "precio de referencia" : null,
-            ]
-              .filter(Boolean)
-              .join(" • ")}
-          </p>
-        )}
+      {/* Contenido descriptivo y precio */}
+      <div className="flex flex-1 flex-col justify-between gap-2">
+        <div className="flex flex-col gap-1">
+          {(tela.categoria || tela.precio_desde_es_referencia) && (
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-primary-container">
+              {[
+                tela.categoria,
+                tela.precio_desde_es_referencia ? "precio de referencia" : null,
+              ]
+                .filter(Boolean)
+                .join(" • ")}
+            </p>
+          )}
 
-        <h3 className="font-display text-base leading-[1.25] text-ink transition-colors group-hover:text-primary sm:text-lg">
-          {tela.tela_nombre}
-        </h3>
+          <h3 className="font-display text-base font-medium leading-snug text-ink-deep transition-colors group-hover:text-primary sm:text-lg">
+            {tela.tela_nombre}
+          </h3>
+        </div>
 
-        {tela.precio_desde != null ? (
-          <p className="text-base font-semibold text-amber">
-            <span className="text-sm font-normal text-ink-soft">desde </span>
-            {pesos.format(tela.precio_desde)}
-            {unidadDe(tela.precio_desde_unidad).sufijoPrecio}
-          </p>
-        ) : (
-          <p className="text-sm leading-6 text-ink-soft">a consultar</p>
-        )}
+        <div className="flex flex-col gap-2 pt-1 border-t border-line/60">
+          {tela.precio_desde != null ? (
+            <p className="text-base font-bold text-amber">
+              <span className="text-xs font-normal text-ink-soft">desde </span>
+              {pesos.format(tela.precio_desde)}
+              <span className="text-xs font-medium text-ink-soft ml-0.5">
+                {unidadDe(tela.precio_desde_unidad).sufijoPrecio}
+              </span>
+            </p>
+          ) : (
+            <p className="text-sm font-medium text-ink-soft">a consultar</p>
+          )}
 
-        {swatches.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
-            {swatches.slice(0, 8).map((v) => (
-              <ColorSwatch key={v.color_hex} hex={v.color_hex} nombre={v.color_nombre} size="sm" />
-            ))}
-            {swatches.length > 8 && (
-              <span className="text-sm text-ink-soft">+{swatches.length - 8}</span>
-            )}
-          </div>
-        )}
+          {swatches.length > 0 && (
+            <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+              {swatches.slice(0, 7).map((v) => (
+                <ColorSwatch key={v.color_hex} hex={v.color_hex} nombre={v.color_nombre} size="sm" />
+              ))}
+              {swatches.length > 7 && (
+                <span className="text-xs font-medium text-ink-soft/80">+{swatches.length - 7}</span>
+              )}
+            </div>
+          )}
 
-        <AttributeBadges atributos={atributos} />
+          <AttributeBadges atributos={atributos} />
+        </div>
       </div>
     </Link>
   );

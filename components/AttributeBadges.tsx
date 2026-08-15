@@ -19,11 +19,11 @@ export function AttributeBadges({ atributos }: { atributos: Atributos }) {
   if (activos.length === 0) return null;
 
   return (
-    <div className="flex flex-wrap gap-1.5">
+    <div className="flex flex-wrap gap-1.5 pt-0.5">
       {activos.map(({ key, label, Icon }) => (
         <span
           key={key}
-          className="inline-flex items-center gap-1 rounded border border-line-strong/30 bg-chip px-2 py-1 text-label-caps text-xs text-ink-soft"
+          className="inline-flex items-center gap-1.5 rounded-full border border-primary/15 bg-primary/5 px-2.5 py-0.5 text-[11px] font-semibold tracking-wide text-primary-container"
         >
           <Icon className="h-3 w-3 text-amber" aria-hidden />
           {label}

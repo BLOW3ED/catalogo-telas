@@ -90,32 +90,27 @@ export function CartDrawer() {
               </div>
             </div>
           ) : (
-            <ul className="space-y-6">
+            <ul className="space-y-4">
               {items.map((item) => (
-                <li key={item.id} className="flex gap-4">
-                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded border border-line-strong/30 bg-white p-px">
+                <li key={item.id} className="flex gap-3.5 rounded-2xl border border-line bg-surface p-3.5 shadow-2xs">
+                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-line bg-surface-container-low">
                     <TelaImage
                       src={publicImageUrl(item.foto_principal)}
                       derivados={item.foto_derivados}
                       sizes="80px"
                       alt={item.tela_nombre}
-                      // El contenedor es cuadrado: con el default `retrato` el
-                      // hijo medía 78x104 dentro de 78 con overflow-hidden y se
-                      // perdía el borde inferior del producto.
                       aspecto="cuadrado"
                     />
                   </div>
                   <div className="flex flex-1 flex-col justify-between">
                     <div>
-                      <h3 className="font-semibold leading-tight text-ink">{item.tela_nombre}</h3>
-                      <p className="text-sm text-ink-soft">
-                        {item.color_nombre} {item.sku && `(SKU: ${item.sku})`}
+                      <h3 className="font-semibold leading-tight text-ink-deep">{item.tela_nombre}</h3>
+                      <p className="text-xs text-ink-soft mt-0.5">
+                        {item.color_nombre} {item.sku && `· SKU: ${item.sku}`}
                       </p>
                     </div>
-                    <div className="mt-2 flex items-center justify-between">
-                      <div className="flex items-center rounded border border-line-strong/30 bg-chip p-1">
-                        {/* Mismo paso que el stepper del detalle: la tela baja
-                            de medio en medio metro, lo demás de uno en uno. */}
+                    <div className="mt-2.5 flex items-center justify-between">
+                      <div className="flex items-center rounded-full border border-line bg-surface-container/60 p-1 shadow-inner-sm">
                         <button
                           onClick={() =>
                             updateQuantity(
@@ -126,30 +121,30 @@ export function CartDrawer() {
                               )
                             )
                           }
-                          className="flex h-11 w-11 items-center justify-center rounded text-lg text-ink-soft transition-colors hover:bg-surface-high hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                          className="flex h-8 w-8 items-center justify-center rounded-full bg-surface text-sm font-bold text-ink shadow-2xs transition-all hover:bg-surface-container hover:text-primary active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                           aria-label={`Disminuir ${unidadDe(item.unidad_venta).singular} de ${item.tela_nombre}`}
                         >-</button>
-                        <span className="w-14 text-center text-sm font-medium">
+                        <span className="w-12 text-center text-xs font-bold text-ink-deep">
                           {cantidadCorta(item.cantidad, item.unidad_venta)}
                         </span>
                         <button
                           onClick={() =>
                             updateQuantity(item.id, item.cantidad + unidadDe(item.unidad_venta).paso)
                           }
-                          className="flex h-11 w-11 items-center justify-center rounded text-lg text-ink-soft transition-colors hover:bg-surface-high hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                          className="flex h-8 w-8 items-center justify-center rounded-full bg-surface text-sm font-bold text-ink shadow-2xs transition-all hover:bg-surface-container hover:text-primary active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                           aria-label={`Aumentar ${unidadDe(item.unidad_venta).singular} de ${item.tela_nombre}`}
                         >+</button>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-amber">
+                        <span className="text-sm font-bold text-amber">
                           {item.precio != null ? pesos.format(item.precio * item.cantidad) : "Consultar"}
                         </span>
                         <button
                           onClick={() => removeItem(item.id)}
-                          className="rounded-full p-2.5 text-ink-soft transition-colors hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                          className="rounded-full p-2 text-ink-soft transition-colors hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                           aria-label="Eliminar"
                         >
-                          <Trash2 className="h-5 w-5" />
+                          <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
                     </div>
@@ -161,14 +156,14 @@ export function CartDrawer() {
         </div>
 
         {items.length > 0 && (
-          <div className="border-t border-line bg-surface p-4 sm:p-6">
-            <div className="mb-1 flex items-center justify-between">
-              <span className="text-lg font-medium text-ink">
+          <div className="border-t border-line bg-surface p-5 sm:p-6 shadow-lg">
+            <div className="mb-2 flex items-center justify-between">
+              <span className="text-base font-semibold text-ink-deep">
                 {haySinPrecio ? "Total parcial" : "Total estimado"}
               </span>
-              <span className="font-display text-2xl text-amber">{pesos.format(total)}</span>
+              <span className="font-display text-2xl sm:text-3xl font-bold text-amber">{pesos.format(total)}</span>
             </div>
-            <p className="mb-4 text-sm text-ink-soft">
+            <p className="mb-4 text-xs text-ink-soft leading-relaxed">
               {hayReferencia
                 ? "Incluye precios de referencia. Confirmamos precio final y disponibilidad por WhatsApp."
                 : haySinPrecio
@@ -184,18 +179,18 @@ export function CartDrawer() {
               rel="noopener noreferrer"
               onClick={() => setIsOpen(false)}
             >
-              <MessageCircle className="h-6 w-6" aria-hidden />
+              <MessageCircle className="h-5 w-5" aria-hidden />
               Enviar pedido por WhatsApp
             </Button>
             <Button
               variant="secondary"
               size="md"
               fullWidth
-              className="mt-2"
+              className="mt-2.5"
               onClick={() => setIsOpen(false)}
             >
               <ArrowLeft className="h-4 w-4" aria-hidden />
-              Seguir comprando
+              Seguir explorando
             </Button>
           </div>
         )}

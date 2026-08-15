@@ -77,7 +77,7 @@ export function Filtros({
             </span>
           </summary>
 
-          <div className="mt-3 space-y-3 rounded-xl border border-line-strong/20 bg-surface p-4">
+          <div className="mt-3 space-y-3 rounded-2xl border border-line bg-surface p-5 shadow-sm">
             {facetas.colores.length > 0 && (
               <Grupo titulo="Color">
                 {facetas.colores.map((c) => (
@@ -180,18 +180,16 @@ function Chip({
     <Link
       href={href}
       scroll={false}
-      // `aria-pressed` no aplica a un link; el estado se comunica con
-      // aria-current, que los lectores anuncian como "actual".
       aria-current={activo ? "true" : undefined}
-      className={`inline-flex shrink-0 snap-start items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
+      className={`inline-flex shrink-0 snap-start items-center gap-2 whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
         activo
-          ? "border-ink-deep bg-ink-deep font-medium text-bg"
-          : "border-line-strong/30 bg-chip text-ink hover:border-line-strong/60 hover:bg-surface-high"
+          ? "border-primary bg-primary text-white shadow-sm"
+          : "border-line bg-surface text-ink-soft hover:border-line-strong hover:bg-surface-container hover:text-ink shadow-xs"
       }`}
     >
       {children}
       {conteo != null && (
-        <span className={activo ? "text-bg/70" : "text-ink-soft"}>{conteo}</span>
+        <span className={`text-xs ${activo ? "text-white/80" : "text-ink-soft/70"}`}>{conteo}</span>
       )}
     </Link>
   );

@@ -11,32 +11,38 @@
    automáticamente (bg-bg, text-ink, text-amber, border-line, font-display...).
 --------------------------------------------------------------------------- */
 @theme {
-  --color-ink: #1b1e26; /* on-surface: texto principal (16.3:1 sobre bg) */
-  --color-ink-deep: #14161d; /* marca, chips activos y app bars */
-  --color-ink-soft: #474a52; /* texto secundario (7.8:1 sobre bg) */
-  --color-bg: #f8f7f2; /* surface: fondo marfil */
-  --color-surface: #f1f0ea; /* surface-container-low: tarjetas y paneles */
-  --color-surface-high: #e7e6df; /* surface-container-high: hover/activo sutil */
-  --color-chip: #efeee8; /* fondo de chips de filtro */
-  --color-primary: #3730a3; /* añil: links, CTAs, seleccionado, focus (9.3:1) */
-  --color-primary-deep: #312a8e; /* hover del primario */
-  --color-amber: #a84d08; /* acento ámbar: precios, eyebrows (4.9:1 incluso sobre surface) */
-  --color-amber-soft: #92400e; /* ámbar oscuro para labels pequeños (6.6:1) */
-  --color-success: #157a3a; /* disponibilidad/stock (4.7:1 sobre surface) */
-  --color-line: #e9e8e1; /* hairline pre-mezclado sobre bg */
-  --color-line-strong: #c9c8c0; /* base de borde; usar con alfa /20 /30 /60 */
-  --color-whatsapp: #0e7a3f; /* verde WhatsApp accesible (blanco: 5.4:1) */
+  --color-ink: #121c28; /* on-surface: texto principal */
+  --color-ink-deep: #080f18; /* marca, títulos y acentos oscuros */
+  --color-ink-soft: #4b5563; /* texto secundario y metadatos */
+  --color-bg: #fcfbf8; /* canvas / lino suave de fondo */
+  --color-surface: #ffffff; /* tarjetas y superficies elevadas */
+  --color-surface-container: #f3f3ee; /* contenedores y barras de búsqueda */
+  --color-surface-container-low: #f8f8f4; /* fondo alterno suave */
+  --color-surface-container-high: #ebeae4; /* hover de contenedores */
+  --color-surface-high: #ebeae4; /* surface-container-high */
+  --color-chip: #f0eee8; /* fondo de chips */
+  --color-primary: #003527; /* esmeralda profundo de marca y foco */
+  --color-primary-container: #064e3b; /* esmeralda medio */
+  --color-primary-deep: #00261c; /* hover del primario */
+  --color-primary-fixed: #b0f0d6; /* tinte suave de primario */
+  --color-amber: #b45309; /* acento ámbar / cobre: precios y destacados */
+  --color-amber-soft: #92400e; /* ámbar oscuro para labels pequeños */
+  --color-success: #157a3a; /* disponibilidad / stock */
+  --color-line: #e7e5dc; /* líneas divisorias */
+  --color-line-strong: #d5d3ca; /* bordes sutiles con contraste */
+  --color-whatsapp: #0e7a3f; /* verde WhatsApp accesible */
   --color-whatsapp-dark: #0b6534; /* hover del botón WhatsApp */
 
   --font-display: var(--font-fraunces);
   --font-sans: var(--font-karla);
 
-  /* Escala de radios editorial: casi recta, salvo rounded-full (círculos). */
-  --radius: 0.125rem;
-  --radius-md: 0.25rem;
-  --radius-lg: 0.25rem;
-  --radius-xl: 0.5rem;
-  --radius-2xl: 0.75rem;
+  /* Escala de radios moderna y suave */
+  --radius: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
 
   /* Manita de la invitación a deslizar la foto (detalle de tela). */
   --animate-swipe-nudge: swipe-nudge 1.8s ease-in-out infinite;

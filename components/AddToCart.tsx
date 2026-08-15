@@ -36,25 +36,25 @@ export function AddToCart({ variante }: { variante: CatalogoTela }) {
   return (
     <div className="mt-6 flex flex-col gap-3">
       <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="flex items-center justify-between rounded border border-line-strong/30 bg-chip p-1 sm:w-40">
+        <div className="flex h-14 items-center justify-between rounded-full border border-line bg-surface-container/60 p-1.5 shadow-inner-sm sm:w-44">
           <button
             type="button"
             disabled={agotado}
             onClick={() => setCantidad((prev) => Math.max(unidad.minimo, prev - unidad.paso))}
-            className="flex h-14 w-14 items-center justify-center rounded text-xl text-ink-soft transition-colors hover:bg-surface-high hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-surface text-lg font-bold text-ink shadow-2xs transition-all hover:bg-surface-container-high hover:text-primary active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-40"
             aria-label={etiquetaMenos}
           >
             -
           </button>
-          <div className="flex flex-1 flex-col items-center justify-center px-2">
-            <span className="font-medium leading-none text-ink">{cantidad}</span>
-            <span className="mt-1 text-xs uppercase text-ink-soft">{unidad.plural}</span>
+          <div className="flex flex-1 flex-col items-center justify-center px-1">
+            <span className="text-base font-bold leading-none text-ink-deep">{cantidad}</span>
+            <span className="mt-0.5 text-[10px] font-semibold uppercase tracking-wider text-ink-soft">{unidad.plural}</span>
           </div>
           <button
             type="button"
             disabled={agotado}
             onClick={() => setCantidad((prev) => prev + unidad.paso)}
-            className="flex h-14 w-14 items-center justify-center rounded text-xl text-ink-soft transition-colors hover:bg-surface-high hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-surface text-lg font-bold text-ink shadow-2xs transition-all hover:bg-surface-container-high hover:text-primary active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-40"
             aria-label={etiquetaMas}
           >
             +

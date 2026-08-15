@@ -16,24 +16,24 @@ type Variant = "primary" | "whatsapp" | "secondary" | "ghost";
 type Size = "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded text-label-caps " +
-  "transition-colors focus-visible:outline-none focus-visible:ring-2 " +
-  "focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex items-center justify-center gap-2 rounded-full font-semibold " +
+  "transition-all duration-200 active:scale-98 focus-visible:outline-none focus-visible:ring-2 " +
+  "focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 select-none cursor-pointer";
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-primary text-white hover:bg-primary-deep focus-visible:ring-primary",
+    "bg-primary text-white shadow-sm hover:bg-primary-container hover:shadow-md focus-visible:ring-primary",
   whatsapp:
-    "bg-whatsapp text-white hover:bg-whatsapp-dark focus-visible:ring-whatsapp",
+    "bg-whatsapp text-white shadow-sm hover:bg-whatsapp-dark hover:shadow-md focus-visible:ring-whatsapp",
   secondary:
-    "border border-line-strong/30 bg-chip text-ink-soft hover:bg-surface-high focus-visible:ring-primary",
+    "border border-line bg-surface text-ink shadow-2xs hover:bg-surface-container hover:border-line-strong focus-visible:ring-primary",
   ghost:
-    "text-ink-soft hover:bg-line/60 hover:text-ink focus-visible:ring-primary",
+    "text-ink-soft hover:bg-surface-container hover:text-ink focus-visible:ring-primary",
 };
 
 const sizes: Record<Size, string> = {
-  md: "h-12 px-5 text-sm",
-  lg: "h-16 px-6 text-base",
+  md: "h-12 px-6 text-sm",
+  lg: "h-14 px-8 text-base",
 };
 
 type CommonProps = {
