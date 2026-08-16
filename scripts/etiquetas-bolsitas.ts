@@ -88,7 +88,7 @@ async function main() {
   const salida = [lineas[0]];
   for (const l of lineas.slice(1)) {
     const c = partirLinea(l);
-    const et = ETIQUETAS[c[i.archivo].replace(/\.jpg$/i, "")];
+    const et = ETIQUETAS[c[i.archivo].replace(/\.[^.]+$/, "")];
     if (et) {
       const [codigo, piezas, precio, aviso] = et;
       c[i.modelo] = "Bolsa de Piedras";

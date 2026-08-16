@@ -35,6 +35,8 @@ export const CATEGORIAS = {
   BOTONES: { nombre: "Botones", slug: "botones" },
   CORCHETES: { nombre: "Corchetes", slug: "corchetes" },
   FLORES: { nombre: "Flores", slug: "flores" },
+  HILOS: { nombre: "Hilos", slug: "hilos" },
+  CIERRES: { nombre: "Cierres", slug: "cierres" },
   // Tela de verdad (no mercería). Ya venían sembradas en la sección 8 del SQL;
   // se repiten aquí para que el clasificador las pueda asignar sola.
   CHIFON: { nombre: "Chifón", slug: "chifon" },
@@ -70,6 +72,8 @@ export const UNIDAD_POR_CATEGORIA: Record<string, string> = {
   [CATEGORIAS.BOTONES.slug]: "pieza",
   [CATEGORIAS.CORCHETES.slug]: "pieza",
   [CATEGORIAS.FLORES.slug]: "pieza",
+  [CATEGORIAS.HILOS.slug]: "pieza",
+  [CATEGORIAS.CIERRES.slug]: "pieza",
   // A granel.
   [CATEGORIAS.PIEDRA.slug]: "bolsa",
   // Las copas van en PAR: es media prenda, no se vende una sola.
@@ -159,9 +163,18 @@ export const REGLAS_CATEGORIA: ReglaCategoria[] = [
   // — Familias ya descriptivas en el nombre de archivo.
   { re: /^COP/i, categoria: CATEGORIAS.COPAS, ejemplo: "CopTirante" },
   { re: /^YULI/i, categoria: CATEGORIAS.CINTA, ejemplo: "YuliCintaBies16mm" },
+  { re: /^CRIN/i, categoria: CATEGORIAS.CINTA, ejemplo: "Crin" },
   { re: /^BO\d/i, categoria: CATEGORIAS.BOTONES, ejemplo: "BO12" },
   { re: /^JR\d/i, categoria: CATEGORIAS.CORCHETES, ejemplo: "JR1103" },
   { re: /^FLOR/i, categoria: CATEGORIAS.FLORES, ejemplo: "Flor348Humo" },
+  { re: /^HILO/i, categoria: CATEGORIAS.HILOS, ejemplo: "Hilo Gutermann" },
+  { re: /^CIERRE/i, categoria: CATEGORIAS.CIERRES, ejemplo: "cierreoculto" },
+  { re: /^GUIPIUR/i, categoria: CATEGORIAS.GALON, ejemplo: "guipiur" },
+  { re: /^BUTTERFLY/i, categoria: CATEGORIAS.APLICACION, ejemplo: "butterfly" },
+  { re: /^MAP\d/i, categoria: CATEGORIAS.APLICACION, ejemplo: "map4" },
+  { re: /^MOTIVOS/i, categoria: CATEGORIAS.APLICACION, ejemplo: "motivos" },
+  { re: /tira\s+(tul\s+)?bordad/i, categoria: CATEGORIAS.TUL_BORDADO, ejemplo: "201 Tira Tul Bordado40mm" },
+  { re: /tira\s+orilla/i, categoria: CATEGORIAS.TIRA, ejemplo: "350 Tira Orilla Piedra" },
 ];
 
 /**

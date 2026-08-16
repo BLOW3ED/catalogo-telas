@@ -50,7 +50,7 @@ const esc = (v: string) => (/[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v)
 
 /** Número de toma que la cámara pegó al nombre: "BolsitaPiedras00021" → "00021". */
 function toma(archivo: string): string {
-  const m = /(\d{5})\.jpg$/i.exec(archivo);
+  const m = /(\d{5})\.[^.]+$/i.exec(archivo);
   return m ? m[1] : "";
 }
 

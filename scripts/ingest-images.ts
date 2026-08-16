@@ -29,6 +29,7 @@
 
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import sharp from "sharp";
 import { config as loadEnv } from "dotenv";
 import { procesarFoto } from "../lib/images/derivados";
 import { interpretaFlor, interpretaFamilia, modeloFlor, tablaDeColores } from "../lib/ingesta/nombres";
@@ -59,7 +60,7 @@ function argChar(name: string): string | undefined {
   return hit ? hit.slice(name.length + 1) : undefined;
 }
 
-const IMG_EXT = new Set([".jpg", ".jpeg", ".png"]);
+const IMG_EXT = new Set([".jpg", ".jpeg", ".png", ".webp"]);
 
 /**
  * Diccionario de colores (espejo del seed en SQL). Sirve para separar
@@ -732,9 +733,24 @@ async function modoUpload() {
     // 4) subir imagen al bucket (idempotente con upsert) + fila foto
     const ext = path.extname(archivo).toLowerCase();
     const ruta = `${telaSlug}/${slugify(path.basename(archivo, ext))}${ext}`;
-    const buffer = await fs.readFile(path.join(dir, archivo));
+    let buffer = await fs.readFile(path.join(dir, archivo));
+    let contentType =
+      ext === ".webp"
+        ? "image/webp"
+        : ext === ".png"
+        ? "image/png"
+        : "image/jpeg";
+
+    if (buffer.length > 4.5 * 1024 * 1024) {
+      buffer = await sharp(buffer)
+        .resize(3200, 3200, { fit: "inside", withoutEnlargement: true })
+        .webp({ quality: 85, effort: 4 })
+        .toBuffer();
+      contentType = "image/webp";
+    }
+
     const { error: upErr } = await supabase.storage.from(BUCKET).upload(ruta, buffer, {
-      contentType: ext === ".png" ? "image/png" : "image/jpeg",
+      contentType,
       upsert: true,
     });
     if (upErr) throw new Error(`storage ${ruta}: ${upErr.message}`);
