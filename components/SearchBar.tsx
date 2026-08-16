@@ -2,33 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { Search, X } from "lucide-react";
+import { X } from "lucide-react";
 
-/**
- * Caja de búsqueda. El estado vive en la URL (`?q=`) para que sea compartible
- * y que el Server Component vuelva a consultar el catálogo. Debounce de 300ms
- * para no navegar en cada tecla.
- *
- * Al navegar CONSERVA el resto del querystring: los chips de filtro viven ahí
- * mismo, y reescribir la URL entera los borraría en cada tecla.
- */
 export function SearchBar() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const terminoEnUrl = searchParams.get("q") ?? "";
   const [valor, setValor] = useState(terminoEnUrl);
-  // El objeto de searchParams cambia de identidad en cada render; su texto no.
-  // Dependemos del texto para no re-disparar el efecto sin que nada cambie.
   const qsActual = searchParams.toString();
 
   useEffect(() => {
-    // Este efecto REACCIONA a la URL y además la ESCRIBE, así que solo debe
-    // navegar cuando la caja y la URL discrepan — o sea, cuando el usuario
-    // acaba de teclear. Cualquier otra navegación ("Ver más", un chip) también
-    // cambia `qsActual` y volvería a entrar aquí: sin esta guarda, el
-    // `delete("ver")` de abajo deshace la paginación 300ms después de picarla.
-    // Cubre de paso el primer render, donde `valor` sale de la propia URL.
     if (valor.trim() === terminoEnUrl) return;
 
     const t = setTimeout(() => {
@@ -36,9 +20,6 @@ export function SearchBar() {
       const params = new URLSearchParams(qsActual);
       if (v) params.set("q", v);
       else params.delete("q");
-      // Otra búsqueda son otros resultados: volver a la primera página. Sin
-      // esto, quien venía de picar "Ver más" tres veces se traería ese `ver`
-      // a una búsqueda de dos resultados.
       params.delete("ver");
       const qs = params.toString();
       router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
@@ -47,25 +28,27 @@ export function SearchBar() {
   }, [valor, pathname, router, qsActual, terminoEnUrl]);
 
   return (
-    <div className="relative group">
-      <Search
-        className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-ink-soft transition-colors group-focus-within:text-primary"
+    <div className="relative w-full group">
+      <span
+        className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[22px] text-ink-soft/70 transition-colors group-focus-within:text-heritage-navy"
         aria-hidden
-      />
+      >
+        search
+      </span>
       <input
         type="search"
         value={valor}
         onChange={(e) => setValor(e.target.value)}
-        placeholder="Buscar telas, mercería, color o SKU…"
+        placeholder="Buscar telas, mercería, color o SKU..."
         aria-label="Buscar productos del catálogo"
-        className="w-full rounded-full border border-line bg-surface-container/70 py-3.5 pl-12 pr-12 text-ink placeholder:text-ink-soft shadow-inner-sm transition-all focus:bg-surface focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:shadow-md"
+        className="w-full h-14 pl-12 pr-12 rounded-full border border-outline-variant/40 bg-surface-container-lowest/80 backdrop-blur-sm text-base text-ink-text placeholder:text-ink-soft/70 shadow-xs transition-all focus:bg-surface-container-lowest focus:border-accent-copper focus:outline-none focus:ring-2 focus:ring-accent-copper/30 focus:shadow-md"
       />
       {valor && (
         <button
           type="button"
           onClick={() => setValor("")}
           aria-label="Limpiar búsqueda"
-          className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-ink-soft transition-all hover:bg-surface hover:text-ink active:scale-95"
+          className="absolute right-3.5 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-ink-soft/70 transition-all hover:bg-surface-container hover:text-ink-text active:scale-95"
         >
           <X className="h-4 w-4" aria-hidden />
         </button>
@@ -73,3 +56,4 @@ export function SearchBar() {
     </div>
   );
 }
+

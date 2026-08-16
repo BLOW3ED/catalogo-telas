@@ -1,48 +1,68 @@
+@import "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap";
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   Tokens "The Atelier" (ver design-system/design-system.html) — paleta
-   "Añil + ámbar": neutros marfil, añil #3730A3 como primario de interacción
-   (links, CTAs, seleccionado, focus) y ámbar como acento de precios, con
-   tipografía editorial
-   (Fraunces para display/headlines, Karla para cuerpo/labels). Radios de
-   esquina casi rectos: la calidez viene de la foto y el color, no de curvas.
-   En Tailwind v4 los tokens se declaran con @theme y generan utilidades
-   automáticamente (bg-bg, text-ink, text-amber, border-line, font-display...).
+   Tokens "Artisanal Modernity" (Atelier Textil Selecto) de Stitch:
+   - Lienzo: Lino / Arena suave (#EAE3D2 / #FFF9ED)
+   - Tinta: Ink Text / Deep Slate (#0A0F14 / #1E1C11)
+   - Marca & Primario: Heritage Navy (#0D1B2A / #1B263B)
+   - Acento: Cobre / Terracota (#B07D62 / #80543B / #B45309)
+   - Contenedores: Surface levels (#FFFFFF, #FAF3E2, #F5EDDC, #EFE8D7, #E9E2D1)
+   - Tipografía: Hanken Grotesk para todo el sistema (Display, Headline, Body, Label)
 --------------------------------------------------------------------------- */
 @theme {
-  --color-ink: #121c28; /* on-surface: texto principal */
-  --color-ink-deep: #080f18; /* marca, títulos y acentos oscuros */
-  --color-ink-soft: #4b5563; /* texto secundario y metadatos */
-  --color-bg: #fcfbf8; /* canvas / lino suave de fondo */
-  --color-surface: #ffffff; /* tarjetas y superficies elevadas */
-  --color-surface-container: #f3f3ee; /* contenedores y barras de búsqueda */
-  --color-surface-container-low: #f8f8f4; /* fondo alterno suave */
-  --color-surface-container-high: #ebeae4; /* hover de contenedores */
-  --color-surface-high: #ebeae4; /* surface-container-high */
-  --color-chip: #f0eee8; /* fondo de chips */
-  --color-primary: #003527; /* esmeralda profundo de marca y foco */
-  --color-primary-container: #064e3b; /* esmeralda medio */
-  --color-primary-deep: #00261c; /* hover del primario */
-  --color-primary-fixed: #b0f0d6; /* tinte suave de primario */
-  --color-amber: #b45309; /* acento ámbar / cobre: precios y destacados */
-  --color-amber-soft: #92400e; /* ámbar oscuro para labels pequeños */
-  --color-success: #157a3a; /* disponibilidad / stock */
-  --color-line: #e7e5dc; /* líneas divisorias */
-  --color-line-strong: #d5d3ca; /* bordes sutiles con contraste */
-  --color-whatsapp: #0e7a3f; /* verde WhatsApp accesible */
-  --color-whatsapp-dark: #0b6534; /* hover del botón WhatsApp */
+  --color-sand-bg: #eae3d2;
+  --color-ink-text: #0a0f14;
+  --color-heritage-navy: #0d1b2a;
+  --color-deep-slate: #1b263b;
+  --color-accent-copper: #b07d62;
 
-  --font-display: var(--font-fraunces);
-  --font-sans: var(--font-karla);
+  --color-ink: #0a0f14; /* on-surface / texto principal */
+  --color-ink-deep: #0d1b2a; /* títulos y marcas */
+  --color-ink-soft: #5e5f5b; /* texto secundario y metadatos */
+  
+  --color-bg: #eae3d2; /* fondo arena / lino base */
+  --color-surface: #fff9ed; /* superficie cálida */
+  --color-surface-bright: #fff9ed;
+  --color-surface-dim: #ded7c5;
+  --color-surface-container-lowest: #ffffff; /* tarjetas y modales */
+  --color-surface-container-low: #faf3e2; /* contenedores suaves */
+  --color-surface-container: #f5eddc; /* buscador, chips inactivos */
+  --color-surface-container-high: #efe8d7; /* hover de contenedores */
+  --color-surface-container-highest: #e9e2d1; /* tarjetas de categoría */
+  --color-surface-high: #efe8d7;
+  --color-chip: #f5eddc;
 
-  /* Escala de radios moderna y suave */
+  --color-primary: #0d1b2a; /* Heritage Navy primario */
+  --color-primary-container: #0f1c2c;
+  --color-primary-deep: #050b12;
+  --color-primary-fixed: #d6e4f9;
+
+  --color-secondary: #80543b;
+  --color-secondary-container: #fdc2a3;
+
+  --color-amber: #b07d62; /* acento cobre / ámbar para precios */
+  --color-amber-soft: #80543b;
+  --color-success: #157a3a;
+  --color-line: #dfd8c7;
+  --color-line-strong: #c4c6cc;
+  --color-outline: #74777d;
+  --color-outline-variant: #c4c6cc;
+
+  --color-whatsapp: #0e7a3f;
+  --color-whatsapp-dark: #0b6534;
+
+  --font-sans: var(--font-hanken), "Hanken Grotesk", system-ui, sans-serif;
+  --font-display: var(--font-hanken), "Hanken Grotesk", system-ui, sans-serif;
+
+  /* Escala de radios moderna y táctil */
   --radius: 0.25rem;
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
   --radius-xl: 0.75rem;
   --radius-2xl: 1rem;
   --radius-3xl: 1.5rem;
+  --radius-full: 9999px;
 
   /* Manita de la invitación a deslizar la foto (detalle de tela). */
   --animate-swipe-nudge: swipe-nudge 1.8s ease-in-out infinite;
@@ -76,22 +96,23 @@
 
 html {
   background-color: var(--color-bg);
-  color: var(--color-ink);
+  color: var(--color-ink-text);
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-ink-text);
 }
 
 /* Foco visible y accesible en toda la app */
 :focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--color-heritage-navy);
   outline-offset: 2px;
   border-radius: 4px;
 }
 
-/* Quien pidió menos movimiento (mareo, vértigo, migraña) no debe recibir el
-   halo del tutorial ni la manita del carrusel latiendo en bucle. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -103,21 +124,29 @@ body {
   }
 }
 
-/* Títulos display/headline con Fraunces (serif editorial) */
 .font-display {
-  font-family: var(--font-display), Georgia, serif;
-  font-weight: 400;
+  font-family: var(--font-display);
+  font-weight: 700;
   letter-spacing: -0.01em;
-  /* Ejes variables de Fraunces según el Figma: sin soft, con wonk editorial */
-  font-variation-settings: "SOFT" 0, "WONK" 1;
 }
 
-/* Label caps: eyebrows y etiquetas en mayúsculas (Karla, tracking amplio).
-   No fija tamaño de fuente a propósito: se combina con un text-* de Tailwind
-   (p.ej. `text-label-caps text-xs`) sin pelear por especificidad. */
 .text-label-caps {
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

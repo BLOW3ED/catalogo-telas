@@ -207,7 +207,7 @@ export function TutorialModal() {
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-end justify-center bg-ink/50 p-4 backdrop-blur-sm sm:items-center"
+      className="fixed inset-0 z-[60] flex items-end justify-center bg-heritage-navy/60 p-4 backdrop-blur-sm sm:items-center"
       onClick={cerrar}
     >
       <div
@@ -216,19 +216,19 @@ export function TutorialModal() {
         aria-modal="true"
         aria-labelledby="tutorial-titulo"
         tabIndex={-1}
-        className="w-full max-w-md overflow-hidden rounded-2xl bg-bg shadow-2xl focus:outline-none"
+        className="w-full max-w-md overflow-hidden rounded-3xl bg-sand-bg border border-line/60 shadow-2xl focus:outline-none"
         onClick={(e) => e.stopPropagation()}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >
-        <div className="flex items-center justify-between border-b border-line px-5 py-4">
-          <p className="text-label-caps text-xs text-amber-soft">
-            Cómo funciona · {slide + 1} de {SLIDES.length}
+        <div className="flex items-center justify-between border-b border-line/60 bg-surface-container-low px-5 py-4">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-accent-copper">
+            Cómo funciona el catálogo · {slide + 1} de {SLIDES.length}
           </p>
           <button
             type="button"
             onClick={cerrar}
-            className="rounded-full p-1.5 text-ink-soft transition-colors hover:bg-line/50 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="rounded-full p-1.5 text-ink-soft transition-colors hover:bg-surface-container hover:text-heritage-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
             aria-label="Cerrar tutorial"
           >
             <X className="h-5 w-5" />
@@ -238,22 +238,21 @@ export function TutorialModal() {
         <div className="px-6 pb-2 pt-6">
           <Maqueta />
 
-          {/* aria-live: al cambiar de slide con las flechas o el swipe, el
-              lector de pantalla anuncia el paso nuevo sin mover el foco. */}
+          {/* aria-live */}
           <div className="mt-6 text-center" aria-live="polite">
             <h2
               id="tutorial-titulo"
-              className="font-display text-2xl text-ink"
+              className="font-display text-2xl font-bold text-heritage-navy"
             >
               {actual.titulo}
             </h2>
-            <p className="mx-auto mt-2 max-w-sm text-base leading-relaxed text-ink-soft">
+            <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-ink-soft">
               {actual.texto}
             </p>
           </div>
         </div>
 
-        {/* Puntos de progreso: también sirven para saltar de slide. */}
+        {/* Puntos de progreso */}
         <div className="flex justify-center gap-2 py-5">
           {SLIDES.map((s, i) => (
             <button
@@ -265,20 +264,20 @@ export function TutorialModal() {
               className="group p-1.5 focus-visible:outline-none"
             >
               <span
-                className={`block h-2 rounded-full transition-all group-focus-visible:ring-2 group-focus-visible:ring-primary group-focus-visible:ring-offset-2 ${
-                  i === slide ? "w-6 bg-primary" : "w-2 bg-line-strong"
+                className={`block h-2 rounded-full transition-all group-focus-visible:ring-2 group-focus-visible:ring-heritage-navy group-focus-visible:ring-offset-2 ${
+                  i === slide ? "w-6 bg-heritage-navy" : "w-2 bg-outline-variant"
                 }`}
               />
             </button>
           ))}
         </div>
 
-        <div className="flex items-center justify-between gap-3 border-t border-line px-5 py-4">
+        <div className="flex items-center justify-between gap-3 border-t border-line/60 bg-surface-container-low px-5 py-4">
           {esPrimero ? (
             <button
               type="button"
               onClick={cerrar}
-              className="rounded px-1 text-sm text-ink-soft transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              className="rounded px-2 text-xs font-bold uppercase tracking-wider text-ink-soft transition-colors hover:text-heritage-navy focus-visible:outline-none"
             >
               Saltar
             </button>
@@ -286,7 +285,7 @@ export function TutorialModal() {
             <button
               type="button"
               onClick={() => irA(slide - 1)}
-              className="flex items-center gap-1 rounded px-1 text-sm text-ink-soft transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              className="flex items-center gap-1 rounded px-2 text-xs font-bold uppercase tracking-wider text-ink-soft transition-colors hover:text-heritage-navy focus-visible:outline-none"
             >
               <ChevronLeft className="h-4 w-4" aria-hidden />
               Atrás

@@ -1,17 +1,5 @@
 import { Check } from "lucide-react";
 
-/**
- * Muestra el hex real del color, desde la tabla `color`.
- * - `sm`/`md`: punto redondo (cards, listas compactas).
- * - `lg`: cuadro de 48px casi recto, como los "Available Tones" del detalle.
- *
- * Accesibilidad (WCAG 1.4.1): el estado seleccionado no depende solo del
- * color — además del aro añil lleva una palomita cuyo tono (tinta o blanco)
- * se decide por la luminancia del hex para que contraste sobre cualquier
- * tela. Los tonos claros (crema, blanco) reciben un aro interior sutil para
- * no fundirse con el fondo marfil. `agotado` cruza el swatch en diagonal.
- */
-
 /** Luminancia relativa WCAG del hex (0 = negro, 1 = blanco). */
 function luminancia(hex: string | null): number {
   if (!hex) return 1;
@@ -38,23 +26,22 @@ export function ColorSwatch({
 }) {
   const shape =
     size === "lg"
-      ? "h-12 w-12 rounded-xl shadow-xs transition-transform hover:scale-105 active:scale-95"
+      ? "h-12 w-12 rounded-2xl shadow-xs transition-transform hover:scale-105 active:scale-95"
       : size === "sm"
         ? "h-5 w-5 rounded-full shadow-2xs"
         : "h-6 w-6 rounded-full shadow-2xs";
 
   const lum = luminancia(hex);
   const esClaro = lum > 0.6;
-  // Palomita/diagonal: tinta sobre telas claras, blanco sobre oscuras.
-  const marca = lum > 0.4 ? "#121c28" : "#ffffff";
+  const marca = lum > 0.4 ? "#0d1b2a" : "#ffffff";
 
   return (
     <span
       className={`relative inline-flex items-center justify-center border ${shape} ${
         selected
-          ? "border-primary/40 ring-2 ring-primary ring-offset-2 ring-offset-bg shadow-sm"
-          : "border-line"
-      } ${esClaro ? "shadow-[inset_0_0_0_1px_rgba(18,28,40,0.12)]" : ""}`}
+          ? "border-heritage-navy ring-2 ring-heritage-navy ring-offset-2 ring-offset-sand-bg shadow-sm"
+          : "border-outline-variant/40"
+      } ${esClaro ? "shadow-[inset_0_0_0_1px_rgba(13,27,42,0.12)]" : ""}`}
       style={{ backgroundColor: hex ?? "transparent" }}
       title={nombre ?? undefined}
       aria-label={nombre ?? "color"}
@@ -78,3 +65,4 @@ export function ColorSwatch({
     </span>
   );
 }
+
