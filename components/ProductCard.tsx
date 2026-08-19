@@ -49,6 +49,7 @@ export function ProductCard({
             derivados={principal?.foto_principal_derivados}
             alt={principal?.color_nombre ? `${tela.tela_nombre} ${principal.color_nombre}` : tela.tela_nombre}
             priority={priority}
+            aspecto="cuadrado"
           />
         </div>
       </div>

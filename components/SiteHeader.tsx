@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -23,18 +24,36 @@ export function SiteHeader() {
   const isInspiracion = pathname === "/inspiracion";
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-line/60 bg-sand-bg/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] transition-all">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    /* Mismo blanco que las tarjetas (`--color-surface-container-lowest`, #fff),
+        no un `bg-white` suelto: la paleta vive en globals.css. Al 60% deja
+        entrever la banda de foto del hero, que la sección mete debajo con
+        `-mt-16`; el `backdrop-blur-xl` es lo que mantiene legible el texto
+        sobre una foto tan movida. */
+    <header className="sticky top-0 z-40 w-full border-b border-line/60 bg-surface-container-lowest/60 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] transition-all">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-3 sm:px-6 lg:px-8">
         {/* Marca / Logo */}
-        <Link href="/" className="group flex items-center gap-2.5 focus-visible:outline-none">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-heritage-navy text-sand-bg font-bold shadow-xs">
-            <span className="material-symbols-outlined text-[20px]">texture</span>
+        <Link href="/" className="group flex items-center gap-2 sm:gap-2.5 focus-visible:outline-none min-w-0">
+          {/* El monograma es 2.13:1, no cuadrado: se sirve ya recortado a su caja
+              (`-marca.webp`) para no arrastrar el 60% de negro vacio del original.
+              El fondo negro es parte del archivo; `bg-black` solo evita el
+              destello blanco mientras carga. `alt=""` a proposito: el nombre de
+              la tienda ya va como texto aqui al lado, no hay que repetirlo. */}
+          <div className="shrink-0 overflow-hidden rounded-xl bg-black shadow-xs">
+            <Image
+              src="/logo-jalisciense-marca.webp"
+              alt=""
+              width={640}
+              height={329}
+              priority
+              sizes="78px"
+              className="h-9 w-auto sm:h-10"
+            />
           </div>
-          <div className="flex flex-col">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-accent-copper">
+          <div className="flex flex-col min-w-0">
+            <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-accent-copper truncate">
               Fresnillo · Atelier
             </span>
-            <span className="font-display text-xl font-bold tracking-tight text-heritage-navy transition-colors group-hover:text-accent-copper sm:text-2xl">
+            <span className="font-display text-lg sm:text-2xl font-bold tracking-tight text-heritage-navy transition-colors group-hover:text-accent-copper truncate">
               Telas La Jalisciense
             </span>
           </div>
@@ -65,29 +84,39 @@ export function SiteHeader() {
         </nav>
 
         {/* Acciones */}
-        <div className="flex items-center gap-2">
-          {/* Botón ¿Cómo funciona? / Ayuda */}
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* Botón ¿Cómo pedir? / Guía en 4 pasos (oculto en móvil pequeño porque ya está en MobileBottomNav) */}
           <button
             type="button"
             onClick={openTutorial}
-            className="flex items-center gap-1.5 rounded-full px-3 py-2 text-ink-soft transition-all hover:bg-surface-container hover:text-ink-text active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
-            aria-label="Cómo funciona el catálogo"
+            className="hidden sm:flex items-center gap-1.5 rounded-full border border-accent-copper/40 bg-surface-container-lowest/80 px-3.5 py-1.5 text-xs font-bold text-heritage-navy shadow-xs transition-all hover:bg-surface-container hover:border-accent-copper active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
+            aria-label="Cómo funciona el catálogo en 4 pasos"
           >
-            <span className="material-symbols-outlined text-[20px] text-heritage-navy">help_outline</span>
-            <span className="hidden text-sm font-medium sm:inline">Ayuda</span>
+            <span className="material-symbols-outlined text-[18px] text-accent-copper">
+              help_outline
+            </span>
+            <span>¿Cómo pedir?</span>
+            <span className="inline-flex rounded bg-accent-copper/15 px-1.5 py-0.2 text-[10px] font-bold text-accent-copper">
+              4 pasos
+            </span>
           </button>
 
-          {/* Compartir catálogo */}
-          <ShareCatalog variant="ghost" size="md" label="Compartir" className="hidden sm:inline-flex" />
+          {/* Compartir catálogo. El `hidden` va en este span y NO en el className del
+              Button: `Button` concatena clases sin tailwind-merge, asi que su
+              `inline-flex` de base le gana al `hidden` y el boton se colaba en movil
+              comiendose ~142px del header (el nombre de la tienda salia truncado). */}
+          <span className="hidden sm:inline-flex">
+            <ShareCatalog variant="ghost" size="md" label="Compartir" />
+          </span>
 
           {/* Botón Carrito / Cotización */}
           <button
             type="button"
             onClick={() => setIsOpen(true)}
-            className="relative flex h-10 w-10 items-center justify-center rounded-full bg-surface-container text-heritage-navy border border-outline-variant/30 shadow-xs transition-all hover:bg-surface-container-high hover:shadow active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
+            className="relative flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-surface-container text-heritage-navy border border-outline-variant/30 shadow-xs transition-all hover:bg-surface-container-high hover:shadow active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
             aria-label="Ver mi cotización"
           >
-            <span className="material-symbols-outlined text-[20px]">shopping_bag</span>
+            <span className="material-symbols-outlined text-[18px] sm:text-[20px]">shopping_bag</span>
             {mounted && itemCount > 0 && (
               <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent-copper px-1.5 text-xs font-bold text-white shadow-xs ring-2 ring-sand-bg">
                 {itemCount}
@@ -99,4 +128,3 @@ export function SiteHeader() {
     </header>
   );
 }
-

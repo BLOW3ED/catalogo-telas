@@ -219,6 +219,7 @@ export function TelaImageCarousel({
                 derivados={s.derivados}
                 sizes="(max-width: 1023px) 100vw, 50vw"
                 alt={altDe(s, i)}
+                aspecto="cuadrado"
                 priority={
                   i === initialIndex.current || (warm && Math.abs(i - index) <= 1)
                 }

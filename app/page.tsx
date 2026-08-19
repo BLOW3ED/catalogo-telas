@@ -1,11 +1,10 @@
-import { Suspense } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { getCatalogo, getFacetas, MODELOS_POR_PAGINA } from "@/lib/queries";
 import { agruparPorModelo } from "@/lib/types";
 import { leerFiltros, cuentaFiltros, aQuerystring } from "@/lib/filtros";
 import { ProductCard } from "@/components/ProductCard";
-import { SearchBar } from "@/components/SearchBar";
-import { Filtros } from "@/components/Filtros";
+import { CatalogToolbar } from "@/components/CatalogToolbar";
 import { TutorialTrigger } from "@/components/tutorial/TutorialTrigger";
 import { Plus } from "lucide-react";
 
@@ -41,62 +40,81 @@ export default async function HomePage({
 
   return (
     <main className="min-h-screen bg-sand-bg text-ink-text">
-      {/* 1. Hero Editorial / Bienvenida (Solo visible cuando no hay filtros activos de búsqueda) */}
+      {/* 1. Hero Editorial / Bienvenida con Tutorial Llamativo */}
       {!tieneFiltrosOBusqueda && (
-        <section className="relative w-full overflow-hidden border-b border-line/60 bg-surface-container-low">
-          <div className="relative mx-auto flex min-h-[360px] sm:min-h-[440px] max-w-7xl flex-col justify-end px-4 pb-12 pt-16 sm:px-6 lg:px-8">
-            <div className="absolute inset-0 z-0 opacity-40 mix-blend-multiply">
-              <div
-                className="h-full w-full bg-cover bg-center"
-                style={{
-                  backgroundImage:
-                    "url('https://lh3.googleusercontent.com/aida-public/AB6AXuARc_jBlq3eaVT-nzPAr-UoG2Iy6xCi3yWN8i3Ndsmp3FmDDFDeO2iT9bwQO5XUTDc7SXJbs5QwhNBq92izOmaUSky-mSNPrmjEnVgnnecYBEpHQqo0IGwivb6CTSHTzGtXU1J2nHH9mNPTfIi1D0TQOWzoo5H30toOcdjvdUYsiNrysngO4-D_4TL7Xn4MLb1iv9h8QBZGyXfDj-Ck-O0kBzK0pzh_rJaUK_Jg0wHFTv6yudgijl12')",
-                }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-sand-bg via-sand-bg/60 to-transparent" />
-            </div>
+        /* Hero en dos piezas: BANDA de foto a color pleno arriba y el texto
+            abajo sobre arena sólida. Antes iba todo superpuesto, pero el bloque
+            de texto (eyebrow + título + párrafo + banner del tutorial) llena el
+            hero casi entero, así que hacía falta un velo del 68% en TODA la
+            superficie para que el titular pasara AA — y eso dejaba los encajes
+            irreconocibles. Separándolos, la foto va sin velo y el texto recupera
+            el contraste normal del sitio.
 
-            <div className="relative z-10 max-w-2xl">
+            El `-mt-16` mete la banda DEBAJO del header (que mide h-16 y es
+            sticky), para que la foto se vea a través del blanco translúcido. */
+        <section className="relative w-full overflow-hidden border-b border-line/60 bg-sand-bg -mt-16">
+          {/* Banda de foto. Se le suma el alto del header para que lo que queda
+              a la vista bajo la barra siga siendo una franja con cuerpo. */}
+          <div className="relative h-[264px] sm:h-[344px] lg:h-[404px] w-full">
+            {/* Foto real del mostrador (encajes bordados). Sustituye al stock de
+                Stitch que venía hotlinkeado desde googleusercontent: una URL
+                ajena que podía morir sin aviso y que no era mercancía nuestra.
+                El activo se generó con la MISMA cadena que
+                `lib/images/derivados.ts` (sRGB forzado, sharpen σ 0.6, WebP 82)
+                — sin tocar brillo ni saturación: aquí se ve tela de verdad. */}
+            <Image
+              src="/hero-encajes.webp"
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+            />
+            {/* Único remate: funde el borde inferior con el arena de la página.
+                No vela la banda, solo evita el corte seco. */}
+            <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-sand-bg to-transparent" />
+          </div>
+
+          <div className="mx-auto max-w-7xl px-4 pb-10 pt-4 sm:px-6 lg:px-8">
+            <div className="relative z-10 max-w-3xl">
               <div className="mb-3 flex items-center gap-2">
                 <span className="h-0.5 w-6 bg-accent-copper" />
                 <span className="text-xs font-bold uppercase tracking-widest text-accent-copper">
-                  Atelier Textil & Mercería Fina
+                  TIENDA TEXTIL & MERCERÍA
                 </span>
               </div>
               <h1 className="font-display text-3xl font-bold tracking-tight text-heritage-navy sm:text-5xl sm:leading-tight">
-                Bienvenidos a Telas La Jalisciense
+                Bienvenid@ a Telas La Jalisciense
               </h1>
               <p className="mt-3 text-base text-ink-text/80 sm:text-lg">
-                La mayor selección de sedas, linos, encajes bordados y mercería de alta calidad para tus confecciones en Fresnillo.
+                La mejor selección de telas, encajes, bordados y mercería en Fresnillo.
               </p>
+
+              {/* Banner llamativo y destacado del Tutorial */}
+              <TutorialTrigger variant="hero-banner" className="mt-6 sm:mt-8" />
             </div>
           </div>
         </section>
       )}
 
-      {/* 2. Área Principal de Catálogo */}
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Encabezado de sección cuando se está buscando */}
-        {tieneFiltrosOBusqueda && (
-          <div className="mb-6">
-            <h1 className="font-display text-2xl font-bold text-heritage-navy sm:text-3xl">
-              Catálogo de Telas
-            </h1>
-            <p className="text-sm text-ink-soft">
-              Explora y filtra entre nuestra colección disponible.
-            </p>
-          </div>
-        )}
+      {/* 2. Barra de Búsqueda, Categorías y Filtros Sticky (Accesible en todo momento) */}
+      {configurado && (
+        <CatalogToolbar filtros={filtros} facetas={facetas} />
+      )}
 
-        {configurado && (
-          <div className="mb-6 flex flex-col gap-4">
-            <div className="max-w-xl">
-              <Suspense fallback={null}>
-                <SearchBar />
-              </Suspense>
-              <TutorialTrigger className="mt-3" />
+      {/* 3. Contenedor de Productos del Catálogo */}
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {/* Encabezado de sección cuando se está buscando o filtrando */}
+        {tieneFiltrosOBusqueda && (
+          <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div>
+              <h1 className="font-display text-2xl font-bold text-heritage-navy sm:text-3xl">
+                {filtros.q ? `Resultados para “${filtros.q}”` : "Catálogo de Telas"}
+              </h1>
+              <p className="text-sm text-ink-soft">
+                Explora y filtra entre nuestra colección disponible.
+              </p>
             </div>
-            <Filtros filtros={filtros} facetas={facetas} />
           </div>
         )}
 
@@ -150,6 +168,9 @@ export default async function HomePage({
           </>
         )}
       </div>
+
+      {/* Botón flotante del tutorial (siempre accesible desde cualquier parte de la página) */}
+      <TutorialTrigger variant="floating" />
     </main>
   );
 }
@@ -187,7 +208,14 @@ function SinResultados({ filtros }: { filtros: ReturnType<typeof leerFiltros> })
     );
   }
 
-  const soloBusqueda = aQuerystring({ ...filtros, categorias: [], colores: [], propiedades: [], precioMax: null, soloDisponibles: false });
+  const soloBusqueda = aQuerystring({
+    ...filtros,
+    categorias: [],
+    colores: [],
+    propiedades: [],
+    precioMax: null,
+    soloDisponibles: false,
+  });
 
   return (
     <div className="rounded-2xl border border-dashed border-outline-variant/60 bg-surface-container-lowest/80 p-12 text-center shadow-xs">
@@ -202,16 +230,17 @@ function SinResultados({ filtros }: { filtros: ReturnType<typeof leerFiltros> })
             ? `No encontramos nada para “${filtros.q}”. Intenta con otro término o SKU.`
             : "Ningún producto cumple con todos los filtros activos."}
       </p>
-      {conFiltros && (
-        <Link
-          href={soloBusqueda ? `/?${soloBusqueda}` : "/"}
-          className="mt-5 inline-flex items-center gap-2 rounded-full border border-outline-variant/40 bg-surface-container-lowest px-5 py-2.5 text-sm font-semibold text-heritage-navy shadow-xs transition-all hover:bg-surface-container active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
-        >
-          <span className="material-symbols-outlined text-[18px]">filter_alt_off</span>
-          Quitar los filtros
-        </Link>
-      )}
+      <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+        {conFiltros && (
+          <Link
+            href={soloBusqueda ? `/?${soloBusqueda}` : "/"}
+            className="inline-flex items-center gap-2 rounded-full border border-outline-variant/40 bg-surface-container-lowest px-5 py-2.5 text-sm font-semibold text-heritage-navy shadow-xs transition-all hover:bg-surface-container active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
+          >
+            <span className="material-symbols-outlined text-[18px]">filter_alt_off</span>
+            Quitar los filtros
+          </Link>
+        )}
+      </div>
     </div>
   );
 }
-

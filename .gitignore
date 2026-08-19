@@ -32,6 +32,9 @@ next-env.d.ts
 catalog-manifest.csv
 catalog-manifest.auto.json
 revision-lote.html
+respaldo-bd-*.json
+snapshot-catalogo-*.csv
+
 
 # salida de la skill graphify (grafo de conocimiento del repo, se regenera)
 /graphify-out/

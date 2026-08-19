@@ -14,9 +14,11 @@
     "etiquetas:bolsitas": "tsx scripts/etiquetas-bolsitas.ts",
     "nombres-provisionales": "tsx scripts/nombres-provisionales.ts",
     "clasificar": "tsx scripts/clasificar.ts",
+    "limpiar": "tsx scripts/limpiar-duplicados.ts",
     "hoja": "tsx scripts/hoja-revision.ts",
     "backfill:derivados": "tsx scripts/backfill-derivados.ts",
-    "resubir": "tsx scripts/resubir-fotos.ts"
+    "resubir": "tsx scripts/resubir-fotos.ts",
+    "og": "tsx scripts/generar-og.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",

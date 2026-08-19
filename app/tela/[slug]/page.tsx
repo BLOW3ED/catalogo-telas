@@ -129,6 +129,7 @@ export default async function TelaDetallePage({
                       ? `${nombre} ${seleccionada.color_nombre}`
                       : nombre
                   }
+                  aspecto="cuadrado"
                   priority
                 />
               </div>

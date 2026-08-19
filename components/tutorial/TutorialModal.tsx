@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { X, ChevronLeft } from "lucide-react";
+import { X, ChevronLeft, ArrowRight, Sparkles } from "lucide-react";
 import { useGuideStore } from "@/lib/guide-store";
 import { Button } from "@/components/ui/Button";
 import {
@@ -13,20 +13,12 @@ import {
 
 /**
  * TUTORIAL del catálogo — modal de slides con maquetas.
- *
- * Reemplaza a los coach-marks que antes vivían incrustados en la página
- * (buscador, grid, selector de color, metros, carrito): estorbaban el layout y
- * competían con las telas. Aquí el tutorial es efímero y está fuera del flujo;
- * las maquetas reponen el contexto espacial que daba el coach-mark ("mira ESTE
- * botón") sin ocupar un pixel de la página real.
- *
- * Se abre solo en la primera visita, y se puede reabrir cuando sea desde
- * "Ayuda" en el header. Copy corto y letra grande: el rango de edad va de 20 a
- * 80 años.
+ * Rediseñado con la estética "Artisanal Modernity" (Atelier Textil).
  */
 
 type Slide = {
   maqueta: () => React.ReactElement;
+  etiqueta: string;
   titulo: string;
   texto: string;
 };
@@ -34,27 +26,31 @@ type Slide = {
 const SLIDES: Slide[] = [
   {
     maqueta: MaquetaBuscar,
-    titulo: "Busca o explora",
+    etiqueta: "Paso 1 · Exploración",
+    titulo: "Busca o explora a tu ritmo",
     texto:
-      "Escribe el nombre, el color o el tipo de tela que buscas. O baja y explora todo el catálogo con calma.",
+      "Escribe el nombre, color o uso de tela que buscas. O desliza hacia abajo para recorrer todo nuestro catálogo selecto.",
   },
   {
     maqueta: MaquetaColor,
-    titulo: "Elige el color",
+    etiqueta: "Paso 2 · Selección de Tono",
+    titulo: "Elige el color ideal",
     texto:
-      "Toca una tela para verla en grande. Cambia de color picando los botones o deslizando la foto: el precio se actualiza solo.",
+      "Toca cualquier tela para verla a detalle. Cambia de tono con un solo toque y consulta las existencias en tiempo real.",
   },
   {
     maqueta: MaquetaMetros,
-    titulo: "Di cuántos metros",
+    etiqueta: "Paso 3 · Cantidad y Cesta",
+    titulo: "Define cuántos metros requieres",
     texto:
-      "Elige los metros que necesitas y toca “Agregar”. Se guarda en tu cotización, sin compromiso.",
+      "Ajusta los metros que necesitas y agrégalos a tu cotización. Puedes combinar distintas telas sin compromiso.",
   },
   {
     maqueta: MaquetaWhatsapp,
+    etiqueta: "Paso 4 · Cotización Directa",
     titulo: "Envíalo por WhatsApp",
     texto:
-      "Al terminar, toca “Enviar por WhatsApp”: se abre el chat con tu pedido ya escrito. Solo mándalo y te confirmamos precio y disponibilidad.",
+      "Al terminar, toca “Enviar por WhatsApp”: se abrirá el chat con tu pedido redactado para confirmarte precio exacto y disponibilidad inmediata.",
   },
 ];
 
@@ -62,10 +58,7 @@ const SLIDES: Slide[] = [
 const SWIPE_MINIMO = 40;
 
 /**
- * Espera antes de ofrecer el tutorial solo en la primera visita. La idea es
- * atender a quien se quedó parado sin saber qué hacer, no interrumpir a quien
- * llegó por un link de WhatsApp buscando una tela concreta: cualquier señal de
- * que sabe moverse (scroll, toque, clic, tecla) cancela la apertura.
+ * Espera antes de ofrecer el tutorial solo en la primera visita.
  */
 const ESPERA_AUTO_MS = 3000;
 
@@ -81,17 +74,12 @@ export function TutorialModal() {
 
   const panelRef = useRef<HTMLDivElement>(null);
   const touchX = useRef<number | null>(null);
-  // Para devolver el foco a donde estaba (el botón "Ayuda") al cerrar.
   const focoPrevio = useRef<HTMLElement | null>(null);
 
   useEffect(() => setMounted(true), []);
 
-  // Apertura DIFERIDA en la primera visita: el catálogo abre limpio y el
-  // tutorial solo aparece si a los 3 segundos la persona sigue sin tocar nada.
-  // Si se movió (scroll, toque, clic, tecla) ya sabe qué hacer: lo damos por
-  // visto y no lo volvemos a intentar en las siguientes páginas.
+  // Apertura diferida en la primera visita
   useEffect(() => {
-    // `tutorialSeen` sale de localStorage: solo se puede leer ya montados.
     if (!mounted || tutorialSeen || tutorialOpen) return;
 
     const temporizador = setTimeout(openTutorial, ESPERA_AUTO_MS);
@@ -125,7 +113,7 @@ export function TutorialModal() {
     setSlide(Math.min(SLIDES.length - 1, Math.max(0, i)));
   }, []);
 
-  // Teclado: Esc cierra, flechas navegan, Tab se queda dentro del modal.
+  // Teclado: Esc cierra, flechas navegan, Tab se queda dentro del modal
   useEffect(() => {
     if (!visible) return;
 
@@ -145,9 +133,6 @@ export function TutorialModal() {
       }
       if (e.key !== "Tab" || !panelRef.current) return;
 
-      // Trampa de foco: sin esto el tabulador se escapa al catálogo de atrás,
-      // que para un lector de pantalla no existe (aria-modal) pero para el
-      // teclado sí.
       const focusables = panelRef.current.querySelectorAll<HTMLElement>(
         'button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'
       );
@@ -170,7 +155,7 @@ export function TutorialModal() {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [visible, cerrar]);
 
-  // Al abrir: recordar el foco, meterlo al modal y congelar el scroll de atrás.
+  // Al abrir: foco al modal y congelar scroll
   useEffect(() => {
     if (!visible) return;
 
@@ -207,7 +192,7 @@ export function TutorialModal() {
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-end justify-center bg-heritage-navy/60 p-4 backdrop-blur-sm sm:items-center"
+      className="fixed inset-0 z-[60] flex items-end justify-center bg-heritage-navy/65 p-3 sm:p-4 backdrop-blur-md transition-opacity duration-300 sm:items-center"
       onClick={cerrar}
     >
       <div
@@ -216,44 +201,53 @@ export function TutorialModal() {
         aria-modal="true"
         aria-labelledby="tutorial-titulo"
         tabIndex={-1}
-        className="w-full max-w-md overflow-hidden rounded-3xl bg-sand-bg border border-line/60 shadow-2xl focus:outline-none"
+        className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-line/80 bg-surface-container-lowest shadow-2xl focus:outline-none"
         onClick={(e) => e.stopPropagation()}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >
-        <div className="flex items-center justify-between border-b border-line/60 bg-surface-container-low px-5 py-4">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-accent-copper">
-            Cómo funciona el catálogo · {slide + 1} de {SLIDES.length}
-          </p>
+        {/* Cabecera del Atelier */}
+        <div className="flex items-center justify-between border-b border-line/60 bg-surface-container-low/60 px-5 py-3.5 sm:px-6">
+          <div className="flex items-center gap-2">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent-copper text-white text-[11px] font-bold">
+              {slide + 1}
+            </span>
+            <span className="text-[11px] font-bold uppercase tracking-widest text-accent-copper">
+              {actual.etiqueta}
+            </span>
+          </div>
           <button
             type="button"
             onClick={cerrar}
-            className="rounded-full p-1.5 text-ink-soft transition-colors hover:bg-surface-container hover:text-heritage-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
-            aria-label="Cerrar tutorial"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-surface-container hover:text-heritage-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
+            aria-label="Cerrar guía del catálogo"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </button>
         </div>
 
-        <div className="px-6 pb-2 pt-6">
-          <Maqueta />
+        {/* Contenido Principal y Maqueta */}
+        <div className="px-5 pt-5 pb-2 sm:px-7 sm:pt-6">
+          <div className="relative">
+            <Maqueta />
+          </div>
 
-          {/* aria-live */}
-          <div className="mt-6 text-center" aria-live="polite">
+          {/* Textos explicativos */}
+          <div className="mt-5 text-center" aria-live="polite">
             <h2
               id="tutorial-titulo"
-              className="font-display text-2xl font-bold text-heritage-navy"
+              className="font-display text-xl sm:text-2xl font-bold text-heritage-navy tracking-tight"
             >
               {actual.titulo}
             </h2>
-            <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-ink-soft">
+            <p className="mx-auto mt-2 max-w-md text-xs sm:text-sm leading-relaxed text-ink-soft">
               {actual.texto}
             </p>
           </div>
         </div>
 
-        {/* Puntos de progreso */}
-        <div className="flex justify-center gap-2 py-5">
+        {/* Indicadores de Paso (Pills animados) */}
+        <div className="flex justify-center items-center gap-1.5 py-4">
           {SLIDES.map((s, i) => (
             <button
               key={s.titulo}
@@ -261,34 +255,37 @@ export function TutorialModal() {
               onClick={() => irA(i)}
               aria-label={`Ir al paso ${i + 1}: ${s.titulo}`}
               aria-current={i === slide ? "step" : undefined}
-              className="group p-1.5 focus-visible:outline-none"
+              className="group p-1 focus-visible:outline-none"
             >
               <span
-                className={`block h-2 rounded-full transition-all group-focus-visible:ring-2 group-focus-visible:ring-heritage-navy group-focus-visible:ring-offset-2 ${
-                  i === slide ? "w-6 bg-heritage-navy" : "w-2 bg-outline-variant"
+                className={`block h-2 rounded-full transition-all duration-300 ${
+                  i === slide
+                    ? "w-8 bg-heritage-navy shadow-xs"
+                    : "w-2 bg-line-strong/40 hover:bg-outline-variant/70"
                 }`}
               />
             </button>
           ))}
         </div>
 
-        <div className="flex items-center justify-between gap-3 border-t border-line/60 bg-surface-container-low px-5 py-4">
+        {/* Barra de Acciones Inferior */}
+        <div className="flex items-center justify-between gap-3 border-t border-line/60 bg-surface-container-low/60 px-5 py-3.5 sm:px-6">
           {esPrimero ? (
             <button
               type="button"
               onClick={cerrar}
-              className="rounded px-2 text-xs font-bold uppercase tracking-wider text-ink-soft transition-colors hover:text-heritage-navy focus-visible:outline-none"
+              className="rounded-full px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-ink-soft transition-colors hover:text-heritage-navy hover:bg-surface-container focus-visible:outline-none"
             >
-              Saltar
+              Saltar guía
             </button>
           ) : (
             <button
               type="button"
               onClick={() => irA(slide - 1)}
-              className="flex items-center gap-1 rounded px-2 text-xs font-bold uppercase tracking-wider text-ink-soft transition-colors hover:text-heritage-navy focus-visible:outline-none"
+              className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-ink-soft transition-colors hover:text-heritage-navy hover:bg-surface-container focus-visible:outline-none"
             >
               <ChevronLeft className="h-4 w-4" aria-hidden />
-              Atrás
+              <span>Anterior</span>
             </button>
           )}
 
@@ -296,11 +293,18 @@ export function TutorialModal() {
             variant="primary"
             size="md"
             onClick={esUltimo ? cerrar : () => irA(slide + 1)}
+            className="shadow-sm"
           >
-            {esUltimo ? "¡Empecemos!" : "Siguiente"}
+            <span>{esUltimo ? "¡Explorar telas!" : "Siguiente"}</span>
+            {esUltimo ? (
+              <Sparkles className="h-4 w-4" aria-hidden />
+            ) : (
+              <ArrowRight className="h-4 w-4" aria-hidden />
+            )}
           </Button>
         </div>
       </div>
     </div>
   );
 }
+
