@@ -32,11 +32,17 @@ const SIZES_GRID =
  * v4 escanea el código fuente buscando literales, así que una clase armada en
  * runtime (`aspect-[${x}]`) compila, pasa los tipos y no existe en el CSS.
  *
- * El default es `retrato` porque es lo que pinta el grid. `lib/images/recorte.ts`
- * entrega SIEMPRE un cuadrado, y `object-cover` en 3:4 descarta 12.5% del ancho
- * por lado — por eso el MARGEN del recorte tiene que dejar más aire que eso.
- * Los contenedores cuadrados (el carrito) piden `cuadrado` y así ven la foto
- * íntegra en vez de perder el borde inferior.
+ * El default es `cuadrado` porque TODO lo que pinta fotos ya es cuadrado: el
+ * grid, la ficha, el carrito y el listado de /admin. Los maestros también lo
+ * son —`lib/images/recorte.ts` entrega siempre un cuadrado y el curador de
+ * /admin recorta a 1:1—, así que la ventana enseña la foto ÍNTEGRA y lo que
+ * se encuadró es literalmente lo que se ve.
+ *
+ * El default era `retrato`, de cuando la card era 3:4, y sobrevivió al cambio:
+ * `object-cover` en 3:4 descarta 12.5% del ancho por lado, y la miniatura del
+ * listado de /admin —el único punto que no pasaba `aspecto`— recortaba en
+ * silencio lo que el admin acababa de encuadrar a mano. `retrato` sigue
+ * disponible para una ventana que de verdad lo sea, pero ya nadie lo pide.
  */
 const ASPECTOS = {
   retrato: "aspect-[3/4]",
@@ -61,7 +67,7 @@ export function TelaImage({
   derivados,
   sizes = SIZES_GRID,
   priority = false,
-  aspecto = "retrato",
+  aspecto = "cuadrado",
 }: {
   src: string | null;
   alt: string;
@@ -69,7 +75,7 @@ export function TelaImage({
   /** Cómo se renderiza según viewport (para elegir el derivado correcto). */
   sizes?: string;
   priority?: boolean;
-  /** Proporción de la ventana; `cuadrado` para contenedores 1:1. */
+  /** Proporción de la ventana; el default 1:1 es el de todo el catálogo. */
   aspecto?: AspectoTelaImage;
 }) {
   const [loaded, setLoaded] = useState(false);

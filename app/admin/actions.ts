@@ -8,6 +8,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getSesionAdmin } from "@/lib/admin-auth";
 import { STORAGE_BUCKET, rutasDerivados } from "@/lib/supabase/storage";
 import { procesarFoto } from "@/lib/images/derivados";
+import { parsearEncuadres, type Encuadre } from "@/lib/images/encuadre";
+import { aplicarEncuadre } from "@/lib/images/aplicar-encuadre";
 import { slugify } from "@/lib/slug";
 import { aplicarMovimiento, esTipoMovimiento } from "@/lib/inventario";
 import { UNIDADES_VENTA, type UnidadVenta } from "@/lib/unidades";
@@ -292,6 +294,7 @@ export async function crearMerceria(formData: FormData) {
       carpeta: creada.slug,
       base: slugify(codigo) || "producto",
       archivos,
+      encuadres: parsearEncuadres(formData.get("recortes"), archivos.length),
       alt: null,
       ordenInicial: 0,
     });
@@ -520,6 +523,11 @@ function archivosDelForm(formData: FormData, campo: string): File[] {
  * partir de `ordenInicial`. Compartido por la subida desde el editor y por el
  * alta de mercería, que sube la foto en el mismo paso en que crea el producto.
  *
+ * Si la foto trae encuadre (el curador de /admin), se recorta ANTES de subir:
+ * lo que queda en el bucket ya es el maestro tal como se va a ver en la
+ * vitrina, y de ahí salen los derivados sin saber nada del recorte. Ver
+ * `lib/images/aplicar-encuadre.ts` para por qué es destructivo a propósito.
+ *
  * Devuelve las fotos registradas para que el llamador genere sus derivados en
  * `after()`; NO los genera aquí porque quien sube no debe esperar a sharp.
  */
@@ -529,6 +537,7 @@ async function registrarFotos({
   carpeta,
   base,
   archivos,
+  encuadres = [],
   alt,
   ordenInicial,
 }: {
@@ -537,23 +546,44 @@ async function registrarFotos({
   carpeta: string;
   base: string;
   archivos: File[];
+  /** Alineado por índice con `archivos`; `null` = subir la foto entera. */
+  encuadres?: (Encuadre | null)[];
   alt: string | null;
   ordenInicial: number;
 }): Promise<{ fotoId: string; ruta: string }[]> {
   const pendientes: { fotoId: string; ruta: string }[] = [];
   let orden = ordenInicial;
 
-  for (const archivo of archivos) {
+  for (const [i, archivo] of archivos.entries()) {
     const ext = EXTENSIONES_IMAGEN[archivo.type];
     if (!ext) {
       throw new Error(`"${archivo.name}" no es JPG, PNG ni WebP. Convierte la imagen e inténtalo de nuevo.`);
+    }
+
+    // Sin encuadre se suben los BYTES ORIGINALES: recortar obliga a
+    // re-codificar, y sin nada que recortar ese paso solo puede restar calidad.
+    let cuerpo: File | Buffer = archivo;
+    const encuadre = encuadres[i];
+    if (encuadre) {
+      try {
+        cuerpo = await aplicarEncuadre(
+          Buffer.from(await archivo.arrayBuffer()),
+          encuadre,
+          archivo.type
+        );
+      } catch (e) {
+        // Explícito y no silencioso: si se subiera la foto sin recortar, la
+        // tienda creería que quedó encuadrada y solo lo notaría en la vitrina.
+        const detalle = e instanceof Error ? e.message : String(e);
+        throw new Error(`No se pudo recortar "${archivo.name}": ${detalle}`);
+      }
     }
 
     // Timestamp en el nombre → nunca pisa una foto existente en el bucket.
     const ruta = `${carpeta}/${base}-${Date.now()}-${orden}.${ext}`;
     const { error: errorSubida } = await supabase.storage
       .from(STORAGE_BUCKET)
-      .upload(ruta, archivo, { contentType: archivo.type, upsert: false });
+      .upload(ruta, cuerpo, { contentType: archivo.type, upsert: false });
     if (errorSubida) throw new Error(`No se pudo subir "${archivo.name}": ${errorSubida.message}`);
 
     const { data: fila, error: errorFila } = await supabase
@@ -626,6 +656,7 @@ export async function subirFotos(formData: FormData) {
     carpeta: contexto?.tela_slug ?? "sin-modelo",
     base: contexto?.color_slug ?? "variante",
     archivos,
+    encuadres: parsearEncuadres(formData.get("recortes"), archivos.length),
     alt: textoOpcional(formData.get("alt")),
     ordenInicial: (existentes?.[0]?.orden ?? -1) + 1,
   });

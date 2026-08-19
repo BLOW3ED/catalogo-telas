@@ -169,6 +169,7 @@ function FilaVariante({ v, fotos }: { v: CatalogoTela; fotos: number }) {
                   ? `${v.tela_nombre} ${v.color_nombre}`
                   : v.tela_nombre
               }
+              aspecto="cuadrado"
             />
           </div>
           <div className="min-w-0">

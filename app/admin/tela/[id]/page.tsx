@@ -10,6 +10,7 @@ import { AdminNav } from "@/components/admin/AdminNav";
 import { SubmitButton } from "@/components/admin/SubmitButton";
 import { ConfirmSubmit } from "@/components/admin/ConfirmSubmit";
 import { OrdenColores } from "@/components/admin/OrdenColores";
+import { CuradorFotos } from "@/components/admin/CuradorFotos";
 import { UNIDADES_VENTA, unidadDe } from "@/lib/unidades";
 import {
   actualizarTela,
@@ -344,34 +345,28 @@ export default async function EditarTelaPage({
                     ))}
                 </ul>
 
-                <form action={subirFotos} className="flex flex-col gap-3 sm:flex-row sm:items-end">
+                <form action={subirFotos} className="space-y-4">
                   <input type="hidden" name="variante_id" value={v.id} />
                   <input type="hidden" name="tela_id" value={tela.id} />
-                  <label className="block flex-1">
-                    <span className="mb-1 block text-xs font-medium text-ink/60">
-                      Agregar fotos (JPG, PNG o WebP; puedes elegir varias)
-                    </span>
-                    <input
-                      type="file"
-                      name="fotos"
-                      accept="image/jpeg,image/png,image/webp"
-                      multiple
-                      required
-                      className="block w-full text-sm text-ink/70 file:mr-3 file:rounded-xl file:border-0 file:bg-amber file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-amber/90"
-                    />
-                  </label>
-                  <label className="block flex-1">
-                    <span className="mb-1 block text-xs font-medium text-ink/60">
-                      Texto alternativo (accesibilidad)
-                    </span>
-                    <input
-                      type="text"
-                      name="alt"
-                      placeholder={`${tela.nombre}${v.color_id ? ` ${nombreColor.get(v.color_id) ?? ""}` : ""}`}
-                      className="h-10 w-full rounded-xl border border-line bg-bg px-3 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
-                    />
-                  </label>
-                  <SubmitButton label="Subir fotos" pendingLabel="Subiendo…" size="sm" />
+                  <CuradorFotos
+                    requerido
+                    etiqueta="Agregar fotos"
+                    ayuda="JPG, PNG o WebP; puedes elegir varias. Al elegirlas se abre el encuadre para decidir cómo se ve cada una en el catálogo."
+                  />
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+                    <label className="block flex-1">
+                      <span className="mb-1 block text-xs font-medium text-ink/60">
+                        Texto alternativo (accesibilidad)
+                      </span>
+                      <input
+                        type="text"
+                        name="alt"
+                        placeholder={`${tela.nombre}${v.color_id ? ` ${nombreColor.get(v.color_id) ?? ""}` : ""}`}
+                        className="h-10 w-full rounded-xl border border-line bg-bg px-3 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+                      />
+                    </label>
+                    <SubmitButton label="Subir fotos" pendingLabel="Subiendo…" size="sm" />
+                  </div>
                 </form>
               </div>
 

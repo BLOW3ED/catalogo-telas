@@ -88,6 +88,23 @@ carrito ya guardado en localStorage— no le cambia el pedido a nadie.
   `foto_principal_derivados`. `TelaImage` usa `<img srcset>` directo al CDN de Supabase
   (sin recompresión de next/image) y cae a `next/image` sobre el original si es null.
   El `lg` también es para el agente de WhatsApp (n8n), que lee Storage directo.
+- **Curaduría de encuadre en /admin** (`components/admin/CuradorFotos.tsx`): elegir una
+  foto abre un visor a pantalla completa con el marco CUADRADO de la card (zoom con
+  rueda/pellizco anclado al cursor, arrastre, giro de 90°, regla de tercios y una
+  miniatura en vivo de cómo queda en vitrina). El navegador NO recorta píxeles: manda
+  los bytes originales más un rectángulo en FRACCIONES (`lib/images/encuadre.ts`, campo
+  `recortes` del form) y el corte lo hace sharp sobre la foto completa
+  (`lib/images/aplicar-encuadre.ts`). Un `<canvas>` habría recomprimido, tirado el ICC y
+  submuestreado en iOS — inaceptable donde el color ES el producto.
+  Detalles que no son negociables: la orientación EXIF va en `sharp(x, {autoOrient:true})`
+  y NO en `.rotate()`, porque sharp resetea la rotación si se le llama dos veces y las
+  fotos verticales salían acostadas; el FORMATO se conserva (un PNG sin fondo pasado a
+  JPEG perdería el alfa); y sin recorte real los bytes suben intactos, sin re-codificar.
+  El recorte es DESTRUCTIVO a propósito, igual que `pnpm preparar`: el maestro del bucket
+  es el asset horneado, no el negativo.
+  La política de encuadre vive sola en `vistaLimitada()`: la ventana **nunca se sale de
+  la foto**. `recorte.ts` sí deja desbordar y rellena con el fondo, porque ahí nadie está
+  mirando; aquí hay alguien decidiendo y la previsualización promete "así se va a ver".
 
 ## Convenciones
 - Paleta (tokens en `app/globals.css`): tinta `#1A1714`, fondo hueso `#FAF8F5`,
@@ -125,6 +142,8 @@ carrito ya guardado en localStorage— no le cambia el pedido a nadie.
    se cuenta con una lectura aparte a `foto`), y la card ENTERA abre el editor
    —stretched link— menos los campos de captura, elevados en `z-10` para que
    tocar el precio en la tablet no navegue.
+   Las dos pantallas que suben fotos (`/admin/tela/[id]` y `/admin/merceria/nueva`)
+   usan el curador de encuadre; ver "Storage e imágenes".
    **Dos altas, porque la captura es al revés:** `/admin/tela/nueva` crea el
    modelo vacío y los colores se agregan en el editor; `/admin/merceria/nueva`
    captura el avío completo de una sentada (código, categoría, unidad de venta,

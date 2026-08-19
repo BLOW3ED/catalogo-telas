@@ -6,6 +6,7 @@ import { crearMerceria } from "@/app/admin/actions";
 import { categoriaDeCodigo, unidadDeCategoria } from "@/lib/ingesta/categorias";
 import { UNIDADES_VENTA, unidadDe } from "@/lib/unidades";
 import { SubmitButton } from "@/components/admin/SubmitButton";
+import { CuradorFotos } from "@/components/admin/CuradorFotos";
 
 type Opcion = { id: string; nombre: string };
 type OpcionCategoria = Opcion & { slug: string };
@@ -238,20 +239,10 @@ export function FormNuevaMerceria({
       </label>
 
       {/* --------------------------------------------------------------- Fotos */}
-      <label className="block">
-        <span className={etiquetaClase}>Fotos</span>
-        <input
-          type="file"
-          name="fotos"
-          multiple
-          accept="image/jpeg,image/png,image/webp"
-          className="w-full rounded-xl border border-line bg-bg p-2.5 text-sm text-ink file:mr-3 file:rounded-lg file:border-0 file:bg-amber/10 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-amber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
-        />
-        <span className={ayudaClase}>
-          JPG, PNG o WebP. La primera es la portada; las versiones optimizadas se
-          generan solas.
-        </span>
-      </label>
+      <CuradorFotos
+        etiqueta="Fotos"
+        ayuda="JPG, PNG o WebP. Al elegirlas se abre el encuadre; la primera es la portada y las versiones optimizadas se generan solas."
+      />
 
       <SubmitButton label="Crear producto" pendingLabel="Creando…" />
     </form>
