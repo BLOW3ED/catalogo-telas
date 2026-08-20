@@ -39,6 +39,16 @@ uso: cliente final que navega, y vendedor en tablet que arma cotizaciones.
 - `pnpm ingest --upload` — tras aprobar el CSV: sube fotos al bucket y hace upsert idempotente
 - `pnpm backfill:derivados` — genera derivados WebP para fotos con `derivados IS NULL`
   (idempotente; acepta `--limit=N`)
+- `pnpm admin:crear --email=<correo>` — da de alta un administrador. Un admin son DOS
+  cosas y hacen falta las dos: la cuenta de Supabase Auth (sesión) y el correo en
+  `ADMIN_EMAILS` (autorización) — la sesión sola no basta porque Supabase permite
+  sign-up público. El script hace la primera y te imprime el `ADMIN_EMAILS` completo
+  ya armado para la segunda; no puede escribir las variables de Vercel.
+  **Simulacro por defecto**: `--aplicar` escribe. La contraseña NO se pasa por
+  argumento (quedaría en el historial del shell): la genera con el CSPRNG y la
+  muestra UNA vez, sin caracteres ambiguos porque se dicta por teléfono y se
+  teclea en tablet. `--listar` dice quién tiene cuenta y si está autorizado;
+  `--reset --aplicar` repone la contraseña de una cuenta que ya existe.
 - `pnpm clasificar` — sobre lo YA SUBIDO: asigna categoría a cada tela según el prefijo
   de su código (`lib/ingesta/categorias.ts`) y le quita a las bolsitas de piedra el
   número de cámara del nombre. **Simulacro por defecto**: `--aplicar` escribe,
@@ -134,7 +144,8 @@ carrito ya guardado en localStorage— no le cambia el pedido a nadie.
    las filas de esa página— y `recortarAModelos` hace lo mismo en el camino de
    búsqueda. Cambiar un filtro o la búsqueda resetea `ver`.
 5. ⏳ Cotización + WhatsApp (carrito y envío listos; pulido pendiente)
-6. ✅ Admin con Auth (allowlist `ADMIN_EMAILS`): precio/stock en `/admin`, editor
+6. ✅ Admin con Auth (allowlist `ADMIN_EMAILS`, altas con `pnpm admin:crear`):
+   precio/stock en `/admin`, editor
    completo de telas/variantes/fotos en `/admin/tela/[id]`, inventario con
    kardex en `/admin/inventario` (tabla `movimiento_inventario`, sección 10 del
    SQL). En `/admin` cada card muestra categoría y CUÁNTAS FOTOS tiene (esto
