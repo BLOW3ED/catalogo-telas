@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import { getTelaPorSlug, getFotosDeVariantes } from "@/lib/queries";
 import { publicImageUrl } from "@/lib/supabase/storage";
 import { construirSlides } from "@/lib/fotos";
@@ -10,7 +9,9 @@ import { TelaImageCarousel } from "@/components/TelaImageCarousel";
 import { ColorSelector } from "@/components/ColorSelector";
 import { AttributeBadges } from "@/components/AttributeBadges";
 import { AddToCart } from "@/components/AddToCart";
+import { VolverAlCatalogo } from "@/components/VolverAlCatalogo";
 import { unidadDe } from "@/lib/unidades";
+import { sugerenciaMerceriaDeCategoria } from "@/lib/ingesta/categorias";
 
 const pesos = new Intl.NumberFormat("es-MX", {
   style: "currency",
@@ -89,24 +90,22 @@ export default async function TelaDetallePage({
   };
 
   const tags = [...seleccionada.casos_uso, ...seleccionada.oportunidades];
+  const sugerenciaMerceria = sugerenciaMerceriaDeCategoria(seleccionada.categoria_slug);
 
   const fotos = await getFotosDeVariantes(variantes.map((v) => v.variante_id));
   const slides = construirSlides({ variantes, fotos, seleccionada });
   const usarCarrusel = slides.length > 1;
 
+  // pb extra en móvil: reserva espacio bajo el contenido para las DOS barras
+  // fijas que se le encimaban (MobileBottomNav + AddToCart), que entre las
+  // dos miden ~9.25rem + safe-area. En sm+ ninguna es fixed.
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-      <Link
-        href="/"
-        className="mb-6 inline-flex items-center gap-2 rounded-full border border-outline-variant/40 bg-surface-container-lowest px-4 py-2 text-xs font-bold uppercase tracking-wider text-ink-soft shadow-xs transition-all hover:bg-surface-container hover:text-heritage-navy active:scale-95"
-      >
-        <ArrowLeft className="h-4 w-4" aria-hidden />
-        Volver al catálogo
-      </Link>
+    <main className="mx-auto max-w-6xl px-4 pt-8 pb-[calc(9.5rem+env(safe-area-inset-bottom,0px))] sm:px-6 sm:pb-8 lg:px-8">
+      <VolverAlCatalogo />
 
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
         {/* Columna Izquierda: Galería / Imagen & Swatches */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 min-w-0">
           {usarCarrusel ? (
             <div className="overflow-hidden rounded-3xl border border-outline-variant/30 bg-surface-container-lowest shadow-sm">
               <TelaImageCarousel
@@ -301,38 +300,34 @@ export default async function TelaDetallePage({
             </div>
           )}
 
-          {/* Mercería recomendada para esta tela */}
-          <div className="border-t border-line/60 pt-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-accent-copper mb-3">
-              Mercería sugerida para este producto
-            </h3>
-            <div className="grid grid-cols-2 gap-3">
-              <Link
-                href="/?q=hilo"
-                className="flex items-center gap-3 rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-3 shadow-2xs transition-all hover:bg-surface-container"
-              >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-container text-heritage-navy">
-                  <span className="material-symbols-outlined text-[20px]">palette</span>
-                </div>
-                <div className="overflow-hidden">
-                  <p className="truncate text-xs font-bold text-heritage-navy">Hilo a tono</p>
-                  <p className="text-[11px] text-ink-soft">Gütermann / Poliéster</p>
-                </div>
-              </Link>
-              <Link
-                href="/?q=aguja"
-                className="flex items-center gap-3 rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-3 shadow-2xs transition-all hover:bg-surface-container"
-              >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-container text-heritage-navy">
-                  <span className="material-symbols-outlined text-[20px]">hardware</span>
-                </div>
-                <div className="overflow-hidden">
-                  <p className="truncate text-xs font-bold text-heritage-navy">Agujas de costura</p>
-                  <p className="text-[11px] text-ink-soft">Punta fina / Microtex</p>
-                </div>
-              </Link>
+          {/* Mercería recomendada para esta tela. Se oculta por completo si
+              la categoría no se cose con hilo (pedrería, cinta, el propio
+              hilo…) — ver sugerenciaMerceriaDeCategoria en
+              lib/ingesta/categorias.ts. */}
+          {sugerenciaMerceria && (
+            <div className="border-t border-line/60 pt-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-accent-copper mb-3">
+                Mercería sugerida para este producto
+              </h3>
+              <div className="grid grid-cols-2 gap-3">
+                {sugerenciaMerceria.map((s) => (
+                  <Link
+                    key={s.q}
+                    href={`/?q=${s.q}`}
+                    className="flex items-center gap-3 rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-3 shadow-2xs transition-all hover:bg-surface-container"
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-container text-heritage-navy">
+                      <span className="material-symbols-outlined text-[20px]">{s.icono}</span>
+                    </div>
+                    <div className="overflow-hidden">
+                      <p className="truncate text-xs font-bold text-heritage-navy">{s.titulo}</p>
+                      <p className="text-[11px] text-ink-soft">{s.detalle}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Agregar a la Cotización */}
           <AddToCart variante={seleccionada} />

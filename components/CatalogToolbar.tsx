@@ -13,6 +13,7 @@ import {
   cuentaFiltros,
 } from "@/lib/filtros";
 import type { Facetas } from "@/lib/queries";
+import { useScrollCompacto } from "@/lib/useScrollCompacto";
 
 interface CatalogToolbarProps {
   filtros: EstadoFiltros;
@@ -21,6 +22,7 @@ interface CatalogToolbarProps {
 
 export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
   const [panelFiltrosAbierto, setPanelFiltrosAbierto] = useState(false);
+  const compacto = useScrollCompacto();
 
   const activos = cuentaFiltros(filtros);
   const totalFiltrosAvanzados =
@@ -37,7 +39,11 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
     ruta(alternar(filtros, faceta, valor));
 
   return (
-    <div className="sticky top-16 z-30 w-full border-b border-line/60 bg-sand-bg/90 pb-2.5 pt-2.5 sm:pb-3 sm:pt-3 shadow-[0_4px_16px_rgba(0,0,0,0.04)] backdrop-blur-xl transition-all">
+    <div
+      className={`sticky z-30 w-full border-b border-line/60 bg-sand-bg/90 pb-2.5 pt-2.5 shadow-[0_4px_16px_rgba(0,0,0,0.04)] backdrop-blur-xl transition-all sm:top-16 sm:pb-3 sm:pt-3 ${
+        compacto ? "top-12" : "top-16"
+      }`}
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Fila 1: Barra de Búsqueda + Botón de Filtros Detallados + Limpiar */}
         <div className="flex items-center gap-2">
@@ -98,9 +104,17 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
           </div>
         </div>
 
-        {/* Fila 2: Carrusel Horizontal de Categorías */}
+        {/* Fila 2: Carrusel Horizontal de Categorías. Es lo primero que se
+            oculta al hacer scroll en móvil (`compacto`): entre esto y la
+            cabecera se comían casi un tercio de la pantalla, sin dejar
+            espacio a las fotos. En sm+ siempre visible, hay espacio de
+            sobra. */}
         {facetas.categorias.length > 0 && (
-          <div className="relative mt-2">
+          <div
+            className={`relative mt-2 overflow-hidden transition-all sm:max-h-none sm:opacity-100 ${
+              compacto ? "max-h-0 opacity-0" : "max-h-16 opacity-100"
+            }`}
+          >
             <h2 className="sr-only">Categorías</h2>
             <div className="-mx-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 py-1 sm:mx-0 sm:px-0 no-scrollbar">
               {/* Chip "Todos" */}
@@ -149,9 +163,12 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
           </div>
         )}
 
-        {/* Panel Desplegable de Filtros Avanzados (Colores, Acabados, Stock) */}
+        {/* Panel Desplegable de Filtros Avanzados (Colores, Acabados, Stock).
+            Vive dentro de la barra sticky, no en un modal — sin límite de
+            alto, si hay muchos colores/acabados el final del panel se salía
+            de la pantalla en móvil y esas opciones no se podían tocar. */}
         {panelFiltrosAbierto && hayAvanzados && (
-          <div className="mt-3 space-y-4 rounded-2xl border border-line bg-surface-container-lowest p-5 shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="mt-3 max-h-[min(70vh,32rem)] space-y-4 overflow-y-auto overscroll-contain rounded-2xl border border-line bg-surface-container-lowest p-5 shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
             <div className="flex items-center justify-between border-b border-line pb-3">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-[20px] text-accent-copper">

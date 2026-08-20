@@ -189,3 +189,52 @@ export function categoriaDeCodigo(codigo: string | null | undefined): Categoria 
   if (!limpio) return null;
   return REGLAS_CATEGORIA.find((r) => r.re.test(limpio))?.categoria ?? null;
 }
+
+/**
+ * Sugerencia de mercería para la ficha de producto (`/tela/[slug]`).
+ * ---------------------------------------------------------------------------
+ * Antes se mostraba "Hilo a tono / Agujas" en TODOS los productos, incluida
+ * la pedrería (se pega, no se cose) y hasta el propio hilo. Como con
+ * `UNIDAD_POR_CATEGORIA`, esto es una regla de negocio por categoría, no
+ * algo deducible del texto: solo se listan aquí las categorías donde de
+ * verdad tiene sentido coser con hilo y aguja.
+ */
+export type SugerenciaMerceria = {
+  icono: string;
+  titulo: string;
+  detalle: string;
+  q: string;
+};
+
+const SUGERENCIA_HILO_AGUJA: SugerenciaMerceria[] = [
+  { icono: "palette", titulo: "Hilo a tono", detalle: "Gütermann / Poliéster", q: "hilo" },
+  { icono: "hardware", titulo: "Agujas de costura", detalle: "Punta fina / Microtex", q: "aguja" },
+];
+
+/**
+ * Categorías donde "hilo y aguja" no aplica: pedrería y flores van pegadas o
+ * cosidas con otra técnica, la cinta no se cose a mano, y el propio hilo no
+ * necesita que le sugieran comprar hilo. `null`/sin clasificar NO entra
+ * aquí a propósito: así se comporta la tela hoy, que es la mayoría del
+ * catálogo sin `categoria_slug` todavía.
+ */
+const CATEGORIAS_SIN_SUGERENCIA_HILO = new Set<string>([
+  CATEGORIAS.HILOS.slug,
+  CATEGORIAS.PIEDRA.slug,
+  CATEGORIAS.TIRA.slug,
+  CATEGORIAS.FLECO.slug,
+  CATEGORIAS.APLICACION.slug,
+  CATEGORIAS.CINTA.slug,
+  CATEGORIAS.FLORES.slug,
+  CATEGORIAS.HEBILLA.slug,
+  CATEGORIAS.COPAS.slug,
+]);
+
+/** Sugerencia de mercería para esa categoría, o `null` si no aplica (se oculta la sección). */
+export function sugerenciaMerceriaDeCategoria(
+  slug: string | null | undefined
+): SugerenciaMerceria[] | null {
+  const k = slug?.trim();
+  if (k && CATEGORIAS_SIN_SUGERENCIA_HILO.has(k)) return null;
+  return SUGERENCIA_HILO_AGUJA;
+}

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useCartStore } from "@/lib/store";
 import { useGuideStore } from "@/lib/guide-store";
+import { useScrollCompacto } from "@/lib/useScrollCompacto";
 import { ShareCatalog } from "@/components/ShareCatalog";
 
 export function SiteHeader() {
@@ -14,6 +15,7 @@ export function SiteHeader() {
   const items = useCartStore((state) => state.items);
   const setIsOpen = useCartStore((state) => state.setIsOpen);
   const openTutorial = useGuideStore((state) => state.openTutorial);
+  const compacto = useScrollCompacto();
 
   useEffect(() => {
     setMounted(true);
@@ -30,7 +32,11 @@ export function SiteHeader() {
         `-mt-16`; el `backdrop-blur-xl` es lo que mantiene legible el texto
         sobre una foto tan movida. */
     <header className="sticky top-0 z-40 w-full border-b border-line/60 bg-surface-container-lowest/60 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] transition-all">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-3 sm:px-6 lg:px-8">
+      <div
+        className={`mx-auto flex max-w-7xl items-center justify-between px-3 transition-all sm:h-16 sm:px-6 lg:px-8 ${
+          compacto ? "h-12" : "h-16"
+        }`}
+      >
         {/* Marca / Logo */}
         <Link href="/" className="group flex items-center gap-2 sm:gap-2.5 focus-visible:outline-none min-w-0">
           {/* El monograma es 2.13:1, no cuadrado: se sirve ya recortado a su caja
@@ -46,11 +52,18 @@ export function SiteHeader() {
               height={329}
               priority
               sizes="78px"
-              className="h-9 w-auto sm:h-10"
+              className={`w-auto transition-all sm:h-10 ${compacto ? "h-7" : "h-9"}`}
             />
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-accent-copper truncate">
+            {/* En móvil, la franja "Fresnillo · Atelier" es lo primero que se
+                sacrifica al hacer scroll: no aporta orientación una vez que
+                ya se sabe en qué sitio se está, y es puro alto reclamado. */}
+            <span
+              className={`text-[9px] font-bold uppercase tracking-widest text-accent-copper truncate sm:block sm:text-[10px] ${
+                compacto ? "hidden" : "block"
+              }`}
+            >
               Fresnillo · Atelier
             </span>
             <span className="font-display text-lg sm:text-2xl font-bold tracking-tight text-heritage-navy transition-colors group-hover:text-accent-copper truncate">

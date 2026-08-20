@@ -113,7 +113,7 @@ export function CartDrawer() {
                       </p>
                     </div>
                     <div className="mt-2.5 flex items-center justify-between">
-                      <div className="flex items-center rounded-xl border border-outline-variant/30 bg-surface-container p-0.5">
+                      <div className="flex items-center rounded-xl border border-outline-variant/30 bg-surface-container p-1">
                         <button
                           onClick={() =>
                             updateQuantity(
@@ -124,7 +124,7 @@ export function CartDrawer() {
                               )
                             )
                           }
-                          className="flex h-7 w-7 items-center justify-center rounded-lg bg-surface-container-lowest text-xs font-bold text-heritage-navy shadow-2xs transition-all hover:bg-surface-container-high active:scale-95"
+                          className="flex h-11 w-11 items-center justify-center rounded-lg bg-surface-container-lowest text-xs font-bold text-heritage-navy shadow-2xs transition-all hover:bg-surface-container-high active:scale-95"
                           aria-label={`Disminuir ${unidadDe(item.unidad_venta).singular} de ${item.tela_nombre}`}
                         >
                           -
@@ -136,7 +136,7 @@ export function CartDrawer() {
                           onClick={() =>
                             updateQuantity(item.id, item.cantidad + unidadDe(item.unidad_venta).paso)
                           }
-                          className="flex h-7 w-7 items-center justify-center rounded-lg bg-surface-container-lowest text-xs font-bold text-heritage-navy shadow-2xs transition-all hover:bg-surface-container-high active:scale-95"
+                          className="flex h-11 w-11 items-center justify-center rounded-lg bg-surface-container-lowest text-xs font-bold text-heritage-navy shadow-2xs transition-all hover:bg-surface-container-high active:scale-95"
                           aria-label={`Aumentar ${unidadDe(item.unidad_venta).singular} de ${item.tela_nombre}`}
                         >
                           +

@@ -6,7 +6,7 @@ import { leerFiltros, cuentaFiltros, aQuerystring } from "@/lib/filtros";
 import { ProductCard } from "@/components/ProductCard";
 import { CatalogToolbar } from "@/components/CatalogToolbar";
 import { TutorialTrigger } from "@/components/tutorial/TutorialTrigger";
-import { Plus } from "lucide-react";
+import { VerMasButton } from "@/components/VerMasButton";
 
 const VER_MAXIMO = 1000;
 
@@ -155,14 +155,10 @@ export default async function HomePage({
             {/* Ver más */}
             {faltan > 0 && (
               <div className="mt-12 flex justify-center pb-12">
-                <Link
+                <VerMasButton
                   href={hrefConVer(filtros, hasta + MODELOS_POR_PAGINA)}
-                  scroll={false}
-                  className="inline-flex items-center gap-2 rounded-full border border-outline-variant/40 bg-surface-container-lowest px-8 py-3.5 text-sm font-bold text-heritage-navy shadow-sm transition-all hover:bg-surface-container hover:shadow-md active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
-                >
-                  <Plus className="h-4 w-4 text-heritage-navy" aria-hidden />
-                  Ver {Math.min(faltan, MODELOS_POR_PAGINA)} productos más
-                </Link>
+                  etiqueta={`Ver ${Math.min(faltan, MODELOS_POR_PAGINA)} productos más`}
+                />
               </div>
             )}
           </>
