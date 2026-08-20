@@ -23,6 +23,13 @@
  *    de producto, y dejar el slug diciendo "cristal-ab" mientras el chip dice
  *    "Tornasol" es peor.
  *
+ *    2026-08-20: el renombre ya corrió; lo que faltaba era el HEX. Se había
+ *    dejado el que traía `Cristal AB` (#D9C9E4, un lila frío) asumiendo que
+ *    el acabado no cambió, solo el nombre — pero viéndolo de nuevo la tienda
+ *    dice que el swatch real es un rosáceo claro sobre blanco perla, no lila.
+ *    Se corrige a `#F0DCD6`. El esquema no tiene un segundo hex para swatches
+ *    partidos, así que es un solo tono representativo, no un degradado.
+ *
  * 2) "GALÓN DE ROSAS: CONÉCTALO A TIRAS O GUIPIUR, NO USES EL NOMBRE GALÓN".
  *    Es una guirnalda continua de rosas con hoja verde, unidas por su propio
  *    hilo y sin base de tul: eso es guipiur. Comparada con la ficha "Guipiur"
@@ -35,6 +42,22 @@
  *    corrida de `pnpm clasificar --aplicar` le quería cambiar la unidad a sus
  *    12 variantes. En la categoría de guipiur la unidad es metro y el
  *    conflicto desaparece.
+ *
+ * 3) "GALÓN" TAMPOCO ES LA PALABRA PARA LA CATEGORÍA. 2026-08-20: confirmado
+ *    con la tienda — la categoría completa "Galón de encaje" se renombra a
+ *    "Guipiur". Afecta a los 8 productos que ya viven ahí (los 5 Guipiur
+ *    Litúrgicos, "Guipiur de rosas", "Galón de encaje hueso" y la ficha base
+ *    "Guipiur"), incluida "Galón de encaje hueso" que en la fase 1 se había
+ *    pedido no tocar. Es un rename de la fila en `categoria`, no una fusión:
+ *    ninguna tela cambia de `categoria_id`, así que no colisiona con la tela
+ *    que ya se llama "Guipiur" a secas.
+ *
+ *    El `slug` cambia con el nombre (`galon-de-encaje` → `guipiur`), igual
+ *    que con el color: un link viejo con `?categoria=galon-de-encaje` deja de
+ *    filtrar, se acepta por la misma razón. `lib/ingesta/categorias.ts` y el
+ *    diccionario de `describir.ts` se actualizaron en el mismo cambio — si
+ *    solo se renombra en la BD y no ahí, la siguiente corrida de
+ *    `pnpm clasificar --aplicar` revierte el nombre (hace upsert por slug).
  *
  *   pnpm corregir:vocabulario              → SIMULACRO
  *   pnpm corregir:vocabulario --aplicar    → escribe
@@ -53,8 +76,10 @@ const COLOR = {
   de: "Cristal AB",
   a: "Tornasol",
   slug: "tornasol",
-  /** Se conserva el hex: el acabado no cambió, solo cómo se le dice. */
 };
+
+/** Rosáceo claro sobre blanco perla — así se ve el swatch real, no el lila que traía. */
+const TORNASOL_HEX = "#F0DCD6";
 
 /**
  * "Oro rosa es rose gold" — el hex que había propuesto (#C68A6A) tiraba a
@@ -67,6 +92,8 @@ const TELA = {
   nombre: "Guipiur de rosas",
   categoria: "Galón de encaje",
 };
+
+const CATEGORIA = { de: "Galón de encaje", a: "Guipiur", slug: "guipiur" };
 
 async function main() {
   const { createClient } = await import("@supabase/supabase-js");
@@ -107,6 +134,13 @@ async function main() {
     console.log(`   · es_tornasol: ${sinBandera} variante(s) lo tienen apagado y se enciende`);
   }
 
+  const { data: tornasolColor } = await supabase.from("color").select("id, hex").eq("nombre", COLOR.a).maybeSingle();
+  if (tornasolColor && tornasolColor.hex.toLowerCase() !== TORNASOL_HEX.toLowerCase()) {
+    console.log(`   · Tornasol: ${tornasolColor.hex} → ${TORNASOL_HEX} (rosáceo claro sobre blanco perla, no lila)`);
+  } else if (tornasolColor) {
+    console.log(`   ✓ Tornasol ya está en ${TORNASOL_HEX}`);
+  }
+
   const { data: oroRosa } = await supabase.from("color").select("id, hex").eq("nombre", "Oro Rosa").maybeSingle();
   if (oroRosa && oroRosa.hex.toLowerCase() !== ORO_ROSA_HEX.toLowerCase()) {
     console.log(`   · Oro Rosa: ${oroRosa.hex} → ${ORO_ROSA_HEX} (rose gold, no cobre)`);
@@ -132,12 +166,24 @@ async function main() {
     }
   }
 
-  console.log(`\n── para la tienda ──`);
-  console.log(`   ⚠ La CATEGORÍA sigue llamándose "Galón de encaje" y es la que va a salir`);
-  console.log(`     en la card y en el chip de filtros. Si la palabra "galón" tampoco te`);
-  console.log(`     gusta ahí, la renombro a "Guipiur" — pero afecta también a los 5`);
-  console.log(`     Guipiur Litúrgicos, a "Guipiur" y a "Galón de encaje hueso", que en`);
-  console.log(`     la fase 1 pediste NO tocar. Dime y lo hago aparte.`);
+  // ── 3. Galón de encaje → Guipiur (la categoría completa) ──
+  console.log("\n── categoría ──");
+  const { data: catVieja } = await supabase.from("categoria").select("id, nombre").eq("nombre", CATEGORIA.de).maybeSingle();
+  const { data: catNueva } = await supabase.from("categoria").select("id, nombre").eq("nombre", CATEGORIA.a).maybeSingle();
+  if (catVieja && catNueva) {
+    console.error(`   ✖ ABORTADO: existen las dos categorías a la vez; hay que fusionarlas a mano antes`);
+    process.exit(1);
+  }
+  let categoriaId: string | null = null;
+  if (catVieja) {
+    const { count } = await supabase.from("tela").select("id", { count: "exact", head: true }).eq("categoria_id", catVieja.id);
+    console.log(`   · "${CATEGORIA.de}" → "${CATEGORIA.a}"  (${count} producto(s), incluye "Galón de encaje hueso" — en la fase 1 se había pedido no tocar)`);
+    categoriaId = catVieja.id;
+  } else if (catNueva) {
+    console.log(`   ✓ ya se llama "${CATEGORIA.a}"`);
+  } else {
+    console.log(`   ⚠ no encontré ni "${CATEGORIA.de}" ni "${CATEGORIA.a}" — se omite`);
+  }
 
   if (!APLICAR) { console.log("\n   Nada de esto se escribió.\n"); return; }
 
@@ -158,6 +204,11 @@ async function main() {
     if (error) { console.error(`   ✖ ajustando Oro Rosa: ${error.message}`); process.exit(1); }
     console.log(`   ✓ Oro Rosa ahora es ${ORO_ROSA_HEX}`);
   }
+  if (tornasolColor && tornasolColor.hex.toLowerCase() !== TORNASOL_HEX.toLowerCase()) {
+    const { error } = await supabase.from("color").update({ hex: TORNASOL_HEX }).eq("id", tornasolColor.id);
+    if (error) { console.error(`   ✖ ajustando Tornasol: ${error.message}`); process.exit(1); }
+    console.log(`   ✓ Tornasol ahora es ${TORNASOL_HEX}`);
+  }
 
   if (tela && cat) {
     const { error } = await supabase.from("tela")
@@ -170,6 +221,13 @@ async function main() {
         .eq("variante_id", v.id);
     }
     console.log(`   ✓ "${TELA.nombre}" en ${TELA.categoria}, ${vs?.length ?? 0} variante(s) con alt actualizado`);
+  }
+
+  if (categoriaId) {
+    const { error } = await supabase.from("categoria")
+      .update({ nombre: CATEGORIA.a, slug: CATEGORIA.slug }).eq("id", categoriaId);
+    if (error) { console.error(`   ✖ renombrando la categoría: ${error.message}`); process.exit(1); }
+    console.log(`   ✓ categoría renombrada a "${CATEGORIA.a}" (slug: ${CATEGORIA.slug})`);
   }
 
   console.log(`\nCorre "pnpm describir --aplicar" para regenerar la descripción de la ficha.\n`);

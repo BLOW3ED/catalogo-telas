@@ -24,7 +24,7 @@ export type Categoria = { nombre: string; slug: string };
 
 export const CATEGORIAS = {
   TIRA: { nombre: "Tira de pedrería", slug: "tira-de-pedreria" },
-  GALON: { nombre: "Galón de encaje", slug: "galon-de-encaje" },
+  GALON: { nombre: "Guipiur", slug: "guipiur" },
   FLECO: { nombre: "Fleco de pedrería", slug: "fleco-de-pedreria" },
   CINTILLO: { nombre: "Cintillo de pedrería", slug: "cintillo-de-pedreria" },
   APLICACION: { nombre: "Aplicación de pedrería", slug: "aplicacion-de-pedreria" },

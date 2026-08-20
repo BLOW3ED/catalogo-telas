@@ -67,8 +67,8 @@ const BASES: Record<string, string[]> = {
   "Cintillo de pedrería": [
     "Cintillo con las piedras montadas sobre un cuerpo que conserva su curva.\n\nFunciona como pieza central: se coloca uno solo, en el punto donde se quiere concentrar el brillo, y el resto de la prenda lo acompaña.",
   ],
-  "Galón de encaje": [
-    "Galón de encaje con el motivo tejido de corrido y las orillas ya rematadas, así que no necesita dobladillo.\n\nTiene cuerpo propio: apoyado sobre la tela dibuja su relieve, y a contraluz deja ver el calado. Se corta a la medida.",
+  Guipiur: [
+    "Guipiur con el motivo tejido de corrido y las orillas ya rematadas, así que no necesita dobladillo.\n\nTiene cuerpo propio: apoyado sobre la tela dibuja su relieve, y a contraluz deja ver el calado. Se corta a la medida.",
   ],
   Copas: [
     "Copa preformada para dar estructura al busto sin varillas ni costuras a la vista.\n\nSe surte en par, que es como se usa. Va entre la tela y el forro, y la forma la sostiene la copa, no la costura.",
