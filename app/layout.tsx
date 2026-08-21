@@ -45,7 +45,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" className={hankenGrotesk.variable}>
-      <body className="flex min-h-screen flex-col bg-sand-bg text-ink-text antialiased selection:bg-accent-copper/20 selection:text-heritage-navy pb-16 sm:pb-0">
+      <body className="flex min-h-screen flex-col bg-sand-bg text-ink-text antialiased selection:bg-amber/20 selection:text-ink-display pb-16 sm:pb-0">
         <SiteHeader />
         <div className="flex-1">{children}</div>
         <MobileBottomNav />

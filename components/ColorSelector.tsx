@@ -45,7 +45,7 @@ export function ColorSelector({
   return (
     <div>
       <div className="mb-4 flex items-baseline justify-between border-b border-line-strong/30 pb-2">
-        <p className="text-label-caps text-sm text-ink-deep">
+        <p className="text-label-caps text-sm text-ink-display">
           Tonos disponibles
         </p>
         <span className="text-base font-medium text-ink" aria-live="polite">
@@ -68,7 +68,7 @@ export function ColorSelector({
                 : `Ver color ${v.color_nombre}`
             }
             aria-pressed={v.color_slug === optimisticSlug}
-            className="rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            className="rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy focus-visible:ring-offset-2"
           >
             <ColorSwatch
               hex={v.color_hex}

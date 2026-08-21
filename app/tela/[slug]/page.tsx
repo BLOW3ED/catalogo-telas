@@ -154,17 +154,17 @@ export default async function TelaDetallePage({
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
             {seleccionada.categoria && (
-              <span className="text-xs font-bold uppercase tracking-wider text-accent-copper">
+              <span className="text-xs font-bold uppercase tracking-wider text-amber">
                 {seleccionada.categoria}
               </span>
             )}
             <div className="flex items-start justify-between gap-4">
-              <h1 className="font-display text-3xl font-bold text-heritage-navy sm:text-4xl">
+              <h1 className="font-display text-3xl font-bold text-ink-display sm:text-4xl">
                 {nombre}
               </h1>
               {seleccionada.precio_metro != null ? (
                 <div className="shrink-0 text-right">
-                  <p className="text-2xl sm:text-3xl font-bold text-accent-copper">
+                  <p className="text-2xl sm:text-3xl font-bold text-amber">
                     {pesos.format(seleccionada.precio_metro)}
                   </p>
                   <p className="text-xs font-semibold text-ink-soft">
@@ -178,7 +178,7 @@ export default async function TelaDetallePage({
               )}
             </div>
             {seleccionada.precio_es_referencia && (
-              <p className="text-xs text-secondary font-medium">
+              <p className="text-xs text-amber-soft font-medium">
                 * Precio de referencia · confirmamos disponibilidad por WhatsApp
               </p>
             )}
@@ -186,10 +186,10 @@ export default async function TelaDetallePage({
 
           {/* Chips de propiedades */}
           <div className="flex flex-wrap gap-2">
-            <span className="rounded-full bg-surface-container px-3.5 py-1.5 text-xs font-bold text-heritage-navy border border-outline-variant/30">
+            <span className="rounded-full bg-surface-container px-3.5 py-1.5 text-xs font-bold text-ink-display border border-outline-variant/30">
               Ancho: 1.40m – 1.50m
             </span>
-            <span className="rounded-full bg-surface-container px-3.5 py-1.5 text-xs font-bold text-heritage-navy border border-outline-variant/30">
+            <span className="rounded-full bg-surface-container px-3.5 py-1.5 text-xs font-bold text-ink-display border border-outline-variant/30">
               Venta por metro o pieza
             </span>
             <AttributeBadges atributos={atributos} />
@@ -219,30 +219,30 @@ export default async function TelaDetallePage({
 
           {/* Usos Recomendados (Stitch Style) */}
           <div className="rounded-2xl border border-outline-variant/30 bg-surface-container-low p-5 shadow-xs">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-heritage-navy mb-3">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-ink-display mb-3">
               Usos Recomendados para esta Tela
             </h3>
             <div className="flex gap-4 overflow-x-auto pb-1 no-scrollbar">
               <div className="flex flex-col items-center gap-1.5 min-w-[70px]">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-container-lowest text-heritage-navy shadow-2xs">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-container-lowest text-ink-display shadow-2xs">
                   <span className="material-symbols-outlined text-[26px]">checkroom</span>
                 </div>
                 <span className="text-[11px] font-semibold text-ink-soft text-center">Vestidos</span>
               </div>
               <div className="flex flex-col items-center gap-1.5 min-w-[70px]">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-container-lowest text-heritage-navy shadow-2xs">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-container-lowest text-ink-display shadow-2xs">
                   <span className="material-symbols-outlined text-[26px]">dry_cleaning</span>
                 </div>
                 <span className="text-[11px] font-semibold text-ink-soft text-center">Pañuelos</span>
               </div>
               <div className="flex flex-col items-center gap-1.5 min-w-[70px]">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-container-lowest text-heritage-navy shadow-2xs">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-container-lowest text-ink-display shadow-2xs">
                   <span className="material-symbols-outlined text-[26px]">styler</span>
                 </div>
                 <span className="text-[11px] font-semibold text-ink-soft text-center">Blusas</span>
               </div>
               <div className="flex flex-col items-center gap-1.5 min-w-[70px]">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-container-lowest text-heritage-navy shadow-2xs">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-container-lowest text-ink-display shadow-2xs">
                   <span className="material-symbols-outlined text-[26px]">bed</span>
                 </div>
                 <span className="text-[11px] font-semibold text-ink-soft text-center">Decoración</span>
@@ -255,15 +255,15 @@ export default async function TelaDetallePage({
             <dl className="grid grid-cols-2 gap-3.5">
               {seleccionada.sku && (
                 <div className="rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-4 shadow-2xs">
-                  <dt className="text-[11px] font-bold uppercase tracking-wider text-accent-copper">SKU de Almacén</dt>
-                  <dd className="mt-1 text-base font-bold text-heritage-navy font-mono">
+                  <dt className="text-[11px] font-bold uppercase tracking-wider text-amber">SKU de Almacén</dt>
+                  <dd className="mt-1 text-base font-bold text-ink-display font-mono">
                     {seleccionada.sku}
                   </dd>
                 </div>
               )}
               {seleccionada.stock != null && (
                 <div className="rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-4 shadow-2xs">
-                  <dt className="text-[11px] font-bold uppercase tracking-wider text-accent-copper">
+                  <dt className="text-[11px] font-bold uppercase tracking-wider text-amber">
                     Existencia
                   </dt>
                   {seleccionada.stock > 0 ? (
@@ -284,7 +284,7 @@ export default async function TelaDetallePage({
           {/* Tags de ocasión */}
           {tags.length > 0 && (
             <div className="flex flex-col gap-2">
-              <p className="text-xs font-bold uppercase tracking-wider text-heritage-navy">
+              <p className="text-xs font-bold uppercase tracking-wider text-ink-display">
                 Ocasión & Estilo
               </p>
               <div className="flex flex-wrap gap-2">
@@ -306,7 +306,7 @@ export default async function TelaDetallePage({
               lib/ingesta/categorias.ts. */}
           {sugerenciaMerceria && (
             <div className="border-t border-line/60 pt-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-accent-copper mb-3">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-amber mb-3">
                 Mercería sugerida para este producto
               </h3>
               <div className="grid grid-cols-2 gap-3">
@@ -316,11 +316,11 @@ export default async function TelaDetallePage({
                     href={`/?q=${s.q}`}
                     className="flex items-center gap-3 rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-3 shadow-2xs transition-all hover:bg-surface-container"
                   >
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-container text-heritage-navy">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-container text-ink-display">
                       <span className="material-symbols-outlined text-[20px]">{s.icono}</span>
                     </div>
                     <div className="overflow-hidden">
-                      <p className="truncate text-xs font-bold text-heritage-navy">{s.titulo}</p>
+                      <p className="truncate text-xs font-bold text-ink-display">{s.titulo}</p>
                       <p className="text-[11px] text-ink-soft">{s.detalle}</p>
                     </div>
                   </Link>

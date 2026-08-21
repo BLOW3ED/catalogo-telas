@@ -38,7 +38,7 @@ export function SearchBar({
   return (
     <div className={`relative w-full group ${className}`}>
       <span
-        className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[20px] text-ink-soft/70 transition-colors group-focus-within:text-heritage-navy"
+        className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[20px] text-ink-soft/70 transition-colors group-focus-within:text-ink-display"
         aria-hidden
       >
         search
@@ -49,7 +49,7 @@ export function SearchBar({
         onChange={(e) => setValor(e.target.value)}
         placeholder={placeholder}
         aria-label="Buscar productos del catálogo"
-        className="w-full h-11 sm:h-12 pl-11 pr-11 rounded-full border border-outline-variant/40 bg-surface-container-lowest/90 backdrop-blur-sm text-sm sm:text-base text-ink-text placeholder:text-ink-soft/70 shadow-xs transition-all focus:bg-surface-container-lowest focus:border-accent-copper focus:outline-none focus:ring-2 focus:ring-accent-copper/30 focus:shadow-md"
+        className="w-full h-11 sm:h-12 pl-11 pr-11 rounded-full border border-outline-variant/40 bg-surface-container-lowest/90 backdrop-blur-sm text-sm sm:text-base text-ink-text placeholder:text-ink-soft/70 shadow-xs transition-all focus:bg-surface-container-lowest focus:border-amber focus:outline-none focus:ring-2 focus:ring-amber/30 focus:shadow-md"
       />
       {valor && (
         <button

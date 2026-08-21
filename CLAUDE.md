@@ -117,8 +117,22 @@ carrito ya guardado en localStorage— no le cambia el pedido a nadie.
   mirando; aquí hay alguien decidiendo y la previsualización promete "así se va a ver".
 
 ## Convenciones
-- Paleta (tokens en `app/globals.css`): tinta `#1A1714`, fondo hueso `#FAF8F5`,
-  ámbar primario `#B45309`, ámbar secundario `#C2843A`, borde sutil `#E7E1D8`.
+- Paleta (tokens en `app/globals.css`, que es la ÚNICA fuente): fondo arena
+  `#F1EDE2`, superficie crema `#FFF9ED`, tinta de párrafo `#0A0F14`, tinta de
+  títulos `#26262B` (`ink-display`), **primario púrpura `#6E4B7A`**
+  (hover `#56395F`), **acento mostaza `#7A4E0D`** (hover/apagado `#5C3C0A`),
+  borde sutil `#DFD8C7`.
+  **El púrpura NUNCA va en texto.** Es color de ACCIÓN: relleno de botón, chip
+  activo, anillo de foco, borde del color elegido. Los títulos van en
+  `ink-display`. Es decisión de la tienda: cuando el acento era también el color
+  de los títulos, la pantalla entera se leía morada y el botón dejaba de destacar.
+  El mostaza es INFORMACIÓN destacada: precio, etiqueta de categoría, badges, y
+  toda la captura de `/admin`.
+  **El púrpura vive bajo el nombre de token `heritage-navy`** (y su hover bajo
+  `deep-slate`): nombres legados de cuando era azul marino, conservados a
+  propósito porque renombrarlos serían ~235 ediciones mecánicas sin ganancia —
+  el significado vive en `globals.css`, no en el nombre. No hay ningún azul en
+  la paleta. `ink-deep` (`#14141A`) es el velo oscuro sobre foto, no un acento.
 - `rounded-xl`/`rounded-2xl` consistente en cards, botones, inputs, modales. Sombras suaves.
 - Accesibilidad AA: contraste, focus visible, navegable por teclado, `alt` en imágenes.
 - Estado de filtros/búsqueda en la **URL (querystring)** para que sea compartible.

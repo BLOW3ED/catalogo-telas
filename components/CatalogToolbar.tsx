@@ -67,7 +67,7 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
                 className={`inline-flex h-11 items-center gap-1.5 sm:gap-2 rounded-full border px-3 sm:px-4 text-xs font-bold uppercase tracking-wider transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy ${
                   panelFiltrosAbierto || totalFiltrosAvanzados > 0
                     ? "border-heritage-navy bg-heritage-navy text-white shadow-xs"
-                    : "border-outline-variant/40 bg-surface-container-lowest/90 text-heritage-navy hover:bg-surface-container shadow-xs"
+                    : "border-outline-variant/40 bg-surface-container-lowest/90 text-ink-display hover:bg-surface-container shadow-xs"
                 }`}
                 title="Filtros avanzados por color y acabado"
               >
@@ -76,13 +76,7 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
                 </span>
                 <span className="hidden sm:inline">Filtros</span>
                 {totalFiltrosAvanzados > 0 && (
-                  <span
-                    className={`flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-bold ${
-                      panelFiltrosAbierto || totalFiltrosAvanzados > 0
-                        ? "bg-accent-copper text-white"
-                        : "bg-heritage-navy text-white"
-                    }`}
-                  >
+                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-amber px-1.5 text-[10px] font-bold text-white">
                     {totalFiltrosAvanzados}
                   </span>
                 )}
@@ -94,7 +88,7 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
               <Link
                 href="/"
                 scroll={false}
-                className="inline-flex h-11 items-center gap-1.5 rounded-full border border-accent-copper/40 bg-surface-container-lowest/80 px-3 text-xs font-bold text-accent-copper shadow-xs transition-all hover:bg-surface-container hover:border-accent-copper active:scale-95"
+                className="inline-flex h-11 items-center gap-1.5 rounded-full border border-amber/40 bg-surface-container-lowest/80 px-3 text-xs font-bold text-amber shadow-xs transition-all hover:bg-surface-container hover:border-amber active:scale-95"
                 title="Limpiar búsqueda y filtros"
               >
                 <X className="h-3.5 w-3.5" aria-hidden />
@@ -171,14 +165,14 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
           <div className="mt-3 max-h-[min(70vh,32rem)] space-y-4 overflow-y-auto overscroll-contain rounded-2xl border border-line bg-surface-container-lowest p-5 shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
             <div className="flex items-center justify-between border-b border-line pb-3">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[20px] text-accent-copper">
+                <span className="material-symbols-outlined text-[20px] text-amber">
                   tune
                 </span>
-                <span className="font-display text-sm font-bold text-heritage-navy">
+                <span className="font-display text-sm font-bold text-ink-display">
                   Filtros Avanzados
                 </span>
                 {totalFiltrosAvanzados > 0 && (
-                  <span className="rounded-full bg-accent-copper px-2 py-0.5 text-[10px] font-bold text-white">
+                  <span className="rounded-full bg-amber px-2 py-0.5 text-[10px] font-bold text-white">
                     {totalFiltrosAvanzados} activos
                   </span>
                 )}
@@ -195,7 +189,7 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
 
             {facetas.colores.length > 0 && (
               <div>
-                <h3 className="mb-2 text-[11px] font-bold uppercase tracking-wider text-accent-copper">
+                <h3 className="mb-2 text-[11px] font-bold uppercase tracking-wider text-amber">
                   Tonalidades
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -233,7 +227,7 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
 
             {facetas.propiedades.length > 0 && (
               <div>
-                <h3 className="mb-2 text-[11px] font-bold uppercase tracking-wider text-accent-copper">
+                <h3 className="mb-2 text-[11px] font-bold uppercase tracking-wider text-amber">
                   Acabado y Textura
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -270,7 +264,7 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
 
             {facetas.hayStock && (
               <div>
-                <h3 className="mb-2 text-[11px] font-bold uppercase tracking-wider text-accent-copper">
+                <h3 className="mb-2 text-[11px] font-bold uppercase tracking-wider text-amber">
                   Disponibilidad
                 </h3>
                 <div className="flex flex-wrap gap-2">

@@ -39,7 +39,7 @@ export function ProductCard({
   return (
     <Link
       href={`/tela/${tela.tela_slug}`}
-      className="group flex flex-col gap-3 rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-3 sm:p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent-copper/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
+      className="group flex flex-col gap-3 rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-3 sm:p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-amber/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
     >
       {/* Imagen cuadrada con zoom suave */}
       <div className="relative aspect-square overflow-hidden rounded-xl bg-surface-container-low">
@@ -58,19 +58,19 @@ export function ProductCard({
       <div className="flex flex-1 flex-col justify-between gap-2">
         <div className="flex flex-col gap-1">
           {tela.categoria && (
-            <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-accent-copper">
+            <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber">
               {tela.categoria}
             </p>
           )}
 
-          <h3 className="font-display text-base font-semibold leading-snug text-heritage-navy transition-colors group-hover:text-accent-copper sm:text-lg">
+          <h3 className="font-display text-base font-semibold leading-snug text-ink-display transition-colors group-hover:text-amber sm:text-lg">
             {tela.tela_nombre}
           </h3>
         </div>
 
         <div className="flex flex-col gap-2 pt-1 border-t border-line/60">
           {tela.precio_desde != null ? (
-            <p className="text-base sm:text-lg font-bold text-accent-copper">
+            <p className="text-base sm:text-lg font-bold text-amber">
               <span className="text-xs font-normal text-ink-soft">desde </span>
               {pesos.format(tela.precio_desde)}
               <span className="text-xs font-medium text-ink-soft ml-0.5">

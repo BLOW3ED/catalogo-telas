@@ -33,7 +33,9 @@ export function ColorSwatch({
 
   const lum = luminancia(hex);
   const esClaro = lum > 0.6;
-  const marca = lum > 0.4 ? "#0d1b2a" : "#ffffff";
+  // Tinta, no acento de marca: el swatch pinta el color del PRODUCTO y esta es
+  // la palomita encima. Va por token para que nadie la confunda con el primario.
+  const marca = lum > 0.4 ? "var(--color-ink-display)" : "#ffffff";
 
   return (
     <span

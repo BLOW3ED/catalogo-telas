@@ -2,26 +2,35 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   Tokens "Artisanal Modernity" (Atelier Textil Selecto) de Stitch:
-   - Lienzo: Lino / Arena suave (#EAE3D2 / #FFF9ED)
-   - Tinta: Ink Text / Deep Slate (#0A0F14 / #1E1C11)
-   - Marca & Primario: Heritage Navy (#0D1B2A / #1B263B)
-   - Acento: Cobre / Terracota (#B07D62 / #80543B / #B45309)
+   Tokens "Artisanal Modernity" (Atelier Textil Selecto):
+   - Lienzo: Arena clara / Crema (#F1EDE2 / #FFF9ED)
+   - Tinta: Párrafo / Títulos (#0A0F14 / #26262B)
+   - Marca & Primario: Púrpura sobrio (#6E4B7A / #56395F)
+   - Acento: Mostaza cálido (#7A4E0D / #5C3C0A)
    - Contenedores: Surface levels (#FFFFFF, #FAF3E2, #F5EDDC, #EFE8D7, #E9E2D1)
    - Tipografía: Hanken Grotesk para todo el sistema (Display, Headline, Body, Label)
+
+   NOTA 1: `heritage-navy` / `deep-slate` conservan su NOMBRE por historia (~235
+   referencias), pero su VALOR ya no es azul marino: son el púrpura de marca.
+   No renombrarlos vale más que el churn mecánico; el significado vive aquí.
+
+   NOTA 2: el púrpura NUNCA va en texto. Es color de ACCIÓN: relleno de botón,
+   chip activo, anillo de foco, borde de color elegido. El texto oscuro es
+   `ink-display`. Esto es deliberado —cuando el acento también era el color de
+   los títulos, la pantalla entera se leía morada y el botón dejaba de destacar.
 --------------------------------------------------------------------------- */
 @theme {
-  --color-sand-bg: #eae3d2;
+  --color-sand-bg: #f1ede2;
   --color-ink-text: #0a0f14;
-  --color-heritage-navy: #0d1b2a;
-  --color-deep-slate: #1b263b;
-  --color-accent-copper: #b07d62;
+  --color-heritage-navy: #6e4b7a; /* púrpura primario (nombre legado) */
+  --color-deep-slate: #56395f; /* hover/pressed del primario */
 
-  --color-ink: #0a0f14; /* on-surface / texto principal */
-  --color-ink-deep: #0d1b2a; /* títulos y marcas */
+  --color-ink: #0a0f14; /* on-surface / texto de párrafo */
+  --color-ink-display: #26262b; /* grafito de títulos y texto de UI */
+  --color-ink-deep: #14141a; /* velos y píldoras sobre foto (llevan texto blanco) */
   --color-ink-soft: #5e5f5b; /* texto secundario y metadatos */
-  
-  --color-bg: #eae3d2; /* fondo arena / lino base */
+
+  --color-bg: #f1ede2; /* fondo arena claro */
   --color-surface: #fff9ed; /* superficie cálida */
   --color-surface-bright: #fff9ed;
   --color-surface-dim: #ded7c5;
@@ -33,16 +42,10 @@
   --color-surface-high: #efe8d7;
   --color-chip: #f5eddc;
 
-  --color-primary: #0d1b2a; /* Heritage Navy primario */
-  --color-primary-container: #0f1c2c;
-  --color-primary-deep: #050b12;
-  --color-primary-fixed: #d6e4f9;
+  --color-primary-deep: #2e1d33; /* púrpura más profundo (hover-glow de not-found) */
 
-  --color-secondary: #80543b;
-  --color-secondary-container: #fdc2a3;
-
-  --color-amber: #b07d62; /* acento cobre / ámbar para precios */
-  --color-amber-soft: #80543b;
+  --color-amber: #7a4e0d; /* acento mostaza: precios, etiquetas, admin */
+  --color-amber-soft: #5c3c0a; /* hover del acento y texto secundario apagado */
   --color-success: #157a3a;
   --color-line: #dfd8c7;
   --color-line-strong: #c4c6cc;

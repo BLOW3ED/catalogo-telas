@@ -39,9 +39,12 @@ const LOGO_ANCHO = 520;
 /** Tokens de `app/globals.css`, para que la tarjeta no invente su paleta. */
 const COLOR = {
   fondo: "#000000", // el propio fondo del logo
-  nombre: "#EAE3D2", // --color-sand-bg
-  acento: "#B07D62", // --color-accent-copper
-  bajada: "#C08D70", // cobre aclarado: sobre negro da ~5.4:1
+  nombre: "#F1EDE2", // --color-sand-bg
+  // --color-amber (#7A4E0D) aclarado. El token tal cual da 2.9:1 sobre negro:
+  // se ve lodoso y la bajada no pasa AA. Mismo matiz (36°) y misma saturación,
+  // solo más luz → 5.6:1. Aclarar por HSL es lo único que sube el contraste
+  // SIN mover el tono; tocar los canales por separado lo viraría a naranja.
+  mostaza: "#B87614",
 };
 
 const NOMBRE = "TELAS LA JALISCIENSE";
@@ -69,9 +72,9 @@ async function main() {
     `<svg xmlns="http://www.w3.org/2000/svg" width="${LIENZO.ancho}" height="${LIENZO.alto}">
       <text x="600" y="436" text-anchor="middle" font-family="${FUENTE}"
             font-size="54" font-weight="700" letter-spacing="6" fill="${COLOR.nombre}">${esc(NOMBRE)}</text>
-      <rect x="510" y="466" width="180" height="2" fill="${COLOR.acento}"/>
+      <rect x="510" y="466" width="180" height="2" fill="${COLOR.mostaza}"/>
       <text x="600" y="516" text-anchor="middle" font-family="${FUENTE}"
-            font-size="28" font-weight="500" fill="${COLOR.bajada}">${esc(BAJADA)}</text>
+            font-size="28" font-weight="500" fill="${COLOR.mostaza}">${esc(BAJADA)}</text>
     </svg>`
   );
 

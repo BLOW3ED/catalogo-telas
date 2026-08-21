@@ -65,11 +65,11 @@ export function Filtros({
       {/* Filtros Avanzados (Colores, Acabados, Stock) */}
       {hayAvanzados && (
         <details open={avanzadosPuestos} className="group mt-4">
-          <summary className="inline-flex cursor-pointer list-none items-center gap-2 rounded-full border border-outline-variant/30 bg-surface-container px-4 py-2 text-xs font-bold uppercase tracking-wider text-heritage-navy transition-all hover:bg-surface-container-high focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy">
+          <summary className="inline-flex cursor-pointer list-none items-center gap-2 rounded-full border border-outline-variant/30 bg-surface-container px-4 py-2 text-xs font-bold uppercase tracking-wider text-ink-display transition-all hover:bg-surface-container-high focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy">
             <span className="material-symbols-outlined text-[18px]">tune</span>
             Filtros Detallados
             {avanzadosPuestos && (
-              <span className="ml-1 rounded-full bg-accent-copper px-2 py-0.5 text-[10px] text-white">
+              <span className="ml-1 rounded-full bg-amber px-2 py-0.5 text-[10px] text-white">
                 {filtros.colores.length + filtros.propiedades.length + (filtros.soloDisponibles ? 1 : 0)}
               </span>
             )}
@@ -137,7 +137,7 @@ export function Filtros({
               precioMax: null,
               soloDisponibles: false,
             })}
-            className="inline-flex items-center gap-1.5 rounded-full bg-surface-container px-3 py-1 text-xs font-semibold text-accent-copper transition-all hover:bg-surface-container-high active:scale-95"
+            className="inline-flex items-center gap-1.5 rounded-full bg-surface-container px-3 py-1 text-xs font-semibold text-amber transition-all hover:bg-surface-container-high active:scale-95"
           >
             <X className="h-3.5 w-3.5" aria-hidden />
             Limpiar todo
@@ -156,7 +156,7 @@ function ruta(f: EstadoFiltros): string {
 function Grupo({ titulo, children }: { titulo: string; children: React.ReactNode }) {
   return (
     <div>
-      <h3 className="mb-2 text-[11px] font-bold uppercase tracking-wider text-accent-copper">
+      <h3 className="mb-2 text-[11px] font-bold uppercase tracking-wider text-amber">
         {titulo}
       </h3>
       <div className="flex flex-wrap gap-2">{children}</div>

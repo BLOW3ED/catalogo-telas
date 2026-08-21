@@ -19,26 +19,26 @@ export function TutorialTrigger({
   if (variant === "hero-banner") {
     return (
       <div
-        className={`relative overflow-hidden rounded-2xl border border-accent-copper/40 bg-surface-container-lowest/90 p-4 sm:p-5 shadow-sm backdrop-blur-md transition-all hover:border-accent-copper hover:shadow-md ${className}`}
+        className={`relative overflow-hidden rounded-2xl border border-amber/40 bg-surface-container-lowest/90 p-4 sm:p-5 shadow-sm backdrop-blur-md transition-all hover:border-amber hover:shadow-md ${className}`}
       >
         {/* Detalle decorativo de fondo */}
-        <div className="pointer-events-none absolute -right-6 -top-6 h-28 w-28 rounded-full bg-accent-copper/10 blur-xl" />
+        <div className="pointer-events-none absolute -right-6 -top-6 h-28 w-28 rounded-full bg-amber/10 blur-xl" />
 
         <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent-copper text-white shadow-xs">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber text-white shadow-xs">
               <span className="material-symbols-outlined text-[22px]">help_outline</span>
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-accent-copper">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-amber">
                   Guía interactiva
                 </span>
-                <span className="inline-flex items-center rounded-full bg-accent-copper/15 px-2 py-0.5 text-[10px] font-semibold text-accent-copper">
+                <span className="inline-flex items-center rounded-full bg-amber/15 px-2 py-0.5 text-[10px] font-semibold text-amber">
                   4 sencillos pasos
                 </span>
               </div>
-              <h3 className="font-display text-base font-bold text-heritage-navy sm:text-lg">
+              <h3 className="font-display text-base font-bold text-ink-display sm:text-lg">
                 ¿Primera vez?
               </h3>
               <p className="text-xs sm:text-sm text-ink-soft">
@@ -66,16 +66,16 @@ export function TutorialTrigger({
         type="button"
         onClick={openTutorial}
         aria-label="Ver guía: Cómo pedir en 4 pasos"
-        className={`group fixed sm:bottom-6 sm:right-6 z-30 hidden sm:flex items-center gap-2.5 rounded-full border border-accent-copper/50 bg-surface-container-lowest/95 px-4 py-2.5 shadow-lg backdrop-blur-md transition-all hover:scale-105 hover:border-accent-copper hover:bg-white hover:shadow-xl active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-copper ${className}`}
+        className={`group fixed sm:bottom-6 sm:right-6 z-30 hidden sm:flex items-center gap-2.5 rounded-full border border-amber/50 bg-surface-container-lowest/95 px-4 py-2.5 shadow-lg backdrop-blur-md transition-all hover:scale-105 hover:border-amber hover:bg-white hover:shadow-xl active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber ${className}`}
       >
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent-copper text-white shadow-xs group-hover:rotate-12 transition-transform">
+        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-amber text-white shadow-xs group-hover:rotate-12 transition-transform">
           <span className="material-symbols-outlined text-[16px]">help_outline</span>
         </span>
         <div className="flex flex-col text-left">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-accent-copper">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-amber">
             ¿Dudas?
           </span>
-          <span className="text-xs font-bold text-heritage-navy">
+          <span className="text-xs font-bold text-ink-display">
             Cómo pedir (4 pasos)
           </span>
         </div>
@@ -88,9 +88,9 @@ export function TutorialTrigger({
       <button
         type="button"
         onClick={openTutorial}
-        className={`inline-flex items-center gap-2 rounded-full border border-accent-copper/35 bg-surface-container-lowest px-3.5 py-1.5 text-xs font-semibold text-heritage-navy shadow-xs transition-all hover:border-accent-copper hover:bg-surface-container hover:shadow-sm active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy ${className}`}
+        className={`inline-flex items-center gap-2 rounded-full border border-amber/35 bg-surface-container-lowest px-3.5 py-1.5 text-xs font-semibold text-ink-display shadow-xs transition-all hover:border-amber hover:bg-surface-container hover:shadow-sm active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy ${className}`}
       >
-        <span className="material-symbols-outlined text-[16px] text-accent-copper">help_outline</span>
+        <span className="material-symbols-outlined text-[16px] text-amber">help_outline</span>
         <span>¿Cómo pedir en 4 pasos?</span>
       </button>
     );
@@ -100,9 +100,9 @@ export function TutorialTrigger({
     <button
       type="button"
       onClick={openTutorial}
-      className={`inline-flex items-center gap-2 rounded-full border border-outline-variant/50 bg-surface-container-lowest px-4 py-2 text-sm font-semibold text-heritage-navy shadow-xs transition-all hover:bg-surface-container hover:border-heritage-navy/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy ${className}`}
+      className={`inline-flex items-center gap-2 rounded-full border border-outline-variant/50 bg-surface-container-lowest px-4 py-2 text-sm font-semibold text-ink-display shadow-xs transition-all hover:bg-surface-container hover:border-heritage-navy/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy ${className}`}
     >
-      <span className="material-symbols-outlined text-[18px] text-accent-copper">help_outline</span>
+      <span className="material-symbols-outlined text-[18px] text-amber">help_outline</span>
       <span>¿Primera vez? Mira cómo pedir en 4 pasos</span>
     </button>
   );

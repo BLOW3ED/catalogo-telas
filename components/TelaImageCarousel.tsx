@@ -283,9 +283,9 @@ export function TelaImageCarousel({
             onClick={() => irA(i)}
             aria-label={`Ver foto ${i + 1} de ${slides.length}`}
             aria-current={i === index}
-            className={`h-14 w-14 shrink-0 overflow-hidden rounded border bg-white transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 ${
+            className={`h-14 w-14 shrink-0 overflow-hidden rounded border bg-white transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy focus-visible:ring-offset-1 ${
               i === index
-                ? "border-primary opacity-100"
+                ? "border-heritage-navy opacity-100"
                 : "border-line-strong/30 opacity-60 hover:opacity-100"
             }`}
           >
@@ -320,7 +320,7 @@ function FlechaCarrusel({
       type="button"
       onClick={onClick}
       aria-label={etiqueta}
-      className={`absolute top-1/2 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-surface/90 text-ink-deep shadow-md transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:flex ${
+      className={`absolute top-1/2 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-surface/90 text-ink-display shadow-md transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy sm:flex ${
         lado === "izquierda" ? "left-3" : "right-3"
       }`}
     >

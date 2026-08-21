@@ -36,7 +36,7 @@ export function CartDrawer() {
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 bg-heritage-navy/50 backdrop-blur-sm transition-opacity"
+          className="fixed inset-0 z-50 bg-ink-deep/50 backdrop-blur-sm transition-opacity"
           onClick={() => setIsOpen(false)}
           aria-hidden="true"
         />
@@ -51,19 +51,19 @@ export function CartDrawer() {
         <div className="flex items-start justify-between border-b border-line/60 p-4 sm:p-6 bg-surface-container-low/50">
           <div>
             <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-[20px] text-accent-copper">shopping_bag</span>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-accent-copper">
+              <span className="material-symbols-outlined text-[20px] text-amber">shopping_bag</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-amber">
                 Cotización de Telas
               </span>
             </div>
-            <h2 className="font-display text-2xl font-bold text-heritage-navy mt-1">Tu Cesta</h2>
+            <h2 className="font-display text-2xl font-bold text-ink-display mt-1">Tu Cesta</h2>
             <p className="mt-0.5 text-xs text-ink-soft">
               Revisa tus metros seleccionados y envíalos por WhatsApp sin compromiso.
             </p>
           </div>
           <button
             onClick={() => setIsOpen(false)}
-            className="-mr-1 shrink-0 rounded-full p-2 text-ink-soft transition-colors hover:bg-surface-container hover:text-heritage-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
+            className="-mr-1 shrink-0 rounded-full p-2 text-ink-soft transition-colors hover:bg-surface-container hover:text-ink-display focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
             aria-label="Cerrar cotización"
           >
             <X className="h-5 w-5" />
@@ -73,10 +73,10 @@ export function CartDrawer() {
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
           {items.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center text-center py-12">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-surface-container text-accent-copper">
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-surface-container text-amber">
                 <span className="material-symbols-outlined text-[32px]">shopping_basket</span>
               </div>
-              <p className="font-display text-xl font-bold text-heritage-navy">Tu cesta está vacía</p>
+              <p className="font-display text-xl font-bold text-ink-display">Tu cesta está vacía</p>
               <p className="mt-2 max-w-xs text-sm text-ink-soft">
                 Explora el catálogo, elige tus metros favoritos y agrégalos aquí.
               </p>
@@ -107,7 +107,7 @@ export function CartDrawer() {
                   </div>
                   <div className="flex flex-1 flex-col justify-between">
                     <div>
-                      <h3 className="font-display font-bold leading-tight text-heritage-navy">{item.tela_nombre}</h3>
+                      <h3 className="font-display font-bold leading-tight text-ink-display">{item.tela_nombre}</h3>
                       <p className="text-xs text-ink-soft mt-0.5">
                         {item.color_nombre} {item.sku && `· SKU: ${item.sku}`}
                       </p>
@@ -124,26 +124,26 @@ export function CartDrawer() {
                               )
                             )
                           }
-                          className="flex h-11 w-11 items-center justify-center rounded-lg bg-surface-container-lowest text-xs font-bold text-heritage-navy shadow-2xs transition-all hover:bg-surface-container-high active:scale-95"
+                          className="flex h-11 w-11 items-center justify-center rounded-lg bg-surface-container-lowest text-xs font-bold text-ink-display shadow-2xs transition-all hover:bg-surface-container-high active:scale-95"
                           aria-label={`Disminuir ${unidadDe(item.unidad_venta).singular} de ${item.tela_nombre}`}
                         >
                           -
                         </button>
-                        <span className="w-10 text-center text-xs font-bold text-heritage-navy">
+                        <span className="w-10 text-center text-xs font-bold text-ink-display">
                           {cantidadCorta(item.cantidad, item.unidad_venta)}
                         </span>
                         <button
                           onClick={() =>
                             updateQuantity(item.id, item.cantidad + unidadDe(item.unidad_venta).paso)
                           }
-                          className="flex h-11 w-11 items-center justify-center rounded-lg bg-surface-container-lowest text-xs font-bold text-heritage-navy shadow-2xs transition-all hover:bg-surface-container-high active:scale-95"
+                          className="flex h-11 w-11 items-center justify-center rounded-lg bg-surface-container-lowest text-xs font-bold text-ink-display shadow-2xs transition-all hover:bg-surface-container-high active:scale-95"
                           aria-label={`Aumentar ${unidadDe(item.unidad_venta).singular} de ${item.tela_nombre}`}
                         >
                           +
                         </button>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-accent-copper">
+                        <span className="text-sm font-bold text-amber">
                           {item.precio != null ? pesos.format(item.precio * item.cantidad) : "Consultar"}
                         </span>
                         <button
@@ -168,7 +168,7 @@ export function CartDrawer() {
               <span className="text-sm font-bold uppercase tracking-wider text-ink-soft">
                 {haySinPrecio ? "Total parcial" : "Total estimado"}
               </span>
-              <span className="font-display text-2xl sm:text-3xl font-bold text-accent-copper">
+              <span className="font-display text-2xl sm:text-3xl font-bold text-amber">
                 {pesos.format(total)}
               </span>
             </div>

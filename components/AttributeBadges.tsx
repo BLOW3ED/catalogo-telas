@@ -23,9 +23,9 @@ export function AttributeBadges({ atributos }: { atributos: Atributos }) {
       {activos.map(({ key, label, Icon }) => (
         <span
           key={key}
-          className="inline-flex items-center gap-1.5 rounded-full border border-outline-variant/30 bg-surface-container-low px-3 py-1 text-xs font-bold text-heritage-navy shadow-2xs"
+          className="inline-flex items-center gap-1.5 rounded-full border border-outline-variant/30 bg-surface-container-low px-3 py-1 text-xs font-bold text-ink-display shadow-2xs"
         >
-          <Icon className="h-3.5 w-3.5 text-accent-copper" aria-hidden />
+          <Icon className="h-3.5 w-3.5 text-amber" aria-hidden />
           {label}
         </span>
       ))}

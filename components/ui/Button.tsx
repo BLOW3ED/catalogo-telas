@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import type { ButtonHTMLAttributes, AnchorHTMLAttributes, ReactNode } from "react";
 
-type Variant = "primary" | "whatsapp" | "secondary" | "ghost" | "copper";
+type Variant = "primary" | "whatsapp" | "secondary" | "ghost" | "amber";
 type Size = "sm" | "md" | "lg";
 
 const base =
@@ -12,14 +12,14 @@ const base =
 const variants: Record<Variant, string> = {
   primary:
     "bg-heritage-navy text-white shadow-sm hover:bg-deep-slate hover:shadow-md focus-visible:ring-heritage-navy",
-  copper:
-    "bg-accent-copper text-white shadow-sm hover:bg-[#96654c] hover:shadow-md focus-visible:ring-accent-copper",
+  amber:
+    "bg-amber text-white shadow-sm hover:bg-amber-soft hover:shadow-md focus-visible:ring-amber",
   whatsapp:
     "bg-whatsapp text-white shadow-sm hover:bg-whatsapp-dark hover:shadow-md focus-visible:ring-whatsapp",
   secondary:
-    "border border-outline-variant/40 bg-surface-container-lowest text-heritage-navy shadow-xs hover:bg-surface-container hover:border-outline focus-visible:ring-heritage-navy",
+    "border border-outline-variant/40 bg-surface-container-lowest text-ink-display shadow-xs hover:bg-surface-container hover:border-outline focus-visible:ring-heritage-navy",
   ghost:
-    "text-ink-soft hover:bg-surface-container hover:text-heritage-navy focus-visible:ring-heritage-navy",
+    "text-ink-soft hover:bg-surface-container hover:text-ink-display focus-visible:ring-heritage-navy",
 };
 
 const sizes: Record<Size, string> = {

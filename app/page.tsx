@@ -78,12 +78,12 @@ export default async function HomePage({
           <div className="mx-auto max-w-7xl px-4 pb-10 pt-4 sm:px-6 lg:px-8">
             <div className="relative z-10 max-w-3xl">
               <div className="mb-3 flex items-center gap-2">
-                <span className="h-0.5 w-6 bg-accent-copper" />
-                <span className="text-xs font-bold uppercase tracking-widest text-accent-copper">
+                <span className="h-0.5 w-6 bg-amber" />
+                <span className="text-xs font-bold uppercase tracking-widest text-amber">
                   TIENDA TEXTIL & MERCERÍA
                 </span>
               </div>
-              <h1 className="font-display text-3xl font-bold tracking-tight text-heritage-navy sm:text-5xl sm:leading-tight">
+              <h1 className="font-display text-3xl font-bold tracking-tight text-ink-display sm:text-5xl sm:leading-tight">
                 Bienvenid@ a Telas La Jalisciense
               </h1>
               <p className="mt-3 text-base text-ink-text/80 sm:text-lg">
@@ -108,7 +108,7 @@ export default async function HomePage({
         {tieneFiltrosOBusqueda && (
           <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
-              <h1 className="font-display text-2xl font-bold text-heritage-navy sm:text-3xl">
+              <h1 className="font-display text-2xl font-bold text-ink-display sm:text-3xl">
                 {filtros.q ? `Resultados para “${filtros.q}”` : "Catálogo de Telas"}
               </h1>
               <p className="text-sm text-ink-soft">
@@ -121,10 +121,10 @@ export default async function HomePage({
         {!configurado && <SetupNotice />}
 
         {configurado && error && (
-          <div className="flex items-start gap-3 rounded-2xl border border-accent-copper/30 bg-surface-container p-5 text-sm shadow-xs">
-            <span className="material-symbols-outlined text-[24px] text-accent-copper">warning</span>
+          <div className="flex items-start gap-3 rounded-2xl border border-amber/30 bg-surface-container p-5 text-sm shadow-xs">
+            <span className="material-symbols-outlined text-[24px] text-amber">warning</span>
             <div>
-              <p className="font-semibold text-heritage-navy">No se pudo leer el catálogo</p>
+              <p className="font-semibold text-ink-display">No se pudo leer el catálogo</p>
               <p className="text-ink-soft">{error}</p>
             </div>
           </div>
@@ -174,7 +174,7 @@ export default async function HomePage({
 function SetupNotice() {
   return (
     <div className="rounded-2xl border border-line bg-surface-container-lowest p-6 shadow-sm">
-      <div className="mb-3 flex items-center gap-2 text-accent-copper">
+      <div className="mb-3 flex items-center gap-2 text-amber">
         <span className="material-symbols-outlined text-[24px]">settings</span>
         <h2 className="font-display text-xl font-bold">Falta conectar Supabase</h2>
       </div>
@@ -215,10 +215,10 @@ function SinResultados({ filtros }: { filtros: ReturnType<typeof leerFiltros> })
 
   return (
     <div className="rounded-2xl border border-dashed border-outline-variant/60 bg-surface-container-lowest/80 p-12 text-center shadow-xs">
-      <span className="material-symbols-outlined mx-auto mb-3 text-[48px] text-accent-copper block">
+      <span className="material-symbols-outlined mx-auto mb-3 text-[48px] text-amber block">
         search_off
       </span>
-      <p className="font-display text-2xl font-bold text-heritage-navy">Sin resultados</p>
+      <p className="font-display text-2xl font-bold text-ink-display">Sin resultados</p>
       <p className="mt-2 text-sm text-ink-soft max-w-md mx-auto">
         {conBusqueda && conFiltros
           ? `No encontramos productos para “${filtros.q}” con los filtros seleccionados.`
@@ -230,7 +230,7 @@ function SinResultados({ filtros }: { filtros: ReturnType<typeof leerFiltros> })
         {conFiltros && (
           <Link
             href={soloBusqueda ? `/?${soloBusqueda}` : "/"}
-            className="inline-flex items-center gap-2 rounded-full border border-outline-variant/40 bg-surface-container-lowest px-5 py-2.5 text-sm font-semibold text-heritage-navy shadow-xs transition-all hover:bg-surface-container active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
+            className="inline-flex items-center gap-2 rounded-full border border-outline-variant/40 bg-surface-container-lowest px-5 py-2.5 text-sm font-semibold text-ink-display shadow-xs transition-all hover:bg-surface-container active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
           >
             <span className="material-symbols-outlined text-[18px]">filter_alt_off</span>
             Quitar los filtros

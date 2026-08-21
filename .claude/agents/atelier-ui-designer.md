@@ -38,9 +38,12 @@ this doc can go stale.
 | Page background | `bg-bg` | warm bone surface |
 | Card/panel background | `bg-surface` | one step up from `bg-bg`, for cards, inputs, drawers, modals |
 | Elevated hover/active surface | `bg-surface-high` | subtle contrast step, sparingly |
-| Body text | `text-ink` | near-black warm ink; use `/60`, `/50`, `/40` opacity for secondary/tertiary text |
-| Accent (CTAs, prices, active states) | `bg-amber` / `text-amber` | terracotta accent — use for one primary action per view, not everywhere |
-| Accent, muted (eyebrows/labels) | `text-amber-soft` | darker caramel, tuned for AA contrast on small uppercase text — pair with `.text-label-caps` |
+| Body/paragraph text | `text-ink` | `#0A0F14`, near-black; use `/60`, `/50`, `/40` opacity for secondary/tertiary text |
+| **Titles & UI text** | `text-ink-display` | `#26262B`, neutral graphite. Every `h1`/`h2`/`h3`, product names, and UI labels. **This is what replaced purple text** — see the color rule below. |
+| **Primary — action ONLY, never text** | `bg-heritage-navy` / `border-` / `ring-` (hover `bg-deep-slate`) | the sober purple `#6E4B7A`. Filled buttons, selected filter chips, active nav tabs, focus rings, the selected-color ring. **The token name is legacy** — it was navy once and the name was kept to avoid ~235 mechanical edits. There is no blue in this palette. |
+| **Accent — highlighted information** | `bg-amber` / `text-amber` | the warm mustard `#7A4E0D`. Prices, category labels, badges, counters, and all of `/admin`'s capture UI. Not a second CTA color. |
+| Accent, muted (eyebrows/labels, accent hover) | `text-amber-soft` / `hover:bg-amber-soft` | darker mustard, tuned for AA on small uppercase text — pair with `.text-label-caps` |
+| Dark veils over photos | `bg-ink-deep/50…/75` | `#14141A`. Scrims behind the cart/tutorial and pills sitting on product photos — all of these carry white text, so this token must stay very dark. Not a text color. |
 | Borders / dividers | `border-line` | soft warm greige, usually with the element's own opacity if it needs to fade into a photo |
 | WhatsApp CTA only | `bg-whatsapp` / `bg-whatsapp-dark` | reserved for the WhatsApp send button — don't reuse for other greens |
 | Display/headline type | `font-display` | Fraunces serif, weight 400, tight tracking — use for `h1`/`h2`/`h3` and hero prices, never body copy |
@@ -57,8 +60,18 @@ buttons, dots), never as a stand-in for "very rounded card."
 
 ### Color discipline
 
-- One accent color (`amber`) per screen for the primary action. Everything
-  else is neutral (`ink`, `line`, `surface`, `bg`) plus opacity steps.
+- **The purple NEVER goes on text.** No `text-heritage-navy`, no
+  `hover:text-heritage-navy`. It is a color of ACTION: button fill, active
+  chip fill, focus ring, selected-swatch border. Dark text is
+  `text-ink-display`. This is deliberate and was a direct instruction from
+  the store: when the accent doubled as the heading color, the whole screen
+  read purple and the actual buttons stopped standing out.
+- **Two accents, two jobs — don't swap them.** `heritage-navy` (purple) is
+  ACTION; `amber` (mustard) is HIGHLIGHTED INFORMATION — prices, labels,
+  badges. A price is never a button color, and a button is never mustard
+  unless it's deliberately the secondary `amber` Button variant.
+- Still keep ONE primary action per view. Two purple filled buttons competing
+  on the same screen is the failure mode this rule exists to prevent.
 - Don't invent new hex values. If a component needs something the tokens
   don't cover (e.g. a real fabric color swatch from the DB), that's data
   (`color.hex`), not a design token — render it via inline `style`, as

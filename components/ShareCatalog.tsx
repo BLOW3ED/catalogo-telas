@@ -24,7 +24,7 @@ export function ShareCatalog({
   label = "Compartir",
   className,
 }: {
-  variant?: "primary" | "whatsapp" | "secondary" | "ghost" | "copper";
+  variant?: "primary" | "whatsapp" | "secondary" | "ghost" | "amber";
   size?: "sm" | "md" | "lg";
   label?: string;
   className?: string;

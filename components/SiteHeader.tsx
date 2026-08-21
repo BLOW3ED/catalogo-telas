@@ -60,13 +60,13 @@ export function SiteHeader() {
                 sacrifica al hacer scroll: no aporta orientación una vez que
                 ya se sabe en qué sitio se está, y es puro alto reclamado. */}
             <span
-              className={`text-[9px] font-bold uppercase tracking-widest text-accent-copper truncate sm:block sm:text-[10px] ${
+              className={`text-[9px] font-bold uppercase tracking-widest text-amber truncate sm:block sm:text-[10px] ${
                 compacto ? "hidden" : "block"
               }`}
             >
               Fresnillo · Atelier
             </span>
-            <span className="font-display text-lg sm:text-2xl font-bold tracking-tight text-heritage-navy transition-colors group-hover:text-accent-copper truncate">
+            <span className="font-display text-lg sm:text-2xl font-bold tracking-tight text-ink-display transition-colors group-hover:text-amber truncate">
               Telas La Jalisciense
             </span>
           </div>
@@ -102,14 +102,14 @@ export function SiteHeader() {
           <button
             type="button"
             onClick={openTutorial}
-            className="hidden sm:flex items-center gap-1.5 rounded-full border border-accent-copper/40 bg-surface-container-lowest/80 px-3.5 py-1.5 text-xs font-bold text-heritage-navy shadow-xs transition-all hover:bg-surface-container hover:border-accent-copper active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
+            className="hidden sm:flex items-center gap-1.5 rounded-full border border-amber/40 bg-surface-container-lowest/80 px-3.5 py-1.5 text-xs font-bold text-ink-display shadow-xs transition-all hover:bg-surface-container hover:border-amber active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
             aria-label="Cómo funciona el catálogo en 4 pasos"
           >
-            <span className="material-symbols-outlined text-[18px] text-accent-copper">
+            <span className="material-symbols-outlined text-[18px] text-amber">
               help_outline
             </span>
             <span>¿Cómo pedir?</span>
-            <span className="inline-flex rounded bg-accent-copper/15 px-1.5 py-0.2 text-[10px] font-bold text-accent-copper">
+            <span className="inline-flex rounded bg-amber/15 px-1.5 py-0.2 text-[10px] font-bold text-amber">
               4 pasos
             </span>
           </button>
@@ -126,12 +126,12 @@ export function SiteHeader() {
           <button
             type="button"
             onClick={() => setIsOpen(true)}
-            className="relative flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-surface-container text-heritage-navy border border-outline-variant/30 shadow-xs transition-all hover:bg-surface-container-high hover:shadow active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
+            className="relative flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-surface-container text-ink-display border border-outline-variant/30 shadow-xs transition-all hover:bg-surface-container-high hover:shadow active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
             aria-label="Ver mi cotización"
           >
             <span className="material-symbols-outlined text-[18px] sm:text-[20px]">shopping_bag</span>
             {mounted && itemCount > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent-copper px-1.5 text-xs font-bold text-white shadow-xs ring-2 ring-sand-bg">
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-amber px-1.5 text-xs font-bold text-white shadow-xs ring-2 ring-sand-bg">
                 {itemCount}
               </span>
             )}

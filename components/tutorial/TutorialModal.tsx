@@ -192,7 +192,7 @@ export function TutorialModal() {
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-end justify-center bg-heritage-navy/65 p-3 sm:p-4 backdrop-blur-md transition-opacity duration-300 sm:items-center"
+      className="fixed inset-0 z-[60] flex items-end justify-center bg-ink-deep/65 p-3 sm:p-4 backdrop-blur-md transition-opacity duration-300 sm:items-center"
       onClick={cerrar}
     >
       <div
@@ -209,17 +209,17 @@ export function TutorialModal() {
         {/* Cabecera del Atelier */}
         <div className="flex items-center justify-between border-b border-line/60 bg-surface-container-low/60 px-5 py-3.5 sm:px-6">
           <div className="flex items-center gap-2">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent-copper text-white text-[11px] font-bold">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber text-white text-[11px] font-bold">
               {slide + 1}
             </span>
-            <span className="text-[11px] font-bold uppercase tracking-widest text-accent-copper">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-amber">
               {actual.etiqueta}
             </span>
           </div>
           <button
             type="button"
             onClick={cerrar}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-surface-container hover:text-heritage-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-surface-container hover:text-ink-display focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
             aria-label="Cerrar guía del catálogo"
           >
             <X className="h-4 w-4" />
@@ -236,7 +236,7 @@ export function TutorialModal() {
           <div className="mt-5 text-center" aria-live="polite">
             <h2
               id="tutorial-titulo"
-              className="font-display text-xl sm:text-2xl font-bold text-heritage-navy tracking-tight"
+              className="font-display text-xl sm:text-2xl font-bold text-ink-display tracking-tight"
             >
               {actual.titulo}
             </h2>
@@ -274,7 +274,7 @@ export function TutorialModal() {
             <button
               type="button"
               onClick={cerrar}
-              className="rounded-full px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-ink-soft transition-colors hover:text-heritage-navy hover:bg-surface-container focus-visible:outline-none"
+              className="rounded-full px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-ink-soft transition-colors hover:text-ink-display hover:bg-surface-container focus-visible:outline-none"
             >
               Saltar guía
             </button>
@@ -282,7 +282,7 @@ export function TutorialModal() {
             <button
               type="button"
               onClick={() => irA(slide - 1)}
-              className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-ink-soft transition-colors hover:text-heritage-navy hover:bg-surface-container focus-visible:outline-none"
+              className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-ink-soft transition-colors hover:text-ink-display hover:bg-surface-container focus-visible:outline-none"
             >
               <ChevronLeft className="h-4 w-4" aria-hidden />
               <span>Anterior</span>

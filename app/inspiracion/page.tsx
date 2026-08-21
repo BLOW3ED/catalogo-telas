@@ -16,18 +16,18 @@ export default function InspiracionPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Link
             href="/"
-            className="mb-4 inline-flex items-center gap-2 rounded-full border border-outline-variant/40 bg-surface-container-lowest px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-ink-soft shadow-xs transition-all hover:bg-surface-container hover:text-heritage-navy active:scale-95"
+            className="mb-4 inline-flex items-center gap-2 rounded-full border border-outline-variant/40 bg-surface-container-lowest px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-ink-soft shadow-xs transition-all hover:bg-surface-container hover:text-ink-display active:scale-95"
           >
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
             Volver al catálogo
           </Link>
           <div className="flex items-center gap-2">
-            <span className="h-0.5 w-6 bg-accent-copper" />
-            <span className="text-xs font-bold uppercase tracking-widest text-accent-copper">
+            <span className="h-0.5 w-6 bg-amber" />
+            <span className="text-xs font-bold uppercase tracking-widest text-amber">
               Editorial & Creación
             </span>
           </div>
-          <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-heritage-navy sm:text-5xl">
+          <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-ink-display sm:text-5xl">
             Inspiración Textil
           </h1>
           <p className="mt-2 max-w-2xl text-base text-ink-soft sm:text-lg">
@@ -41,7 +41,7 @@ export default function InspiracionPage() {
         <section className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
             <span className="h-px w-8 bg-heritage-navy" />
-            <span className="text-xs font-bold uppercase tracking-widest text-heritage-navy">
+            <span className="text-xs font-bold uppercase tracking-widest text-ink-display">
               Tendencia de Temporada
             </span>
           </div>
@@ -55,10 +55,10 @@ export default function InspiracionPage() {
               }}
             />
             <div className="flex flex-col justify-center p-6 sm:p-10 md:p-12">
-              <span className="text-xs font-bold uppercase tracking-wider text-accent-copper">
+              <span className="text-xs font-bold uppercase tracking-wider text-amber">
                 Terciopelo & Riqueza Táctil
               </span>
-              <h2 className="mt-2 font-display text-2xl font-bold text-heritage-navy sm:text-4xl">
+              <h2 className="mt-2 font-display text-2xl font-bold text-ink-display sm:text-4xl">
                 Tendencias de otoño en terciopelo y brocados
               </h2>
               <p className="mt-4 text-base leading-relaxed text-ink-soft">
@@ -81,13 +81,13 @@ export default function InspiracionPage() {
         <section className="grid gap-6 md:grid-cols-2">
           {/* Card 1: Hilos y Agujas */}
           <div className="flex flex-col overflow-hidden rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-6 sm:p-8 shadow-xs">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-container text-accent-copper">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-container text-amber">
               <span className="material-symbols-outlined text-[28px]">design_services</span>
             </div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-accent-copper">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-amber">
               Guía de Atelier
             </span>
-            <h3 className="mt-1 font-display text-xl font-bold text-heritage-navy sm:text-2xl">
+            <h3 className="mt-1 font-display text-xl font-bold text-ink-display sm:text-2xl">
               Cómo elegir el hilo y aguja correctos
             </h3>
             <p className="mt-3 text-sm leading-relaxed text-ink-soft">
@@ -95,7 +95,7 @@ export default function InspiracionPage() {
             </p>
             <Link
               href="/?q=hilo"
-              className="mt-6 inline-flex items-center gap-1.5 text-sm font-bold text-heritage-navy transition-colors hover:text-accent-copper"
+              className="mt-6 inline-flex items-center gap-1.5 text-sm font-bold text-ink-display transition-colors hover:text-amber"
             >
               Explorar hilos y mercería
               <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
@@ -104,13 +104,13 @@ export default function InspiracionPage() {
 
           {/* Card 2: Caída y Peso */}
           <div className="flex flex-col overflow-hidden rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-6 sm:p-8 shadow-xs">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-container text-accent-copper">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-container text-amber">
               <span className="material-symbols-outlined text-[28px]">straighten</span>
             </div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-accent-copper">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-amber">
               Cálculo de Metraje
             </span>
-            <h3 className="mt-1 font-display text-xl font-bold text-heritage-navy sm:text-2xl">
+            <h3 className="mt-1 font-display text-xl font-bold text-ink-display sm:text-2xl">
               Calcula la tela para faldas con vuelo y vestidos
             </h3>
             <p className="mt-3 text-sm leading-relaxed text-ink-soft">
@@ -118,7 +118,7 @@ export default function InspiracionPage() {
             </p>
             <Link
               href="/"
-              className="mt-6 inline-flex items-center gap-1.5 text-sm font-bold text-heritage-navy transition-colors hover:text-accent-copper"
+              className="mt-6 inline-flex items-center gap-1.5 text-sm font-bold text-ink-display transition-colors hover:text-amber"
             >
               Ver telas con caída
               <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
@@ -129,10 +129,10 @@ export default function InspiracionPage() {
         {/* 3. Galería de la Comunidad: "Hecho con Telas La Jalisciense" */}
         <section className="space-y-6">
           <div className="flex flex-col items-center text-center">
-            <span className="material-symbols-outlined text-[32px] text-accent-copper">
+            <span className="material-symbols-outlined text-[32px] text-amber">
               auto_awesome
             </span>
-            <h2 className="mt-2 font-display text-2xl font-bold text-heritage-navy sm:text-3xl">
+            <h2 className="mt-2 font-display text-2xl font-bold text-ink-display sm:text-3xl">
               Hecho con Nuestras Telas
             </h2>
             <p className="mt-1 max-w-md text-sm text-ink-soft">
@@ -144,11 +144,11 @@ export default function InspiracionPage() {
             {/* Proyecto 1 */}
             <div className="flex flex-col overflow-hidden rounded-2xl border border-outline-variant/30 bg-surface-container-lowest shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
               <div className="flex items-center gap-3 p-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-container text-heritage-navy font-bold">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-container text-ink-display font-bold">
                   CL
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-heritage-navy">Carmen L.</p>
+                  <p className="text-sm font-bold text-ink-display">Carmen L.</p>
                   <p className="text-xs text-ink-soft">Fresnillo, Zacatecas</p>
                 </div>
               </div>
@@ -161,7 +161,7 @@ export default function InspiracionPage() {
               />
               <div className="flex flex-1 flex-col justify-between p-5">
                 <div>
-                  <h3 className="font-display text-lg font-bold text-heritage-navy">
+                  <h3 className="font-display text-lg font-bold text-ink-display">
                     Ensamble Cobrizo de Temporada
                   </h3>
                   <p className="mt-2 text-xs leading-relaxed text-ink-soft">
@@ -171,7 +171,7 @@ export default function InspiracionPage() {
                 <div className="mt-4 pt-3 border-t border-line/60 flex flex-wrap gap-2">
                   <Link
                     href="/?q=cobre"
-                    className="inline-flex items-center gap-1 rounded-full bg-surface-container px-3 py-1 text-xs font-semibold text-heritage-navy hover:bg-surface-container-high"
+                    className="inline-flex items-center gap-1 rounded-full bg-surface-container px-3 py-1 text-xs font-semibold text-ink-display hover:bg-surface-container-high"
                   >
                     <span className="material-symbols-outlined text-[14px]">texture</span>
                     Tono Cobre
@@ -183,11 +183,11 @@ export default function InspiracionPage() {
             {/* Proyecto 2 */}
             <div className="flex flex-col overflow-hidden rounded-2xl border border-outline-variant/30 bg-surface-container-lowest shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
               <div className="flex items-center gap-3 p-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-container text-heritage-navy font-bold">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-container text-ink-display font-bold">
                   MT
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-heritage-navy">Marta Taller Textil</p>
+                  <p className="text-sm font-bold text-ink-display">Marta Taller Textil</p>
                   <p className="text-xs text-ink-soft">Zacatecas Centro</p>
                 </div>
               </div>
@@ -200,7 +200,7 @@ export default function InspiracionPage() {
               />
               <div className="flex flex-1 flex-col justify-between p-5">
                 <div>
-                  <h3 className="font-display text-lg font-bold text-heritage-navy">
+                  <h3 className="font-display text-lg font-bold text-ink-display">
                     Vestido de Gala en Seda Esmeralda
                   </h3>
                   <p className="mt-2 text-xs leading-relaxed text-ink-soft">
@@ -210,7 +210,7 @@ export default function InspiracionPage() {
                 <div className="mt-4 pt-3 border-t border-line/60 flex flex-wrap gap-2">
                   <Link
                     href="/?q=seda"
-                    className="inline-flex items-center gap-1 rounded-full bg-surface-container px-3 py-1 text-xs font-semibold text-heritage-navy hover:bg-surface-container-high"
+                    className="inline-flex items-center gap-1 rounded-full bg-surface-container px-3 py-1 text-xs font-semibold text-ink-display hover:bg-surface-container-high"
                   >
                     <span className="material-symbols-outlined text-[14px]">texture</span>
                     Seda Natural
@@ -222,11 +222,11 @@ export default function InspiracionPage() {
             {/* Proyecto 3 */}
             <div className="flex flex-col overflow-hidden rounded-2xl border border-outline-variant/30 bg-surface-container-lowest shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
               <div className="flex items-center gap-3 p-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-container text-heritage-navy font-bold">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-container text-ink-display font-bold">
                   LF
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-heritage-navy">Lucía Fernández</p>
+                  <p className="text-sm font-bold text-ink-display">Lucía Fernández</p>
                   <p className="text-xs text-ink-soft">Fresnillo, Zacatecas</p>
                 </div>
               </div>
@@ -239,7 +239,7 @@ export default function InspiracionPage() {
               />
               <div className="flex flex-1 flex-col justify-between p-5">
                 <div>
-                  <h3 className="font-display text-lg font-bold text-heritage-navy">
+                  <h3 className="font-display text-lg font-bold text-ink-display">
                     Velo de Novia con Encaje Italiano
                   </h3>
                   <p className="mt-2 text-xs leading-relaxed text-ink-soft">
@@ -249,7 +249,7 @@ export default function InspiracionPage() {
                 <div className="mt-4 pt-3 border-t border-line/60 flex flex-wrap gap-2">
                   <Link
                     href="/?q=encaje"
-                    className="inline-flex items-center gap-1 rounded-full bg-surface-container px-3 py-1 text-xs font-semibold text-heritage-navy hover:bg-surface-container-high"
+                    className="inline-flex items-center gap-1 rounded-full bg-surface-container px-3 py-1 text-xs font-semibold text-ink-display hover:bg-surface-container-high"
                   >
                     <span className="material-symbols-outlined text-[14px]">texture</span>
                     Encaje & Tul
