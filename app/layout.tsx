@@ -6,12 +6,15 @@ import { TutorialModal } from "@/components/tutorial/TutorialModal";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import "./globals.css";
 
-// Hanken Grotesk: fuente principal del sistema "Artisanal Modernity" de Stitch.
+// Tipografía del design system de Stitch "Artisanal Modernity": Hanken Grotesk
+// en TODA la jerarquía (display, cuerpo y etiquetas), con los mismos pesos que
+// carga Stitch (400/600/700). Los tokens --font-display/--font-body/--font-serif
+// de globals.css se conservan y todos apuntan a esta familia.
 const hankenGrotesk = Hanken_Grotesk({
   subsets: ["latin"],
   variable: "--font-hanken",
   display: "swap",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "600", "700"],
 });
 
 // Base absoluta de los metadatos. `app/opengraph-image.png` se anuncia como
@@ -45,7 +48,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" className={hankenGrotesk.variable}>
-      <body className="flex min-h-screen flex-col bg-sand-bg text-ink-text antialiased selection:bg-amber/20 selection:text-ink-display pb-16 sm:pb-0">
+      <body className="flex min-h-screen flex-col bg-sand-bg text-ink-text font-sans antialiased selection:bg-amber/20 selection:text-ink-display pb-16 sm:pb-0">
         <SiteHeader />
         <div className="flex-1">{children}</div>
         <MobileBottomNav />

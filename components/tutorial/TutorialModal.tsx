@@ -201,7 +201,7 @@ export function TutorialModal() {
         aria-modal="true"
         aria-labelledby="tutorial-titulo"
         tabIndex={-1}
-        className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-line/80 bg-surface-container-lowest shadow-2xl focus:outline-none"
+        className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-line/80 bg-surface-container-lowest shadow-2xl focus:outline-none"
         onClick={(e) => e.stopPropagation()}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}

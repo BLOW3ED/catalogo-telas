@@ -49,7 +49,7 @@ export function SearchBar({
         onChange={(e) => setValor(e.target.value)}
         placeholder={placeholder}
         aria-label="Buscar productos del catálogo"
-        className="w-full h-11 sm:h-12 pl-11 pr-11 rounded-full border border-outline-variant/40 bg-surface-container-lowest/90 backdrop-blur-sm text-sm sm:text-base text-ink-text placeholder:text-ink-soft/70 shadow-xs transition-all focus:bg-surface-container-lowest focus:border-amber focus:outline-none focus:ring-2 focus:ring-amber/30 focus:shadow-md"
+        className="w-full h-11 sm:h-12 pl-11 pr-11 rounded border border-outline-variant/40 bg-surface-container-lowest/90 backdrop-blur-sm text-sm sm:text-base text-ink-text placeholder:text-ink-soft/70 shadow-xs transition-all focus:bg-surface-container-lowest focus:border-amber focus:outline-none focus:ring-2 focus:ring-amber/30 focus:shadow-md"
       />
       {valor && (
         <button

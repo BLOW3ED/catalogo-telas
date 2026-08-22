@@ -5,7 +5,7 @@ type Variant = "primary" | "whatsapp" | "secondary" | "ghost" | "amber";
 type Size = "sm" | "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-full font-bold " +
+  "inline-flex items-center justify-center gap-2 rounded font-bold " +
   "transition-all duration-200 active:scale-95 focus-visible:outline-none focus-visible:ring-2 " +
   "focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 select-none cursor-pointer";
 

@@ -11,7 +11,7 @@ function Marco({ children }: { children: React.ReactNode }) {
   return (
     <div
       aria-hidden
-      className="select-none overflow-hidden rounded-2xl border border-line/80 bg-surface-container-lowest shadow-sm"
+      className="select-none overflow-hidden rounded border border-line/80 bg-surface-container-lowest shadow-sm"
     >
       {/* Barra superior de la maqueta (Atelier Window Bar) */}
       <div className="flex h-9 items-center justify-between border-b border-line/60 bg-surface-container-low/70 px-3.5">
@@ -21,7 +21,7 @@ function Marco({ children }: { children: React.ReactNode }) {
             Telas La Jalisciense
           </span>
         </div>
-        <span className="inline-flex items-center gap-1 rounded-full bg-surface-container px-2 py-0.5 text-[9px] font-semibold text-amber">
+        <span className="inline-flex items-center gap-1 rounded bg-surface-container px-2 py-0.5 text-[9px] font-semibold text-amber">
           <Sparkles className="h-2.5 w-2.5" />
           <span>Catálogo</span>
         </span>
@@ -35,7 +35,7 @@ function Foco({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative">
       {children}
-      <span className="pointer-events-none absolute -inset-1.5 animate-halo rounded-2xl ring-2 ring-amber/80 ring-offset-2 ring-offset-surface-container-lowest" />
+      <span className="pointer-events-none absolute -inset-1.5 animate-halo rounded ring-2 ring-amber/80 ring-offset-2 ring-offset-surface-container-lowest" />
     </div>
   );
 }
@@ -49,12 +49,12 @@ function Retazo({
 }) {
   return (
     <div
-      className={`relative aspect-square w-full overflow-hidden rounded-xl bg-gradient-to-br shadow-inner-xs ${className}`}
+      className={`relative aspect-square w-full overflow-hidden rounded bg-gradient-to-br shadow-inner-xs ${className}`}
     >
       {/* Sutil textura de urdimbre/trama textil */}
       <div className="absolute inset-0 bg-[radial-gradient(#00000010_1px,transparent_1px)] [background-size:6px_6px] opacity-40" />
       {label && (
-        <span className="absolute bottom-1.5 left-1.5 rounded-md bg-ink-deep/70 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider text-white backdrop-blur-xs">
+        <span className="absolute bottom-1.5 left-1.5 rounded bg-ink-deep/70 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider text-white backdrop-blur-xs">
           {label}
         </span>
       )}
@@ -74,7 +74,7 @@ function MiniCard({
   precio: string;
 }) {
   return (
-    <div className="flex flex-col gap-1.5 rounded-xl border border-line/60 bg-surface-container-lowest p-2 shadow-2xs transition-transform">
+    <div className="flex flex-col gap-1.5 rounded border border-line/60 bg-surface-container-lowest p-2 shadow-2xs transition-transform">
       <Retazo className={retazo} />
       <div className="flex flex-col gap-0.5">
         <span className="text-[9px] font-semibold uppercase tracking-wider text-amber">
@@ -95,14 +95,14 @@ export function MaquetaBuscar() {
   return (
     <Marco>
       <Foco>
-        <div className="flex items-center justify-between gap-2 rounded-full border border-outline-variant/40 bg-surface-container-lowest px-3 py-2 shadow-xs">
+        <div className="flex items-center justify-between gap-2 rounded border border-outline-variant/40 bg-surface-container-lowest px-3 py-2 shadow-xs">
           <div className="flex items-center gap-2 overflow-hidden">
             <Search className="h-3.5 w-3.5 shrink-0 text-amber" />
             <span className="text-[11px] font-medium text-ink-text truncate">
               Lino rústico arena...
             </span>
           </div>
-          <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-surface-container text-ink-soft">
+          <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-surface-container text-ink-soft">
             <SlidersHorizontal className="h-2.5 w-2.5" />
           </div>
         </div>
@@ -110,13 +110,13 @@ export function MaquetaBuscar() {
 
       {/* Mini chips de categoría */}
       <div className="mt-2.5 flex gap-1.5 overflow-hidden">
-        <span className="rounded-full bg-heritage-navy px-2.5 py-1 text-[9px] font-bold text-white shadow-2xs">
+        <span className="rounded bg-heritage-navy px-2.5 py-1 text-[9px] font-bold text-white shadow-2xs">
           Todos
         </span>
-        <span className="rounded-full border border-line/60 bg-surface-container px-2.5 py-1 text-[9px] font-semibold text-ink-soft">
+        <span className="rounded border border-line/60 bg-surface-container px-2.5 py-1 text-[9px] font-semibold text-ink-soft">
           Linos
         </span>
-        <span className="rounded-full border border-line/60 bg-surface-container px-2.5 py-1 text-[9px] font-semibold text-ink-soft">
+        <span className="rounded border border-line/60 bg-surface-container px-2.5 py-1 text-[9px] font-semibold text-ink-soft">
           Algodón
         </span>
       </div>
@@ -181,11 +181,11 @@ export function MaquetaColor() {
               Tono: <strong className="text-ink-display">Terracota</strong>
             </p>
             <Foco>
-              <div className="flex gap-1.5 items-center rounded-xl bg-surface-container-lowest p-1 border border-line/50">
+              <div className="flex gap-1.5 items-center rounded bg-surface-container-lowest p-1 border border-line/50">
                 {colores.map((c) => (
                   <span
                     key={c.nombre}
-                    className={`relative flex h-5 w-5 items-center justify-center rounded-lg shadow-2xs transition-transform ${
+                    className={`relative flex h-5 w-5 items-center justify-center rounded shadow-2xs transition-transform ${
                       c.activo
                         ? "ring-2 ring-heritage-navy ring-offset-1 ring-offset-surface-container-lowest scale-105"
                         : "opacity-80"
@@ -228,8 +228,8 @@ export function MaquetaMetros() {
           <Foco>
             <div className="flex flex-col gap-1.5">
               {/* Stepper idéntico a AddToCart */}
-              <div className="flex items-center justify-between rounded-xl border border-line/60 bg-surface-container px-2 py-1 shadow-inner-xs">
-                <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-surface-container-lowest text-xs font-bold text-ink-display shadow-2xs">
+              <div className="flex items-center justify-between rounded border border-line/60 bg-surface-container px-2 py-1 shadow-inner-xs">
+                <span className="flex h-6 w-6 items-center justify-center rounded bg-surface-container-lowest text-xs font-bold text-ink-display shadow-2xs">
                   −
                 </span>
                 <div className="text-center">
@@ -238,13 +238,13 @@ export function MaquetaMetros() {
                     metros
                   </span>
                 </div>
-                <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-surface-container-lowest text-xs font-bold text-ink-display shadow-2xs">
+                <span className="flex h-6 w-6 items-center justify-center rounded bg-surface-container-lowest text-xs font-bold text-ink-display shadow-2xs">
                   +
                 </span>
               </div>
 
               {/* Botón Añadir a la Cesta */}
-              <div className="flex items-center justify-center gap-1.5 rounded-full bg-heritage-navy py-2 shadow-xs">
+              <div className="flex items-center justify-center gap-1.5 rounded bg-heritage-navy py-2 shadow-xs">
                 <ShoppingBag className="h-3.5 w-3.5 text-white" />
                 <span className="text-[10px] font-bold uppercase tracking-wider text-white">
                   Añadir a la Cesta ($630)
@@ -273,7 +273,7 @@ export function MaquetaWhatsapp() {
             Tu Cesta
           </span>
         </div>
-        <span className="rounded-full bg-amber/15 px-2 py-0.5 text-[9px] font-bold text-amber">
+        <span className="rounded bg-amber/15 px-2 py-0.5 text-[9px] font-bold text-amber">
           2 telas
         </span>
       </div>
@@ -282,7 +282,7 @@ export function MaquetaWhatsapp() {
         {renglones.map(({ tela, metros, subtotal }) => (
           <div
             key={tela}
-            className="flex items-center justify-between rounded-xl border border-line/60 bg-surface-container-lowest px-2.5 py-1.5 shadow-2xs"
+            className="flex items-center justify-between rounded border border-line/60 bg-surface-container-lowest px-2.5 py-1.5 shadow-2xs"
           >
             <div className="flex flex-col">
               <span className="text-[10px] font-bold leading-tight text-ink-display">
@@ -299,7 +299,7 @@ export function MaquetaWhatsapp() {
 
       <div className="mt-3">
         <Foco>
-          <div className="flex flex-col items-center justify-center gap-0.5 rounded-full bg-whatsapp py-2 px-3 shadow-xs text-white">
+          <div className="flex flex-col items-center justify-center gap-0.5 rounded bg-whatsapp py-2 px-3 shadow-xs text-white">
             <div className="flex items-center gap-1.5">
               <MessageCircle className="h-3.5 w-3.5 fill-current" />
               <span className="text-[10px] font-bold uppercase tracking-wider">

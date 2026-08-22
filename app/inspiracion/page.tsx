@@ -16,7 +16,7 @@ export default function InspiracionPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Link
             href="/"
-            className="mb-4 inline-flex items-center gap-2 rounded-full border border-outline-variant/40 bg-surface-container-lowest px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-ink-soft shadow-xs transition-all hover:bg-surface-container hover:text-ink-display active:scale-95"
+            className="mb-4 inline-flex items-center gap-2 rounded border border-outline-variant/40 bg-surface-container-lowest px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-ink-soft shadow-xs transition-all hover:bg-surface-container hover:text-ink-display active:scale-95"
           >
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
             Volver al catálogo
@@ -46,7 +46,7 @@ export default function InspiracionPage() {
             </span>
           </div>
 
-          <div className="grid overflow-hidden rounded-3xl border border-outline-variant/30 bg-surface-container-lowest shadow-sm md:grid-cols-2">
+          <div className="grid overflow-hidden rounded border border-outline-variant/30 bg-surface-container-lowest shadow-sm md:grid-cols-2">
             <div
               className="min-h-[340px] sm:min-h-[440px] w-full bg-cover bg-center"
               style={{
@@ -67,7 +67,7 @@ export default function InspiracionPage() {
               <div className="mt-8 flex flex-wrap items-center gap-4">
                 <Link
                   href="/?q=terciopelo"
-                  className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-heritage-navy px-8 text-sm font-bold text-white shadow-sm transition-all hover:bg-deep-slate hover:shadow-md active:scale-95"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded bg-heritage-navy px-8 text-sm font-bold text-white shadow-sm transition-all hover:bg-deep-slate hover:shadow-md active:scale-95"
                 >
                   Ver Terciopelos en Catálogo
                   <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
@@ -80,8 +80,8 @@ export default function InspiracionPage() {
         {/* 2. Guía Técnica & Consejos de Confección */}
         <section className="grid gap-6 md:grid-cols-2">
           {/* Card 1: Hilos y Agujas */}
-          <div className="flex flex-col overflow-hidden rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-6 sm:p-8 shadow-xs">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-container text-amber">
+          <div className="flex flex-col overflow-hidden rounded border border-outline-variant/30 bg-surface-container-lowest p-6 sm:p-8 shadow-xs">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded bg-surface-container text-amber">
               <span className="material-symbols-outlined text-[28px]">design_services</span>
             </div>
             <span className="text-[11px] font-bold uppercase tracking-wider text-amber">
@@ -103,8 +103,8 @@ export default function InspiracionPage() {
           </div>
 
           {/* Card 2: Caída y Peso */}
-          <div className="flex flex-col overflow-hidden rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-6 sm:p-8 shadow-xs">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-container text-amber">
+          <div className="flex flex-col overflow-hidden rounded border border-outline-variant/30 bg-surface-container-lowest p-6 sm:p-8 shadow-xs">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded bg-surface-container text-amber">
               <span className="material-symbols-outlined text-[28px]">straighten</span>
             </div>
             <span className="text-[11px] font-bold uppercase tracking-wider text-amber">
@@ -142,7 +142,7 @@ export default function InspiracionPage() {
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {/* Proyecto 1 */}
-            <div className="flex flex-col overflow-hidden rounded-2xl border border-outline-variant/30 bg-surface-container-lowest shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+            <div className="flex flex-col overflow-hidden rounded border border-outline-variant/30 bg-surface-container-lowest shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
               <div className="flex items-center gap-3 p-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-container text-ink-display font-bold">
                   CL
@@ -171,7 +171,7 @@ export default function InspiracionPage() {
                 <div className="mt-4 pt-3 border-t border-line/60 flex flex-wrap gap-2">
                   <Link
                     href="/?q=cobre"
-                    className="inline-flex items-center gap-1 rounded-full bg-surface-container px-3 py-1 text-xs font-semibold text-ink-display hover:bg-surface-container-high"
+                    className="inline-flex items-center gap-1 rounded bg-surface-container px-3 py-1 text-xs font-semibold text-ink-display hover:bg-surface-container-high"
                   >
                     <span className="material-symbols-outlined text-[14px]">texture</span>
                     Tono Cobre
@@ -181,7 +181,7 @@ export default function InspiracionPage() {
             </div>
 
             {/* Proyecto 2 */}
-            <div className="flex flex-col overflow-hidden rounded-2xl border border-outline-variant/30 bg-surface-container-lowest shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+            <div className="flex flex-col overflow-hidden rounded border border-outline-variant/30 bg-surface-container-lowest shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
               <div className="flex items-center gap-3 p-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-container text-ink-display font-bold">
                   MT
@@ -210,7 +210,7 @@ export default function InspiracionPage() {
                 <div className="mt-4 pt-3 border-t border-line/60 flex flex-wrap gap-2">
                   <Link
                     href="/?q=seda"
-                    className="inline-flex items-center gap-1 rounded-full bg-surface-container px-3 py-1 text-xs font-semibold text-ink-display hover:bg-surface-container-high"
+                    className="inline-flex items-center gap-1 rounded bg-surface-container px-3 py-1 text-xs font-semibold text-ink-display hover:bg-surface-container-high"
                   >
                     <span className="material-symbols-outlined text-[14px]">texture</span>
                     Seda Natural
@@ -220,7 +220,7 @@ export default function InspiracionPage() {
             </div>
 
             {/* Proyecto 3 */}
-            <div className="flex flex-col overflow-hidden rounded-2xl border border-outline-variant/30 bg-surface-container-lowest shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+            <div className="flex flex-col overflow-hidden rounded border border-outline-variant/30 bg-surface-container-lowest shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
               <div className="flex items-center gap-3 p-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-container text-ink-display font-bold">
                   LF
@@ -249,7 +249,7 @@ export default function InspiracionPage() {
                 <div className="mt-4 pt-3 border-t border-line/60 flex flex-wrap gap-2">
                   <Link
                     href="/?q=encaje"
-                    className="inline-flex items-center gap-1 rounded-full bg-surface-container px-3 py-1 text-xs font-semibold text-ink-display hover:bg-surface-container-high"
+                    className="inline-flex items-center gap-1 rounded bg-surface-container px-3 py-1 text-xs font-semibold text-ink-display hover:bg-surface-container-high"
                   >
                     <span className="material-symbols-outlined text-[14px]">texture</span>
                     Encaje & Tul

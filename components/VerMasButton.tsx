@@ -24,7 +24,7 @@ export function VerMasButton({ href, etiqueta }: { href: string; etiqueta: strin
           router.push(href, { scroll: false });
         });
       }}
-      className="inline-flex items-center gap-2 rounded-full border border-outline-variant/40 bg-surface-container-lowest px-8 py-3.5 text-sm font-bold text-ink-display shadow-sm transition-all hover:bg-surface-container hover:shadow-md active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy disabled:cursor-wait disabled:opacity-70"
+      className="inline-flex items-center gap-2 rounded border border-outline-variant/40 bg-surface-container-lowest px-8 py-3.5 text-sm font-bold text-ink-display shadow-sm transition-all hover:bg-surface-container hover:shadow-md active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy disabled:cursor-wait disabled:opacity-70"
     >
       {isPending ? (
         <Loader2 className="h-4 w-4 animate-spin text-ink-display" aria-hidden />

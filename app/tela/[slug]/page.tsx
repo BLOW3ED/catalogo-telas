@@ -107,7 +107,7 @@ export default async function TelaDetallePage({
         {/* Columna Izquierda: Galería / Imagen & Swatches */}
         <div className="flex flex-col gap-6 min-w-0">
           {usarCarrusel ? (
-            <div className="overflow-hidden rounded-3xl border border-outline-variant/30 bg-surface-container-lowest shadow-sm">
+            <div className="overflow-hidden rounded border border-outline-variant/30 bg-surface-container-lowest shadow-sm">
               <TelaImageCarousel
                 slides={slides}
                 selectedColorSlug={seleccionada.color_slug}
@@ -115,8 +115,8 @@ export default async function TelaDetallePage({
               />
             </div>
           ) : (
-            <div className="overflow-hidden rounded-3xl border border-outline-variant/30 bg-surface-container-lowest p-2 shadow-sm">
-              <div className="relative aspect-square overflow-hidden rounded-2xl bg-surface-container-low">
+            <div className="overflow-hidden rounded border border-outline-variant/30 bg-surface-container-lowest p-2 shadow-sm">
+              <div className="relative aspect-square overflow-hidden rounded bg-surface-container-low">
                 <TelaImage
                   src={slides[0] ? publicImageUrl(slides[0].ruta) : foto}
                   derivados={
@@ -143,7 +143,7 @@ export default async function TelaDetallePage({
             />
           </div>
 
-          <div className="rounded-2xl border border-outline-variant/30 bg-surface-container-lowest/80 p-4 text-center shadow-2xs">
+          <div className="rounded border border-outline-variant/30 bg-surface-container-lowest/80 p-4 text-center shadow-2xs">
             <p className="text-xs sm:text-sm text-ink-soft">
               📸 <strong>Fotografía auténtica:</strong> Tomada bajo luz natural en nuestro estudio de Fresnillo.
             </p>
@@ -186,10 +186,10 @@ export default async function TelaDetallePage({
 
           {/* Chips de propiedades */}
           <div className="flex flex-wrap gap-2">
-            <span className="rounded-full bg-surface-container px-3.5 py-1.5 text-xs font-bold text-ink-display border border-outline-variant/30">
+            <span className="rounded bg-surface-container px-3.5 py-1.5 text-xs font-bold text-ink-display border border-outline-variant/30">
               Ancho: 1.40m – 1.50m
             </span>
-            <span className="rounded-full bg-surface-container px-3.5 py-1.5 text-xs font-bold text-ink-display border border-outline-variant/30">
+            <span className="rounded bg-surface-container px-3.5 py-1.5 text-xs font-bold text-ink-display border border-outline-variant/30">
               Venta por metro o pieza
             </span>
             <AttributeBadges atributos={atributos} />
@@ -197,7 +197,7 @@ export default async function TelaDetallePage({
 
           {/* Descripción */}
           {seleccionada.descripcion && (
-            <div className="space-y-4 rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-5 shadow-2xs">
+            <div className="space-y-4 rounded border border-outline-variant/30 bg-surface-container-lowest p-5 shadow-2xs">
               {seleccionada.descripcion
                 .split(/\n\s*\n/)
                 .filter((p) => p.trim())
@@ -218,31 +218,31 @@ export default async function TelaDetallePage({
           </div>
 
           {/* Usos Recomendados (Stitch Style) */}
-          <div className="rounded-2xl border border-outline-variant/30 bg-surface-container-low p-5 shadow-xs">
+          <div className="rounded border border-outline-variant/30 bg-surface-container-low p-5 shadow-xs">
             <h3 className="text-xs font-bold uppercase tracking-wider text-ink-display mb-3">
               Usos Recomendados para esta Tela
             </h3>
             <div className="flex gap-4 overflow-x-auto pb-1 no-scrollbar">
               <div className="flex flex-col items-center gap-1.5 min-w-[70px]">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-container-lowest text-ink-display shadow-2xs">
+                <div className="flex h-14 w-14 items-center justify-center rounded bg-surface-container-lowest text-ink-display shadow-2xs">
                   <span className="material-symbols-outlined text-[26px]">checkroom</span>
                 </div>
                 <span className="text-[11px] font-semibold text-ink-soft text-center">Vestidos</span>
               </div>
               <div className="flex flex-col items-center gap-1.5 min-w-[70px]">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-container-lowest text-ink-display shadow-2xs">
+                <div className="flex h-14 w-14 items-center justify-center rounded bg-surface-container-lowest text-ink-display shadow-2xs">
                   <span className="material-symbols-outlined text-[26px]">dry_cleaning</span>
                 </div>
                 <span className="text-[11px] font-semibold text-ink-soft text-center">Pañuelos</span>
               </div>
               <div className="flex flex-col items-center gap-1.5 min-w-[70px]">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-container-lowest text-ink-display shadow-2xs">
+                <div className="flex h-14 w-14 items-center justify-center rounded bg-surface-container-lowest text-ink-display shadow-2xs">
                   <span className="material-symbols-outlined text-[26px]">styler</span>
                 </div>
                 <span className="text-[11px] font-semibold text-ink-soft text-center">Blusas</span>
               </div>
               <div className="flex flex-col items-center gap-1.5 min-w-[70px]">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-container-lowest text-ink-display shadow-2xs">
+                <div className="flex h-14 w-14 items-center justify-center rounded bg-surface-container-lowest text-ink-display shadow-2xs">
                   <span className="material-symbols-outlined text-[26px]">bed</span>
                 </div>
                 <span className="text-[11px] font-semibold text-ink-soft text-center">Decoración</span>
@@ -254,7 +254,7 @@ export default async function TelaDetallePage({
           {(seleccionada.sku || seleccionada.stock != null) && (
             <dl className="grid grid-cols-2 gap-3.5">
               {seleccionada.sku && (
-                <div className="rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-4 shadow-2xs">
+                <div className="rounded border border-outline-variant/30 bg-surface-container-lowest p-4 shadow-2xs">
                   <dt className="text-[11px] font-bold uppercase tracking-wider text-amber">SKU de Almacén</dt>
                   <dd className="mt-1 text-base font-bold text-ink-display font-mono">
                     {seleccionada.sku}
@@ -262,7 +262,7 @@ export default async function TelaDetallePage({
                 </div>
               )}
               {seleccionada.stock != null && (
-                <div className="rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-4 shadow-2xs">
+                <div className="rounded border border-outline-variant/30 bg-surface-container-lowest p-4 shadow-2xs">
                   <dt className="text-[11px] font-bold uppercase tracking-wider text-amber">
                     Existencia
                   </dt>
@@ -291,7 +291,7 @@ export default async function TelaDetallePage({
                 {tags.map((t) => (
                   <span
                     key={t}
-                    className="rounded-full border border-outline-variant/30 bg-surface-container-lowest px-3.5 py-1.5 text-xs font-medium capitalize text-ink-soft shadow-2xs"
+                    className="rounded border border-outline-variant/30 bg-surface-container-lowest px-3.5 py-1.5 text-xs font-medium capitalize text-ink-soft shadow-2xs"
                   >
                     {t.replace(/-/g, " ")}
                   </span>
@@ -314,9 +314,9 @@ export default async function TelaDetallePage({
                   <Link
                     key={s.q}
                     href={`/?q=${s.q}`}
-                    className="flex items-center gap-3 rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-3 shadow-2xs transition-all hover:bg-surface-container"
+                    className="flex items-center gap-3 rounded border border-outline-variant/30 bg-surface-container-lowest p-3 shadow-2xs transition-all hover:bg-surface-container"
                   >
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-container text-ink-display">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-surface-container text-ink-display">
                       <span className="material-symbols-outlined text-[20px]">{s.icono}</span>
                     </div>
                     <div className="overflow-hidden">

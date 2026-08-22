@@ -44,7 +44,7 @@ export function SiteHeader() {
               El fondo negro es parte del archivo; `bg-black` solo evita el
               destello blanco mientras carga. `alt=""` a proposito: el nombre de
               la tienda ya va como texto aqui al lado, no hay que repetirlo. */}
-          <div className="shrink-0 overflow-hidden rounded-xl bg-black shadow-xs">
+          <div className="shrink-0 overflow-hidden rounded bg-black shadow-xs">
             <Image
               src="/logo-jalisciense-marca.webp"
               alt=""
@@ -76,7 +76,7 @@ export function SiteHeader() {
         <nav className="hidden md:flex items-center gap-1">
           <Link
             href="/"
-            className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
+            className={`rounded px-4 py-2 text-sm font-semibold transition-all ${
               isCatalogo
                 ? "bg-heritage-navy text-white shadow-xs"
                 : "text-ink-soft hover:bg-surface-container hover:text-ink-text"
@@ -86,7 +86,7 @@ export function SiteHeader() {
           </Link>
           <Link
             href="/inspiracion"
-            className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
+            className={`rounded px-4 py-2 text-sm font-semibold transition-all ${
               isInspiracion
                 ? "bg-heritage-navy text-white shadow-xs"
                 : "text-ink-soft hover:bg-surface-container hover:text-ink-text"
@@ -102,7 +102,7 @@ export function SiteHeader() {
           <button
             type="button"
             onClick={openTutorial}
-            className="hidden sm:flex items-center gap-1.5 rounded-full border border-amber/40 bg-surface-container-lowest/80 px-3.5 py-1.5 text-xs font-bold text-ink-display shadow-xs transition-all hover:bg-surface-container hover:border-amber active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
+            className="hidden sm:flex items-center gap-1.5 rounded border border-amber/40 bg-surface-container-lowest/80 px-3.5 py-1.5 text-xs font-bold text-ink-display shadow-xs transition-all hover:bg-surface-container hover:border-amber active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
             aria-label="Cómo funciona el catálogo en 4 pasos"
           >
             <span className="material-symbols-outlined text-[18px] text-amber">

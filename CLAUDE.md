@@ -9,7 +9,10 @@ uso: cliente final que navega, y vendedor en tablet que arma cotizaciones.
 - **Supabase**: `@supabase/supabase-js` + `@supabase/ssr`
   - cliente `anon` → lectura pública (Server Components)
   - `service_role` → SOLO en server actions / route handlers (`lib/supabase/admin.ts`). NUNCA en el cliente.
-- **next/image** para imágenes. Tipografías: **Anton** (display de marca Ápice) + **Inter** (cuerpo).
+- **next/image** para imágenes. Tipografía: **Hanken Grotesk** en TODA la jerarquía
+  (pesos 400/600/700), como manda el design system de Stitch "Artisanal Modernity"
+  (`design-system/stitch/`). Los tokens `--font-display`/`--font-body`/`--font-serif`
+  se conservan por historia y todos apuntan a ella — no reintroducir Bodoni/Inter.
 - **lucide-react** para iconos. Sin librerías de UI pesadas: componentes propios.
 
 ## Comandos (gestor: **pnpm**)
@@ -132,8 +135,7 @@ carrito ya guardado en localStorage— no le cambia el pedido a nadie.
   `deep-slate`): nombres legados de cuando era azul marino, conservados a
   propósito porque renombrarlos serían ~235 ediciones mecánicas sin ganancia —
   el significado vive en `globals.css`, no en el nombre. No hay ningún azul en
-  la paleta. `ink-deep` (`#14141A`) es el velo oscuro sobre foto, no un acento.
-- `rounded-xl`/`rounded-2xl` consistente en cards, botones, inputs, modales. Sombras suaves.
+- **Border-radius del design.md de Stitch "Artisanal Modernity"** (tokens en `globals.css`; es la escala default de Tailwind, Stitch no la personalizó). Base de **4px** (`rounded`) en cards de producto, imágenes, inputs, chips y botones; **8px** (`rounded-lg`) en paneles e imágenes enmarcadas; **12px** (`rounded-xl` y `rounded-2xl`, mismo valor: Stitch no define 2xl) en contenedores destacados y modales; **24px** (`rounded-3xl`) en bottom-sheets; **9999px** (`rounded-full`) exclusivamente en swatches de color circulares y puntos de estado.
 - Accesibilidad AA: contraste, focus visible, navegable por teclado, `alt` en imágenes.
 - Estado de filtros/búsqueda en la **URL (querystring)** para que sea compartible.
 - No traer todo el catálogo al cliente: paginación/scroll infinito; cachear lecturas en Server Components.
@@ -159,16 +161,39 @@ carrito ya guardado en localStorage— no le cambia el pedido a nadie.
    búsqueda. Cambiar un filtro o la búsqueda resetea `ver`.
 5. ⏳ Cotización + WhatsApp (carrito y envío listos; pulido pendiente)
 6. ✅ Admin con Auth (allowlist `ADMIN_EMAILS`, altas con `pnpm admin:crear`):
-   precio/stock en `/admin`, editor
+   lista de productos en `/admin`, editor
    completo de telas/variantes/fotos en `/admin/tela/[id]`, inventario con
    kardex en `/admin/inventario` (tabla `movimiento_inventario`, sección 10 del
-   SQL). En `/admin` cada card muestra categoría y CUÁNTAS FOTOS tiene (esto
-   último NO sale de la vista: colapsa las N fotos en `foto_principal`, así que
-   se cuenta con una lectura aparte a `foto`), y la card ENTERA abre el editor
-   —stretched link— menos los campos de captura, elevados en `z-10` para que
-   tocar el precio en la tablet no navegue.
+   SQL). En `/admin` hay UNA card POR PRODUCTO, no por variante: se agrupa con
+   `agruparPorModelo` —el mismo agrupador del grid público— porque un modelo de
+   8 colores llenaba ocho tarjetas con el mismo nombre. Cada card muestra
+   categoría y CUÁNTAS FOTOS tiene el producto entero (esto último NO sale de la
+   vista: colapsa las N fotos en `foto_principal`, así que se cuenta con una
+   lectura aparte a `foto`). La card ENTERA abre el editor —stretched link— y
+   cada swatch abre ESE color (`#variante-<id>`), elevado en `z-10` para que
+   tocar un color en la tablet no dispare el enlace de la card. Se pinta un
+   swatch por VARIANTE y no por color único (al revés que `ProductCard`): aquí
+   el punto es un destino, y deduplicar dejaría sin enlace a dos SKUs del mismo
+   color y sin punto a las variantes sin color. Precio y stock ya NO se capturan
+   en la lista —con ocho colores por card no cabía un formulario por color—:
+   se editan en el editor, a un toque del swatch.
+   La BÚSQUEDA de `/admin` es por PRODUCTO, en dos lecturas (qué telas casan →
+   sus filas completas), igual que `paginaCatalogoCached`: filtrar filas
+   mostraría 1 de 8 swatches y contaría solo las fotos del color que casó.
+   El `in(tela_id, …)` viaja en la URL, así que va topado a 48 productos.
    Las dos pantallas que suben fotos (`/admin/tela/[id]` y `/admin/merceria/nueva`)
    usan el curador de encuadre; ver "Storage e imágenes".
+   **Reclasificar fotos** (`components/admin/GaleriaFotos.tsx`): el editor
+   muestra las fotos de TODOS los colores juntas y deja arrastrarlas de uno a
+   otro, a un color nuevo o a otro producto (`MoverFotoModal`, con buscador y
+   alta de producto). Existe porque la tienda capturó decenas de variantes con
+   varios colores amontonados como fotos extra de una sola (Gema: 18); antes
+   corregirlo era borrar y volver a subir, tirando el encuadre ya curado.
+   Aquí solo cambia `foto.variante_id`: el objeto del bucket, sus derivados y su
+   recorte no se tocan, y la vista recalcula `foto_principal` sola. El arrastre
+   es DnD nativo (mismo patrón que `OrdenColores`, sin librerías) y es un
+   ATAJO: cada foto trae un botón "Mover…" que abre los mismos destinos, que es
+   como se usa en tablet y con teclado.
    **Dos altas, porque la captura es al revés:** `/admin/tela/nueva` crea el
    modelo vacío y los colores se agregan en el editor; `/admin/merceria/nueva`
    captura el avío completo de una sentada (código, categoría, unidad de venta,

@@ -108,86 +108,61 @@ function refrescarCatalogo(telaId?: string) {
 }
 
 // ---------------------------------------------------------------------------
-// Edición rápida de variantes (precio / stock, en /admin)
-// ---------------------------------------------------------------------------
-
-export async function actualizarVariante(formData: FormData) {
-  const email = await requireAdmin();
-  const varianteId = requireUuid(formData.get("variante_id"), "variante");
-
-  // El campo del form sigue llamándose precio_metro (así lo expone la vista);
-  // la columna se llama `precio` desde la sección 13 del SQL, porque no todo
-  // el catálogo se vende por metro.
-  const precio = parseCampoNumerico(formData.get("precio_metro"), "precio");
-  const stock = parseCampoNumerico(formData.get("stock"), "stock");
-
-  const supabase = createAdminClient();
-
-  // Leer el stock anterior para dejar rastro en el kardex si cambió.
-  const { data: antes } = await supabase
-    .from("variante")
-    .select("stock")
-    .eq("id", varianteId)
-    .single();
-
-  const { error } = await supabase
-    .from("variante")
-    .update({ precio, stock })
-    .eq("id", varianteId);
-
-  if (error) {
-    throw new Error(`No se pudo guardar: ${error.message}`);
-  }
-
-  // La edición rápida de stock ES un ajuste: se registra en el kardex para que
-  // el historial no tenga huecos. Best-effort: si la tabla aún no existe
-  // (sección 10 del SQL sin correr), no rompemos la edición de precio/stock.
-  if (antes && antes.stock !== stock && stock != null) {
-    await supabase.from("movimiento_inventario").insert({
-      variante_id: varianteId,
-      tipo: "ajuste",
-      cantidad: stock,
-      stock_resultante: stock,
-      nota: "Edición rápida en /admin",
-      usuario_email: email,
-    });
-  }
-
-  refrescarCatalogo();
-}
-
-// ---------------------------------------------------------------------------
 // Telas (modelos): crear y editar valores
 // ---------------------------------------------------------------------------
 
-export async function crearTela(formData: FormData) {
-  await requireAdmin();
-
-  const nombre = String(formData.get("nombre") ?? "").trim();
-  if (!nombre) throw new Error("El nombre de la tela es obligatorio.");
+/**
+ * Inserta el modelo y devuelve su id. NO decide qué hacer si falla, a propósito:
+ * lo llaman dos caminos con contratos de error distintos —`crearTela` viene de
+ * un `<form action>` y lanza, `crearProductoYMoverFoto` viene del cliente y
+ * devuelve el error para pintarlo sin tirar la página—.
+ */
+async function insertarTelaVacia(
+  supabase: ReturnType<typeof createAdminClient>,
+  campos: { nombre: string; descripcion?: string | null; categoria_id?: string | null }
+): Promise<{ id?: string; error?: string }> {
+  const nombre = campos.nombre.trim();
+  if (!nombre) return { error: "El nombre de la tela es obligatorio." };
 
   const slug = slugify(nombre);
-  if (!slug) throw new Error("El nombre debe incluir letras o números para generar su URL.");
+  if (!slug) {
+    return { error: "El nombre debe incluir letras o números para generar su URL." };
+  }
 
-  const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("tela")
     .insert({
       nombre,
       slug,
-      descripcion: textoOpcional(formData.get("descripcion")),
-      categoria_id: uuidOpcional(formData.get("categoria_id"), "categoría"),
+      descripcion: campos.descripcion ?? null,
+      categoria_id: campos.categoria_id ?? null,
     })
     .select("id")
     .single();
 
   if (error) {
-    const detalle = error.code === "23505" ? `ya existe una tela con la URL "${slug}"` : error.message;
-    throw new Error(`No se pudo crear la tela: ${detalle}.`);
+    const detalle =
+      error.code === "23505" ? `ya existe una tela con la URL "${slug}"` : error.message;
+    return { error: `No se pudo crear la tela: ${detalle}.` };
   }
 
-  refrescarCatalogo(data.id);
-  redirect(`/admin/tela/${data.id}`);
+  return { id: data.id };
+}
+
+export async function crearTela(formData: FormData) {
+  await requireAdmin();
+
+  const supabase = createAdminClient();
+  const { id, error } = await insertarTelaVacia(supabase, {
+    nombre: String(formData.get("nombre") ?? ""),
+    descripcion: textoOpcional(formData.get("descripcion")),
+    categoria_id: uuidOpcional(formData.get("categoria_id"), "categoría"),
+  });
+
+  if (!id) throw new Error(error ?? "No se pudo crear la tela.");
+
+  refrescarCatalogo(id);
+  redirect(`/admin/tela/${id}`);
 }
 
 /**
@@ -723,6 +698,224 @@ export async function moverFoto(formData: FormData) {
 
   refrescarCatalogo(telaId);
 }
+
+// ---------------------------------------------------------------------------
+// Reclasificar fotos: mover una foto a otra variante o a otro producto
+// ---------------------------------------------------------------------------
+//
+// La tienda capturó decenas de variantes con VARIOS colores amontonados como
+// fotos extra de una sola (ver CLAUDE.md / el editor de tela). Corregirlo
+// borrando y volviendo a subir tiraba el encuadre ya curado, así que aquí la
+// foto se REASIGNA: solo cambia `foto.variante_id`; el objeto del bucket, sus
+// derivados y su recorte no se tocan. La vista recalcula `foto_principal`
+// (la de menor `orden` de la variante) en la siguiente lectura.
+//
+// Todas se llaman desde el cliente (drag & drop), así que devuelven `{error}`
+// en vez de lanzar — mismo contrato que `reordenarVariantes`.
+
+/**
+ * Reasigna una foto a otra variante y la deja al FINAL de las fotos del
+ * destino: llegar como portada de un color ajeno sería una sorpresa, y la
+ * portada se decide después con las flechas.
+ *
+ * El hueco que queda en el `orden` del origen no se rellena: la portada es la
+ * de MENOR orden, así que 0,2,3 se comporta igual que 0,1,2 y normalizar
+ * costaría una escritura por foto restante.
+ */
+async function moverFilaFoto(
+  supabase: ReturnType<typeof createAdminClient>,
+  fotoId: string,
+  varianteDestinoId: string
+): Promise<{ error?: string; telas?: string[] }> {
+  const { data: foto, error: errorFoto } = await supabase
+    .from("foto")
+    .select("variante_id")
+    .eq("id", fotoId)
+    .single();
+  if (errorFoto || !foto) return { error: "Esa foto ya no existe. Recarga la página." };
+
+  // Las dos variantes en una sola lectura: hacen falta sus telas para
+  // revalidar ambos editores (mover entre productos toca dos páginas).
+  const { data: variantes, error: errorVar } = await supabase
+    .from("variante")
+    .select("id, tela_id")
+    .in("id", [foto.variante_id, varianteDestinoId]);
+  if (errorVar) return { error: `No se pudieron leer las variantes: ${errorVar.message}` };
+
+  const destino = (variantes ?? []).find((v) => v.id === varianteDestinoId);
+  if (!destino) return { error: "La variante de destino ya no existe. Recarga la página." };
+
+  const telas = [
+    ...new Set((variantes ?? []).map((v) => v.tela_id as string)),
+  ];
+
+  if (foto.variante_id === varianteDestinoId) return { telas }; // ya estaba ahí
+
+  const { data: ultima } = await supabase
+    .from("foto")
+    .select("orden")
+    .eq("variante_id", varianteDestinoId)
+    .order("orden", { ascending: false })
+    .limit(1);
+
+  const { error } = await supabase
+    .from("foto")
+    .update({ variante_id: varianteDestinoId, orden: (ultima?.[0]?.orden ?? -1) + 1 })
+    .eq("id", fotoId);
+  if (error) return { error: `No se pudo mover la foto: ${error.message}` };
+
+  return { telas };
+}
+
+/** Refresca los editores de todas las telas tocadas por el movimiento. */
+function refrescarTelas(telas: string[] = []) {
+  if (!telas.length) return refrescarCatalogo();
+  for (const telaId of telas) refrescarCatalogo(telaId);
+}
+
+/** Mueve una foto a otra variante YA EXISTENTE (del mismo producto o de otro). */
+export async function moverFotoAVariante(
+  fotoId: string,
+  varianteDestinoId: string
+): Promise<{ error?: string }> {
+  await requireAdmin();
+  if (!UUID_RE.test(fotoId)) return { error: "Identificador de foto inválido." };
+  if (!UUID_RE.test(varianteDestinoId)) return { error: "Identificador de variante inválido." };
+
+  const supabase = createAdminClient();
+  const { error, telas } = await moverFilaFoto(supabase, fotoId, varianteDestinoId);
+  if (error) return { error };
+
+  refrescarTelas(telas);
+  return {};
+}
+
+/**
+ * Crea una variante VACÍA en `telaId` y le mueve la foto. Es el caso de la
+ * captura equivocada: la foto era un color propio y nunca tuvo variante. Se
+ * crea sin precio ni color a propósito —la tienda los llena en el editor, que
+ * es donde ve el producto completo—; heredarlos del origen inventaría datos.
+ *
+ * Sirve para "nueva variante de ESTE producto" y para "nueva variante en OTRO
+ * producto": la diferencia es solo qué `telaId` manda el llamador.
+ */
+export async function moverFotoANuevaVariante(
+  fotoId: string,
+  telaId: string
+): Promise<{ error?: string }> {
+  await requireAdmin();
+  if (!UUID_RE.test(fotoId)) return { error: "Identificador de foto inválido." };
+  if (!UUID_RE.test(telaId)) return { error: "Identificador de producto inválido." };
+
+  const supabase = createAdminClient();
+  const { data: variante, error: errorAlta } = await supabase
+    .from("variante")
+    .insert({ tela_id: telaId })
+    .select("id")
+    .single();
+  if (errorAlta || !variante) {
+    return { error: `No se pudo crear la variante: ${errorAlta?.message ?? "sin datos"}.` };
+  }
+
+  const { error, telas } = await moverFilaFoto(supabase, fotoId, variante.id);
+  if (error) {
+    // La variante recién creada quedaría vacía y sin sentido: se deshace para
+    // no dejar basura de un movimiento que no ocurrió.
+    await supabase.from("variante").delete().eq("id", variante.id);
+    return { error };
+  }
+
+  refrescarTelas(telas);
+  return {};
+}
+
+/** Crea un producto nuevo (modelo + una variante vacía) y le mueve la foto. */
+export async function crearProductoYMoverFoto(
+  fotoId: string,
+  nombre: string
+): Promise<{ error?: string; telaId?: string }> {
+  await requireAdmin();
+  if (!UUID_RE.test(fotoId)) return { error: "Identificador de foto inválido." };
+
+  const supabase = createAdminClient();
+  const { id, error: errorTela } = await insertarTelaVacia(supabase, { nombre });
+  if (!id) return { error: errorTela ?? "No se pudo crear el producto." };
+
+  const { error } = await moverFotoANuevaVariante(fotoId, id);
+  if (error) {
+    // Igual que arriba: sin la foto, el producto recién creado sobra.
+    await supabase.from("tela").delete().eq("id", id);
+    return { error };
+  }
+
+  return { telaId: id };
+}
+
+/** Productos cuyo nombre contiene `termino`, para el buscador del modal. */
+export async function buscarProductos(
+  termino: string
+): Promise<{ productos: { id: string; nombre: string; categoria: string | null }[]; error?: string }> {
+  await requireAdmin();
+
+  const texto = termino.trim();
+  if (texto.length < 2) return { productos: [] };
+
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("tela")
+    .select("id, nombre, categoria(nombre)")
+    // Los mismos caracteres que escapa la búsqueda de /admin: en un `ilike`
+    // de PostgREST rompen el parser del filtro, no la consulta.
+    .ilike("nombre", `%${texto.replace(/[,()"\\]/g, " ")}%`)
+    .order("nombre")
+    .limit(8);
+
+  if (error) return { productos: [], error: `No se pudo buscar: ${error.message}` };
+
+  return {
+    productos: (data ?? []).map((t) => ({
+      id: t.id as string,
+      nombre: t.nombre as string,
+      // El embed de PostgREST llega como objeto o como arreglo según la
+      // versión; se normaliza aquí y no en la UI.
+      categoria:
+        (Array.isArray(t.categoria) ? t.categoria[0]?.nombre : (t.categoria as { nombre?: string } | null)?.nombre) ??
+        null,
+    })),
+  };
+}
+
+/** Variantes de un producto, para elegir destino en el modal. */
+export async function variantesDeProducto(
+  telaId: string
+): Promise<{ variantes: { id: string; nombre: string; hex: string | null }[]; error?: string }> {
+  await requireAdmin();
+  if (!UUID_RE.test(telaId)) return { variantes: [], error: "Identificador de producto inválido." };
+
+  const supabase = createAdminClient();
+  // Se lee la VISTA y no `variante` para traer el nombre y el hex del color ya
+  // resueltos. Se ordena por nombre de color y no por `variante_orden`: esa
+  // columna puede no existir todavía (sección 11 del SQL) y aquí el orden solo
+  // decide en qué fila aparece un botón.
+  const { data, error } = await supabase
+    .from("catalogo_telas")
+    .select("variante_id, color_nombre, color_hex, sku")
+    .eq("tela_id", telaId)
+    .order("color_nombre", { ascending: true });
+
+  if (error) return { variantes: [], error: `No se pudieron leer los colores: ${error.message}` };
+
+  return {
+    variantes: (data ?? []).map((v) => ({
+      id: v.variante_id as string,
+      nombre:
+        (v.color_nombre as string | null) ??
+        (v.sku ? `SKU ${v.sku}` : "Sin color"),
+      hex: (v.color_hex as string | null) ?? null,
+    })),
+  };
+}
+
 
 // ---------------------------------------------------------------------------
 // Inventario: kardex de movimientos

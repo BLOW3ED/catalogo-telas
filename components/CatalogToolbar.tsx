@@ -50,7 +50,7 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
           <div className="flex-1 min-w-0">
             <Suspense
               fallback={
-                <div className="h-11 w-full animate-pulse rounded-full bg-surface-container" />
+                <div className="h-11 w-full animate-pulse rounded bg-surface-container" />
               }
             >
               <SearchBar />
@@ -64,7 +64,7 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
                 type="button"
                 onClick={() => setPanelFiltrosAbierto((prev) => !prev)}
                 aria-expanded={panelFiltrosAbierto}
-                className={`inline-flex h-11 items-center gap-1.5 sm:gap-2 rounded-full border px-3 sm:px-4 text-xs font-bold uppercase tracking-wider transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy ${
+                className={`inline-flex h-11 items-center gap-1.5 sm:gap-2 rounded border px-3 sm:px-4 text-xs font-bold uppercase tracking-wider transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy ${
                   panelFiltrosAbierto || totalFiltrosAvanzados > 0
                     ? "border-heritage-navy bg-heritage-navy text-white shadow-xs"
                     : "border-outline-variant/40 bg-surface-container-lowest/90 text-ink-display hover:bg-surface-container shadow-xs"
@@ -88,7 +88,7 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
               <Link
                 href="/"
                 scroll={false}
-                className="inline-flex h-11 items-center gap-1.5 rounded-full border border-amber/40 bg-surface-container-lowest/80 px-3 text-xs font-bold text-amber shadow-xs transition-all hover:bg-surface-container hover:border-amber active:scale-95"
+                className="inline-flex h-11 items-center gap-1.5 rounded border border-amber/40 bg-surface-container-lowest/80 px-3 text-xs font-bold text-amber shadow-xs transition-all hover:bg-surface-container hover:border-amber active:scale-95"
                 title="Limpiar búsqueda y filtros"
               >
                 <X className="h-3.5 w-3.5" aria-hidden />
@@ -116,7 +116,7 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
                 href={ruta({ ...filtros, categorias: [] })}
                 scroll={false}
                 aria-current={filtros.categorias.length === 0 ? "true" : undefined}
-                className={`inline-flex shrink-0 snap-start items-center justify-center rounded-full px-4 py-1.5 text-xs sm:text-sm font-semibold transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy ${
+                className={`inline-flex shrink-0 snap-start items-center justify-center rounded px-4 py-1.5 text-xs sm:text-sm font-semibold transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy ${
                   filtros.categorias.length === 0
                     ? "bg-heritage-navy text-white shadow-xs"
                     : "border border-outline-variant/30 bg-surface-container-lowest/80 text-ink-text hover:bg-surface-container shadow-xs"
@@ -134,7 +134,7 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
                     href={href("categorias", c.slug)}
                     scroll={false}
                     aria-current={activo ? "true" : undefined}
-                    className={`inline-flex shrink-0 snap-start items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs sm:text-sm font-semibold transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy ${
+                    className={`inline-flex shrink-0 snap-start items-center gap-1.5 whitespace-nowrap rounded px-3.5 py-1.5 text-xs sm:text-sm font-semibold transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy ${
                       activo
                         ? "bg-heritage-navy text-white shadow-xs"
                         : "border border-outline-variant/30 bg-surface-container-lowest/80 text-ink-text hover:bg-surface-container hover:border-outline shadow-xs"
@@ -162,7 +162,7 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
             alto, si hay muchos colores/acabados el final del panel se salía
             de la pantalla en móvil y esas opciones no se podían tocar. */}
         {panelFiltrosAbierto && hayAvanzados && (
-          <div className="mt-3 max-h-[min(70vh,32rem)] space-y-4 overflow-y-auto overscroll-contain rounded-2xl border border-line bg-surface-container-lowest p-5 shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="mt-3 max-h-[min(70vh,32rem)] space-y-4 overflow-y-auto overscroll-contain rounded-lg border border-line bg-surface-container-lowest p-5 shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
             <div className="flex items-center justify-between border-b border-line pb-3">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-[20px] text-amber">
@@ -172,7 +172,7 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
                   Filtros Avanzados
                 </span>
                 {totalFiltrosAvanzados > 0 && (
-                  <span className="rounded-full bg-amber px-2 py-0.5 text-[10px] font-bold text-white">
+                  <span className="rounded bg-amber px-2 py-0.5 text-[10px] font-bold text-white">
                     {totalFiltrosAvanzados} activos
                   </span>
                 )}
@@ -180,7 +180,7 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
               <button
                 type="button"
                 onClick={() => setPanelFiltrosAbierto(false)}
-                className="rounded-full p-1 text-ink-soft hover:bg-surface-container hover:text-ink-text"
+                className="rounded p-1 text-ink-soft hover:bg-surface-container hover:text-ink-text"
                 aria-label="Cerrar panel de filtros"
               >
                 <X className="h-4 w-4" />
@@ -201,7 +201,7 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
                         href={href("colores", c.slug)}
                         scroll={false}
                         aria-current={activo ? "true" : undefined}
-                        className={`inline-flex shrink-0 items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold transition-all active:scale-95 ${
+                        className={`inline-flex shrink-0 items-center gap-2 rounded px-3 py-1.5 text-xs font-semibold transition-all active:scale-95 ${
                           activo
                             ? "bg-heritage-navy text-white shadow-xs"
                             : "border border-outline-variant/30 bg-surface-container text-ink-text hover:bg-surface-container-high"
@@ -239,7 +239,7 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
                         href={href("propiedades", p.clave)}
                         scroll={false}
                         aria-current={activo ? "true" : undefined}
-                        className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all active:scale-95 ${
+                        className={`inline-flex shrink-0 items-center gap-1.5 rounded px-3 py-1.5 text-xs font-semibold transition-all active:scale-95 ${
                           activo
                             ? "bg-heritage-navy text-white shadow-xs"
                             : "border border-outline-variant/30 bg-surface-container text-ink-text hover:bg-surface-container-high"
@@ -275,7 +275,7 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
                     })}
                     scroll={false}
                     aria-current={filtros.soloDisponibles ? "true" : undefined}
-                    className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all active:scale-95 ${
+                    className={`inline-flex items-center gap-1.5 rounded px-3 py-1.5 text-xs font-semibold transition-all active:scale-95 ${
                       filtros.soloDisponibles
                         ? "bg-heritage-navy text-white shadow-xs"
                         : "border border-outline-variant/30 bg-surface-container text-ink-text hover:bg-surface-container-high"

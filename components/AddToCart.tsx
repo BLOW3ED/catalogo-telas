@@ -34,12 +34,12 @@ export function AddToCart({ variante }: { variante: CatalogoTela }) {
       <div className="mt-6 hidden flex-col gap-3 sm:flex">
         <div className="flex flex-col gap-3 sm:flex-row items-stretch">
           {/* Stepper */}
-          <div className="flex h-14 items-center justify-between rounded-2xl border border-outline-variant/30 bg-surface-container px-2 shadow-inner-xs sm:w-44">
+          <div className="flex h-14 items-center justify-between rounded border border-outline-variant/30 bg-surface-container px-2 shadow-inner-xs sm:w-44">
             <button
               type="button"
               disabled={agotado}
               onClick={() => setCantidad((prev) => Math.max(unidad.minimo, prev - unidad.paso))}
-              className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container-lowest text-lg font-bold text-ink-display shadow-xs transition-all hover:bg-surface-container-high active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex h-10 w-10 items-center justify-center rounded bg-surface-container-lowest text-lg font-bold text-ink-display shadow-xs transition-all hover:bg-surface-container-high active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
               aria-label={etiquetaMenos}
             >
               <span className="material-symbols-outlined text-[20px]">remove</span>
@@ -52,7 +52,7 @@ export function AddToCart({ variante }: { variante: CatalogoTela }) {
               type="button"
               disabled={agotado}
               onClick={() => setCantidad((prev) => prev + unidad.paso)}
-              className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container-lowest text-lg font-bold text-ink-display shadow-xs transition-all hover:bg-surface-container-high active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex h-10 w-10 items-center justify-center rounded bg-surface-container-lowest text-lg font-bold text-ink-display shadow-xs transition-all hover:bg-surface-container-high active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
               aria-label={etiquetaMas}
             >
               <span className="material-symbols-outlined text-[20px]">add</span>
@@ -87,12 +87,12 @@ export function AddToCart({ variante }: { variante: CatalogoTela }) {
           indicator esta barra quedaba encimada en esa franja de safe-area. */}
       <div className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom,0px))] left-0 right-0 z-30 block border-t border-line/60 bg-sand-bg/95 p-3 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] backdrop-blur-md sm:hidden">
         <div className="flex gap-2.5 items-center">
-          <div className="flex h-14 items-center bg-surface-container rounded-xl px-1 border border-outline-variant/30">
+          <div className="flex h-14 items-center bg-surface-container rounded px-1 border border-outline-variant/30">
             <button
               type="button"
               disabled={agotado}
               onClick={() => setCantidad((prev) => Math.max(unidad.minimo, prev - unidad.paso))}
-              className="flex h-11 w-11 items-center justify-center rounded-lg bg-surface-container-lowest text-ink-display active:bg-surface-container-high disabled:opacity-40"
+              className="flex h-11 w-11 items-center justify-center rounded bg-surface-container-lowest text-ink-display active:bg-surface-container-high disabled:opacity-40"
               aria-label={etiquetaMenos}
             >
               <span className="material-symbols-outlined text-[18px]">remove</span>
@@ -102,7 +102,7 @@ export function AddToCart({ variante }: { variante: CatalogoTela }) {
               type="button"
               disabled={agotado}
               onClick={() => setCantidad((prev) => prev + unidad.paso)}
-              className="flex h-11 w-11 items-center justify-center rounded-lg bg-surface-container-lowest text-ink-display active:bg-surface-container-high disabled:opacity-40"
+              className="flex h-11 w-11 items-center justify-center rounded bg-surface-container-lowest text-ink-display active:bg-surface-container-high disabled:opacity-40"
               aria-label={etiquetaMas}
             >
               <span className="material-symbols-outlined text-[18px]">add</span>
@@ -113,7 +113,7 @@ export function AddToCart({ variante }: { variante: CatalogoTela }) {
             type="button"
             onClick={handleAdd}
             disabled={agotado}
-            className="flex-1 h-14 rounded-xl bg-heritage-navy text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md active:scale-[0.98] transition-transform disabled:opacity-50"
+            className="flex-1 h-14 rounded bg-heritage-navy text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md active:scale-[0.98] transition-transform disabled:opacity-50"
           >
             <span className="material-symbols-outlined text-[18px]">
               {agregadoAnim ? "check" : "shopping_bag"}

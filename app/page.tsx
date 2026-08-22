@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { getCatalogo, getFacetas, MODELOS_POR_PAGINA } from "@/lib/queries";
 import { agruparPorModelo } from "@/lib/types";
@@ -7,6 +6,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { CatalogToolbar } from "@/components/CatalogToolbar";
 import { TutorialTrigger } from "@/components/tutorial/TutorialTrigger";
 import { VerMasButton } from "@/components/VerMasButton";
+import { HeroSection } from "@/components/HeroSection";
 
 const VER_MAXIMO = 1000;
 
@@ -40,67 +40,17 @@ export default async function HomePage({
 
   return (
     <main className="min-h-screen bg-sand-bg text-ink-text">
-      {/* 1. Hero Editorial / Bienvenida con Tutorial Llamativo */}
+      {/* 1. Hero Editorial / Bienvenida con Showcase de Telas e Identidad */}
       {!tieneFiltrosOBusqueda && (
-        /* Hero en dos piezas: BANDA de foto a color pleno arriba y el texto
-            abajo sobre arena sólida. Antes iba todo superpuesto, pero el bloque
-            de texto (eyebrow + título + párrafo + banner del tutorial) llena el
-            hero casi entero, así que hacía falta un velo del 68% en TODA la
-            superficie para que el titular pasara AA — y eso dejaba los encajes
-            irreconocibles. Separándolos, la foto va sin velo y el texto recupera
-            el contraste normal del sitio.
-
-            El `-mt-16` mete la banda DEBAJO del header (que mide h-16 y es
-            sticky), para que la foto se vea a través del blanco translúcido. */
-        <section className="relative w-full overflow-hidden border-b border-line/60 bg-sand-bg -mt-16">
-          {/* Banda de foto. Se le suma el alto del header para que lo que queda
-              a la vista bajo la barra siga siendo una franja con cuerpo. */}
-          <div className="relative h-[264px] sm:h-[344px] lg:h-[404px] w-full">
-            {/* Foto real del mostrador (encajes bordados). Sustituye al stock de
-                Stitch que venía hotlinkeado desde googleusercontent: una URL
-                ajena que podía morir sin aviso y que no era mercancía nuestra.
-                El activo se generó con la MISMA cadena que
-                `lib/images/derivados.ts` (sRGB forzado, sharpen σ 0.6, WebP 82)
-                — sin tocar brillo ni saturación: aquí se ve tela de verdad. */}
-            <Image
-              src="/hero-encajes.webp"
-              alt=""
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover"
-            />
-            {/* Único remate: funde el borde inferior con el arena de la página.
-                No vela la banda, solo evita el corte seco. */}
-            <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-sand-bg to-transparent" />
-          </div>
-
-          <div className="mx-auto max-w-7xl px-4 pb-10 pt-4 sm:px-6 lg:px-8">
-            <div className="relative z-10 max-w-3xl">
-              <div className="mb-3 flex items-center gap-2">
-                <span className="h-0.5 w-6 bg-amber" />
-                <span className="text-xs font-bold uppercase tracking-widest text-amber">
-                  TIENDA TEXTIL & MERCERÍA
-                </span>
-              </div>
-              <h1 className="font-display text-3xl font-bold tracking-tight text-ink-display sm:text-5xl sm:leading-tight">
-                Bienvenid@ a Telas La Jalisciense
-              </h1>
-              <p className="mt-3 text-base text-ink-text/80 sm:text-lg">
-                La mejor selección de telas, encajes, bordados y mercería en Fresnillo.
-              </p>
-
-              {/* Banner llamativo y destacado del Tutorial */}
-              <TutorialTrigger variant="hero-banner" className="mt-6 sm:mt-8" />
-            </div>
-          </div>
-        </section>
+        <HeroSection totalModelos={totalModelos} />
       )}
 
       {/* 2. Barra de Búsqueda, Categorías y Filtros Sticky (Accesible en todo momento) */}
-      {configurado && (
-        <CatalogToolbar filtros={filtros} facetas={facetas} />
-      )}
+      <div id="catalogo-seccion">
+        {configurado && (
+          <CatalogToolbar filtros={filtros} facetas={facetas} />
+        )}
+      </div>
 
       {/* 3. Contenedor de Productos del Catálogo */}
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">

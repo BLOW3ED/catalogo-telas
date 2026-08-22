@@ -39,10 +39,10 @@ export function ProductCard({
   return (
     <Link
       href={`/tela/${tela.tela_slug}`}
-      className="group flex flex-col gap-3 rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-3 sm:p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-amber/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
+      className="group flex flex-col gap-3 rounded border border-outline-variant/30 bg-surface-container-lowest p-3 sm:p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-amber/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
     >
       {/* Imagen cuadrada con zoom suave */}
-      <div className="relative aspect-square overflow-hidden rounded-xl bg-surface-container-low">
+      <div className="relative aspect-square overflow-hidden rounded bg-surface-container-low">
         <div className="h-full w-full transition-transform duration-500 ease-out group-hover:scale-105">
           <TelaImage
             src={foto}

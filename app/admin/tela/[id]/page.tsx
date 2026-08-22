@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { ArrowLeft, ArrowRight, ExternalLink, ImageOff, Star } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { getSesionAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { publicImageUrl } from "@/lib/supabase/storage";
@@ -10,15 +9,14 @@ import { AdminNav } from "@/components/admin/AdminNav";
 import { SubmitButton } from "@/components/admin/SubmitButton";
 import { ConfirmSubmit } from "@/components/admin/ConfirmSubmit";
 import { OrdenColores } from "@/components/admin/OrdenColores";
+import { GaleriaFotos } from "@/components/admin/GaleriaFotos";
 import { CuradorFotos } from "@/components/admin/CuradorFotos";
 import { UNIDADES_VENTA, unidadDe } from "@/lib/unidades";
 import {
   actualizarTela,
   actualizarVarianteDetalle,
   crearVariante,
-  eliminarFoto,
   eliminarVariante,
-  moverFoto,
   subirFotos,
 } from "@/app/admin/actions";
 
@@ -129,20 +127,27 @@ export default async function EditarTelaPage({
   const nombreColor = new Map((colores ?? []).map((c) => [c.id, c.nombre]));
   const hexColor = new Map((colores ?? []).map((c) => [c.id, c.hex as string | null]));
 
-  // Fichas para el ordenador de colores: nombre, swatch y miniatura de portada.
-  const coloresOrdenables = variantes.map((v) => {
-    const portada = [...v.foto].sort(
-      (a, b) => a.orden - b.orden || a.created_at.localeCompare(b.created_at)
-    )[0];
-    return {
-      id: v.id,
-      nombre:
-        (v.color_id ? nombreColor.get(v.color_id) : null) ??
-        (v.sku ? `SKU ${v.sku}` : "Sin color"),
-      hex: v.color_id ? (hexColor.get(v.color_id) ?? null) : null,
-      fotoUrl: portada ? publicImageUrl(portada.ruta) : null,
-    };
-  });
+  // Una sola pasada para los dos componentes que hablan de colores: el
+  // ordenador (que solo quiere la portada) y la galería (que quiere todas las
+  // fotos). `orden` decide cuál es la portada; `created_at` desempata para que
+  // el resultado no dependa del orden en que respondió PostgREST.
+  const fichas = variantes.map((v) => ({
+    id: v.id,
+    nombre:
+      (v.color_id ? nombreColor.get(v.color_id) : null) ??
+      (v.sku ? `SKU ${v.sku}` : "Sin color"),
+    hex: v.color_id ? (hexColor.get(v.color_id) ?? null) : null,
+    fotos: [...v.foto]
+      .sort((a, b) => a.orden - b.orden || a.created_at.localeCompare(b.created_at))
+      .map((f) => ({ id: f.id, url: publicImageUrl(f.ruta), alt: f.alt })),
+  }));
+
+  const coloresOrdenables = fichas.map(({ id, nombre, hex, fotos }) => ({
+    id,
+    nombre,
+    hex,
+    fotoUrl: fotos[0]?.url ?? null,
+  }));
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
@@ -254,11 +259,20 @@ export default async function EditarTelaPage({
           <OrdenColores telaId={tela.id} colores={coloresOrdenables} />
         )}
 
+        {/* Las fotos de TODOS los colores juntas: las zonas donde se sueltan
+            son los otros colores, así que tienen que verse a la vez. Subir
+            fotos sigue siendo por color, en la ficha de cada uno. */}
+        <GaleriaFotos telaId={tela.id} telaNombre={tela.nombre} variantes={fichas} />
+
         <div className="space-y-6">
           {variantes.map((v) => (
             <article
               key={v.id}
-              className="rounded-2xl border border-line bg-surface p-6 shadow-sm"
+              /* Destino del deep-link de los swatches de /admin
+                 (#variante-<id>); `scroll-mt` deja aire arriba para que el
+                 título de la variante no quede pegado al borde. */
+              id={`variante-${v.id}`}
+              className="scroll-mt-24 rounded-2xl border border-line bg-surface p-6 shadow-sm"
             >
               <h3 className="mb-4 font-semibold text-ink">
                 {v.color_id ? nombreColor.get(v.color_id) ?? "Variante" : "Sin color"}
@@ -276,74 +290,14 @@ export default async function EditarTelaPage({
                 <SubmitButton label="Guardar variante" pendingLabel="Guardando…" size="sm" />
               </form>
 
-              {/* Fotos de la variante */}
+              {/* Subir fotos: sigue siendo por color porque el archivo llega a
+                  UN color concreto. Verlas y reclasificarlas es lo que subió a
+                  la galería común de arriba. */}
               <div className="mt-6 border-t border-line pt-4">
                 <h4 className="mb-3 text-sm font-medium text-ink">
-                  Fotos ({v.foto.length}) — la primera es la portada en el catálogo
+                  Agregar fotos a este color ({v.foto.length}
+                  {v.foto.length === 1 ? " foto" : " fotos"})
                 </h4>
-
-                {v.foto.length === 0 && (
-                  <p className="mb-3 flex items-center gap-2 text-sm text-ink/50">
-                    <ImageOff className="h-4 w-4" aria-hidden />
-                    Sin fotos: esta variante sale con un marcador gris en el catálogo.
-                  </p>
-                )}
-
-                <ul className="mb-4 flex flex-wrap gap-3">
-                  {[...v.foto]
-                    .sort((a, b) => a.orden - b.orden || a.created_at.localeCompare(b.created_at))
-                    .map((f, idx, lista) => (
-                      <li key={f.id} className="w-28">
-                        <div className="relative aspect-square w-28 overflow-hidden rounded-xl border border-line bg-line/40">
-                          <Image
-                            src={publicImageUrl(f.ruta) ?? ""}
-                            alt={f.alt ?? tela.nombre}
-                            fill
-                            sizes="112px"
-                            className="object-cover"
-                          />
-                          {idx === 0 && (
-                            <span
-                              className="absolute left-1 top-1 inline-flex items-center gap-1 rounded-lg bg-amber px-1.5 py-0.5 text-[10px] font-medium text-white"
-                              title="Foto principal"
-                            >
-                              <Star className="h-3 w-3" aria-hidden /> Portada
-                            </span>
-                          )}
-                        </div>
-                        <div className="mt-1.5 flex items-center justify-between gap-1">
-                          <form action={moverFoto}>
-                            <input type="hidden" name="foto_id" value={f.id} />
-                            <input type="hidden" name="variante_id" value={v.id} />
-                            <input type="hidden" name="tela_id" value={tela.id} />
-                            <input type="hidden" name="direccion" value="subir" />
-                            <BotonIcono etiqueta="Mover antes" deshabilitado={idx === 0}>
-                              <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
-                            </BotonIcono>
-                          </form>
-                          <form action={eliminarFoto}>
-                            <input type="hidden" name="foto_id" value={f.id} />
-                            <input type="hidden" name="tela_id" value={tela.id} />
-                            <ConfirmSubmit
-                              label="Borrar"
-                              pendingLabel="…"
-                              size="xs"
-                              mensaje="¿Eliminar esta foto? Se borra también del almacenamiento y no se puede deshacer."
-                            />
-                          </form>
-                          <form action={moverFoto}>
-                            <input type="hidden" name="foto_id" value={f.id} />
-                            <input type="hidden" name="variante_id" value={v.id} />
-                            <input type="hidden" name="tela_id" value={tela.id} />
-                            <input type="hidden" name="direccion" value="bajar" />
-                            <BotonIcono etiqueta="Mover después" deshabilitado={idx === lista.length - 1}>
-                              <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-                            </BotonIcono>
-                          </form>
-                        </div>
-                      </li>
-                    ))}
-                </ul>
 
                 <form action={subirFotos} className="space-y-4">
                   <input type="hidden" name="variante_id" value={v.id} />
@@ -569,28 +523,5 @@ function CheckboxChip({
       />
       {etiqueta}
     </label>
-  );
-}
-
-/** Botón compacto de submit para reordenar fotos. */
-function BotonIcono({
-  etiqueta,
-  deshabilitado,
-  children,
-}: {
-  etiqueta: string;
-  deshabilitado?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="submit"
-      disabled={deshabilitado}
-      aria-label={etiqueta}
-      title={etiqueta}
-      className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-line bg-surface text-ink/70 transition-colors hover:bg-surface-high hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber disabled:cursor-not-allowed disabled:opacity-40"
-    >
-      {children}
-    </button>
   );
 }

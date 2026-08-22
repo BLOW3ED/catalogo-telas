@@ -39,7 +39,7 @@ export function Filtros({
               href={ruta({ ...filtros, categorias: [] })}
               scroll={false}
               aria-current={filtros.categorias.length === 0 ? "true" : undefined}
-              className={`inline-flex shrink-0 snap-start items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold transition-all active:scale-95 ${
+              className={`inline-flex shrink-0 snap-start items-center justify-center rounded px-5 py-2.5 text-sm font-semibold transition-all active:scale-95 ${
                 filtros.categorias.length === 0
                   ? "bg-heritage-navy text-white shadow-sm"
                   : "border border-outline-variant/30 bg-surface-container text-ink-text hover:bg-surface-container-high shadow-xs"
@@ -65,17 +65,17 @@ export function Filtros({
       {/* Filtros Avanzados (Colores, Acabados, Stock) */}
       {hayAvanzados && (
         <details open={avanzadosPuestos} className="group mt-4">
-          <summary className="inline-flex cursor-pointer list-none items-center gap-2 rounded-full border border-outline-variant/30 bg-surface-container px-4 py-2 text-xs font-bold uppercase tracking-wider text-ink-display transition-all hover:bg-surface-container-high focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy">
+          <summary className="inline-flex cursor-pointer list-none items-center gap-2 rounded border border-outline-variant/30 bg-surface-container px-4 py-2 text-xs font-bold uppercase tracking-wider text-ink-display transition-all hover:bg-surface-container-high focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy">
             <span className="material-symbols-outlined text-[18px]">tune</span>
             Filtros Detallados
             {avanzadosPuestos && (
-              <span className="ml-1 rounded-full bg-amber px-2 py-0.5 text-[10px] text-white">
+              <span className="ml-1 rounded bg-amber px-2 py-0.5 text-[10px] text-white">
                 {filtros.colores.length + filtros.propiedades.length + (filtros.soloDisponibles ? 1 : 0)}
               </span>
             )}
           </summary>
 
-          <div className="mt-3 space-y-4 rounded-2xl border border-line bg-surface-container-low p-5 shadow-xs">
+          <div className="mt-3 space-y-4 rounded-lg border border-line bg-surface-container-low p-5 shadow-xs">
             {facetas.colores.length > 0 && (
               <Grupo titulo="Tonalidades">
                 {facetas.colores.map((c) => (
@@ -137,7 +137,7 @@ export function Filtros({
               precioMax: null,
               soloDisponibles: false,
             })}
-            className="inline-flex items-center gap-1.5 rounded-full bg-surface-container px-3 py-1 text-xs font-semibold text-amber transition-all hover:bg-surface-container-high active:scale-95"
+            className="inline-flex items-center gap-1.5 rounded bg-surface-container px-3 py-1 text-xs font-semibold text-amber transition-all hover:bg-surface-container-high active:scale-95"
           >
             <X className="h-3.5 w-3.5" aria-hidden />
             Limpiar todo
@@ -180,7 +180,7 @@ function Chip({
       href={href}
       scroll={false}
       aria-current={activo ? "true" : undefined}
-      className={`inline-flex shrink-0 snap-start items-center gap-2 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy ${
+      className={`inline-flex shrink-0 snap-start items-center gap-2 whitespace-nowrap rounded px-4 py-2 text-sm font-semibold transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy ${
         activo
           ? "bg-heritage-navy text-white shadow-sm"
           : "border border-outline-variant/30 bg-surface-container text-ink-text hover:bg-surface-container-high hover:border-outline shadow-xs"

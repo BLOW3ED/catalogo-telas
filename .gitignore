@@ -26,6 +26,10 @@ next-env.d.ts
 *.png
 *.webp
 *.bak
+# archivos de trabajo de editores gráficos (el .pxd del hero pesaba 70 MB)
+*.pxd
+*.psd
+*.sketch
 !/public/**
 
 # manifest de revisión generado por la ingesta

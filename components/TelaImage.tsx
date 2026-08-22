@@ -83,7 +83,7 @@ export function TelaImage({
 
   if (!src) {
     return (
-      <div className={`flex ${proporcion} w-full items-center justify-center rounded-t-2xl bg-line/50 text-ink-soft`}>
+      <div className={`flex ${proporcion} w-full items-center justify-center rounded-t bg-line/50 text-ink-soft`}>
         <ImageOff className="h-8 w-8" aria-hidden />
       </div>
     );
@@ -95,7 +95,7 @@ export function TelaImage({
   }`;
 
   return (
-    <div className={`relative ${proporcion} w-full overflow-hidden rounded-t-2xl bg-line/40`}>
+    <div className={`relative ${proporcion} w-full overflow-hidden rounded-t bg-line/40`}>
       {!loaded && <div className="absolute inset-0 animate-pulse bg-line/60" />}
       {srcSet ? (
         // eslint-disable-next-line @next/next/no-img-element -- srcset directo a los derivados WebP: evita la recompresión de next/image a propósito

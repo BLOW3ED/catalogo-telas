@@ -25,7 +25,7 @@ export function VolverAlCatalogo() {
           router.push("/");
         }
       }}
-      className="mb-6 inline-flex items-center gap-2 rounded-full border border-outline-variant/40 bg-surface-container-lowest px-4 py-2 text-xs font-bold uppercase tracking-wider text-ink-soft shadow-xs transition-all hover:bg-surface-container hover:text-ink-display active:scale-95"
+      className="mb-6 inline-flex items-center gap-2 rounded border border-outline-variant/40 bg-surface-container-lowest px-4 py-2 text-xs font-bold uppercase tracking-wider text-ink-soft shadow-xs transition-all hover:bg-surface-container hover:text-ink-display active:scale-95"
     >
       <ArrowLeft className="h-4 w-4" aria-hidden />
       Volver al catálogo
