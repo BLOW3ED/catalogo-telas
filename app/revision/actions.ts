@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getSesionRevisor } from "@/lib/revisor-auth";
 import { slugify } from "@/lib/slug";
+import { UNIDADES_VENTA, type UnidadVenta } from "@/lib/unidades";
 
 // ---------------------------------------------------------------------------
 // Sesión
@@ -71,6 +72,23 @@ function textoOpcional(valor: FormDataEntryValue | null): string | null {
   return texto === "" ? null : texto;
 }
 
+/**
+ * `unidad_venta` no permite cualquier texto: es un `check` en la BD, y un
+ * valor fuera de la lista lo rechazaría Postgres con un error críptico.
+ * Duplicado mínimo de `parseUnidadVenta` en app/admin/actions.ts (privada a
+ * ese módulo "use server", no se puede importar).
+ */
+function parseUnidadVenta(valor: FormDataEntryValue | null): UnidadVenta {
+  const texto = String(valor ?? "").trim().toLowerCase();
+  if (texto === "") return "metro";
+  if (!(UNIDADES_VENTA as readonly string[]).includes(texto)) {
+    throw new Error(
+      `Unidad de venta inválida: "${texto}". Usa una de: ${UNIDADES_VENTA.join(", ")}.`
+    );
+  }
+  return texto as UnidadVenta;
+}
+
 function parseCampoNumerico(valor: FormDataEntryValue | null, campo: string): number | null {
   const texto = String(valor ?? "").trim();
   if (texto === "") return null;
@@ -125,6 +143,7 @@ export async function actualizarVarianteRevision(formData: FormData) {
     sku: textoOpcional(formData.get("sku")),
     color_id: uuidOpcional(formData.get("color_id"), "color"),
     precio: parseCampoNumerico(formData.get("precio"), "precio"),
+    unidad_venta: parseUnidadVenta(formData.get("unidad_venta")),
     medida: textoOpcional(formData.get("medida")),
     nota: textoOpcional(formData.get("nota")),
   };

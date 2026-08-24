@@ -7,7 +7,7 @@ import { ColorSwatch } from "@/components/ColorSwatch";
 import { SubmitButton } from "@/components/admin/SubmitButton";
 import { publicImageUrl } from "@/lib/supabase/storage";
 import type { DerivadosFoto } from "@/lib/types";
-import { unidadDe } from "@/lib/unidades";
+import { UNIDADES_VENTA, unidadDe } from "@/lib/unidades";
 import { actualizarVarianteRevision, marcarRevisado } from "@/app/revision/actions";
 import { NuevoColorSheet, type ColorNuevo } from "@/components/revision/NuevoColorSheet";
 
@@ -84,22 +84,15 @@ export function VarianteRevisionCard({
     setColorSeleccionado(color.id);
   }
 
-  const unidad = unidadDe(variante.unidad_venta);
-
   return (
     <article className="rounded-2xl border border-line bg-surface p-4 shadow-sm sm:p-6">
       {/* ------------------------------------------------------- Fila superior */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
         <div className="flex items-center gap-3">
           <ColorSwatch hex={colorActual?.hex ?? null} nombre={colorActual?.nombre ?? "Sin color"} size="lg" />
-          <div>
-            <span className="block font-display text-lg text-ink-display">
-              {colorActual?.nombre ?? "Sin color"}
-            </span>
-            <span className="mt-0.5 inline-block rounded-full border border-line bg-bg px-2 py-0.5 text-xs text-ink/60">
-              Se vende por {unidad.singular}
-            </span>
-          </div>
+          <span className="font-display text-lg text-ink-display">
+            {colorActual?.nombre ?? "Sin color"}
+          </span>
         </div>
 
         <div className="flex flex-col items-end gap-1">
@@ -179,31 +172,21 @@ export function VarianteRevisionCard({
 
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="block">
-              <span className="mb-1 block text-xs font-medium text-ink/60">Color</span>
+              <span className="mb-1 block text-xs font-medium text-ink/60">Se vende por</span>
               <select
-                name="color_id"
-                value={colorSeleccionado}
-                onChange={(e) => setColorSeleccionado(e.target.value)}
+                name="unidad_venta"
+                defaultValue={variante.unidad_venta ?? "metro"}
                 className={inputClase}
               >
-                <option value="">— Sin color —</option>
-                {colores.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.nombre}
-                  </option>
-                ))}
+                {UNIDADES_VENTA.map((u) => {
+                  const etiqueta = unidadDe(u).singular;
+                  return (
+                    <option key={u} value={u}>
+                      {etiqueta.charAt(0).toUpperCase() + etiqueta.slice(1)}
+                    </option>
+                  );
+                })}
               </select>
-              <button
-                type="button"
-                onClick={() => setSheetAbierto(true)}
-                className="-ml-1 mt-0.5 inline-flex h-10 items-center gap-1 rounded px-1 text-xs font-semibold text-ink-display underline decoration-heritage-navy/50 underline-offset-4 hover:decoration-heritage-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
-              >
-                <Plus className="h-3.5 w-3.5" aria-hidden />
-                Toca aquí si no encuentras el color del producto
-              </button>
-              <span className="mt-0.5 block text-xs text-ink/40">
-                Revisa bien la lista antes de agregar uno — evita crear colores repetidos.
-              </span>
             </label>
 
             <label className="block">
@@ -217,6 +200,34 @@ export function VarianteRevisionCard({
               />
             </label>
           </div>
+
+          <label className="block">
+            <span className="mb-1 block text-xs font-medium text-ink/60">Color</span>
+            <select
+              name="color_id"
+              value={colorSeleccionado}
+              onChange={(e) => setColorSeleccionado(e.target.value)}
+              className={inputClase}
+            >
+              <option value="">— Sin color —</option>
+              {colores.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nombre}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              onClick={() => setSheetAbierto(true)}
+              className="-ml-1 mt-0.5 inline-flex h-10 items-center gap-1 rounded px-1 text-xs font-semibold text-ink-display underline decoration-heritage-navy/50 underline-offset-4 hover:decoration-heritage-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-heritage-navy"
+            >
+              <Plus className="h-3.5 w-3.5" aria-hidden />
+              Toca aquí si no encuentras el color del producto
+            </button>
+            <span className="mt-0.5 block text-xs text-ink/40">
+              Revisa bien la lista antes de agregar uno — evita crear colores repetidos.
+            </span>
+          </label>
 
           <label className="block">
             <span className="mb-1 block text-xs font-medium text-ink/60">Notas (opcional)</span>
