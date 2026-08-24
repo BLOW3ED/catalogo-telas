@@ -80,6 +80,22 @@ export type CatalogoTela = {
    * WhatsApp distingan precio real (BD) de precio demo.
    */
   precio_es_referencia?: boolean;
+  /**
+   * Talla/medida libre (diámetro de flor, ancho de tira, talla de copa…).
+   * Opcional porque la columna solo existe tras correr la sección 14 del SQL.
+   */
+  medida?: string | null;
+  /**
+   * NULL = pendiente de revisión de catálogo. Con fecha = ya la revisó el
+   * rol revisor. Opcional porque la columna solo existe tras la sección 14.
+   */
+  revisado_en?: string | null;
+  /**
+   * Nota libre del revisor (duda, pendiente, aviso a la tienda) — no es un
+   * dato del producto, es un comentario sobre la revisión. Opcional porque
+   * la columna solo existe tras correr la sección 15 del SQL.
+   */
+  nota?: string | null;
 };
 
 /**

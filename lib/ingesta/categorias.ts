@@ -86,6 +86,28 @@ export function unidadDeCategoria(slug: string | null | undefined): string | nul
   return (k && UNIDAD_POR_CATEGORIA[k]) ?? null;
 }
 
+/**
+ * Placeholder del campo "talla/medida" en `/revision` (`variante.medida`,
+ * sección 14 del SQL) según la categoría — SOLO texto de ayuda, no un campo
+ * condicional: el campo siempre está disponible, la categoría solo sugiere
+ * qué tipo de medida se espera (diámetro, ancho, talla…).
+ */
+export const PLACEHOLDER_MEDIDA_POR_CATEGORIA: Record<string, string> = {
+  [CATEGORIAS.FLORES.slug]: "Ej. 3 cm de diámetro",
+  [CATEGORIAS.COPAS.slug]: "Ej. talla 34",
+  [CATEGORIAS.TIRA.slug]: "Ej. 2.5 cm de ancho",
+  [CATEGORIAS.CINTILLO.slug]: "Ej. 2.5 cm de ancho",
+  [CATEGORIAS.GALON.slug]: "Ej. 2.5 cm de ancho",
+};
+
+const PLACEHOLDER_MEDIDA_DEFAULT = "Talla, diámetro o medida (opcional)";
+
+/** Placeholder sugerido para el campo de medida de esa categoría. */
+export function placeholderMedidaDeCategoria(slug: string | null | undefined): string {
+  const k = slug?.trim();
+  return (k && PLACEHOLDER_MEDIDA_POR_CATEGORIA[k]) ?? PLACEHOLDER_MEDIDA_DEFAULT;
+}
+
 export type ReglaCategoria = {
   re: RegExp;
   categoria: Categoria;

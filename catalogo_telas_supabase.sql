@@ -645,5 +645,164 @@ select
 notify pgrst, 'reload schema';
 
 -- ============================================================================
+-- 14. Revisión de catálogo por la tienda — REQUIERE haber corrido la 13
+--
+--     Antes de entregar el catálogo al cliente, un empleado (rol "revisor",
+--     ver lib/revisor-auth.ts) repasa producto por producto desde su celular
+--     y corrige nombre, SKU, precio, color y talla/medida. Dos columnas:
+--
+--       a) `medida`: talla libre (diámetro de flor, ancho de tira, talla de
+--          copa…). No existía ningún campo para esto — vivía como texto
+--          dentro de `tela.nombre` ("Flor con Piedra 3"). NULL si no aplica.
+--       b) `revisado_en`: NULL = pendiente de revisión. Con fecha = revisado.
+--          Marca el AVANCE de la revisión, no un estado de publicación.
+-- ============================================================================
+alter table variante add column if not exists medida text;
+alter table variante add column if not exists revisado_en timestamptz;
+
+comment on column variante.medida is
+  'Talla/medida libre (diámetro de flor, ancho de tira, talla de copa). NULL si no aplica.';
+comment on column variante.revisado_en is
+  'NULL = pendiente de revisión de catálogo. Con fecha = revisado por el rol revisor.';
+
+-- Cola de pendientes: partial index, barato y crece con el catálogo.
+create index if not exists idx_variante_revisado_pendiente
+  on variante (tela_id) where revisado_en is null;
+
+-- La vista crece SOLO por el final (create or replace no permite reordenar).
+create or replace view catalogo_telas as
+select
+    v.id                       as variante_id,
+    t.id                       as tela_id,
+    t.slug                     as tela_slug,
+    t.nombre                   as tela_nombre,
+    t.descripcion              as descripcion,
+    cat.nombre                 as categoria,
+    cat.slug                   as categoria_slug,
+    v.sku                      as sku,
+    col.nombre                 as color_nombre,
+    col.slug                   as color_slug,
+    col.hex                    as color_hex,
+    ac.nombre                  as acabado,
+    v.precio                   as precio_metro,   -- alias deprecado (ver nota sección 13)
+    v.gramaje                  as gramaje,
+    v.stock                    as stock,
+    v.es_bordado               as es_bordado,
+    v.es_brillante             as es_brillante,
+    v.es_traslucida            as es_traslucida,
+    v.es_tornasol              as es_tornasol,
+    (select f.ruta
+      from foto f
+      where f.variante_id = v.id
+      order by f.orden asc, f.created_at asc
+      limit 1)                 as foto_principal,
+    coalesce((
+      select array_agg(cu.slug order by cu.nombre)
+        from tela_caso_uso tcu
+        join caso_uso cu on cu.id = tcu.caso_uso_id
+      where tcu.tela_id = t.id
+    ), '{}')                   as casos_uso,
+    coalesce((
+      select array_agg(o.slug order by o.nombre)
+        from tela_oportunidad tox
+        join oportunidad o on o.id = tox.oportunidad_id
+      where tox.tela_id = t.id
+    ), '{}')                   as oportunidades,
+    t.created_at               as created_at,
+    t.updated_at               as updated_at,
+    v.orden                    as variante_orden,
+    (select f.derivados
+      from foto f
+      where f.variante_id = v.id
+      order by f.orden asc, f.created_at asc
+      limit 1)                 as foto_principal_derivados,
+    v.precio                   as precio,
+    v.unidad_venta             as unidad_venta,
+    v.piezas_por_unidad        as piezas_por_unidad,
+    v.medida                   as medida,
+    v.revisado_en              as revisado_en
+  from variante v
+  join tela t       on t.id = v.tela_id
+  left join categoria cat on cat.id = t.categoria_id
+  left join color col     on col.id = v.color_id
+  left join acabado ac    on ac.id = v.acabado_id;
+
+notify pgrst, 'reload schema';
+
+-- ============================================================================
+-- 15. Notas de revisión por variante — REQUIERE haber corrido la 14
+--
+--     El revisor a veces no puede corregir un dato en el momento (no sabe el
+--     precio correcto, duda del color, falta la foto) pero sí quiere dejar
+--     constancia para que la tienda lo resuelva después. `nota` es ese texto
+--     libre, independiente de `medida` (que es un DATO del producto, no un
+--     comentario sobre la revisión).
+-- ============================================================================
+alter table variante add column if not exists nota text;
+
+comment on column variante.nota is
+  'Nota libre del revisor sobre esta variante (duda, pendiente, aviso a la tienda). NULL si no hay.';
+
+create or replace view catalogo_telas as
+select
+    v.id                       as variante_id,
+    t.id                       as tela_id,
+    t.slug                     as tela_slug,
+    t.nombre                   as tela_nombre,
+    t.descripcion              as descripcion,
+    cat.nombre                 as categoria,
+    cat.slug                   as categoria_slug,
+    v.sku                      as sku,
+    col.nombre                 as color_nombre,
+    col.slug                   as color_slug,
+    col.hex                    as color_hex,
+    ac.nombre                  as acabado,
+    v.precio                   as precio_metro,   -- alias deprecado (ver nota sección 13)
+    v.gramaje                  as gramaje,
+    v.stock                    as stock,
+    v.es_bordado               as es_bordado,
+    v.es_brillante             as es_brillante,
+    v.es_traslucida            as es_traslucida,
+    v.es_tornasol              as es_tornasol,
+    (select f.ruta
+      from foto f
+      where f.variante_id = v.id
+      order by f.orden asc, f.created_at asc
+      limit 1)                 as foto_principal,
+    coalesce((
+      select array_agg(cu.slug order by cu.nombre)
+        from tela_caso_uso tcu
+        join caso_uso cu on cu.id = tcu.caso_uso_id
+      where tcu.tela_id = t.id
+    ), '{}')                   as casos_uso,
+    coalesce((
+      select array_agg(o.slug order by o.nombre)
+        from tela_oportunidad tox
+        join oportunidad o on o.id = tox.oportunidad_id
+      where tox.tela_id = t.id
+    ), '{}')                   as oportunidades,
+    t.created_at               as created_at,
+    t.updated_at               as updated_at,
+    v.orden                    as variante_orden,
+    (select f.derivados
+      from foto f
+      where f.variante_id = v.id
+      order by f.orden asc, f.created_at asc
+      limit 1)                 as foto_principal_derivados,
+    v.precio                   as precio,
+    v.unidad_venta             as unidad_venta,
+    v.piezas_por_unidad        as piezas_por_unidad,
+    v.medida                   as medida,
+    v.revisado_en              as revisado_en,
+    v.nota                     as nota
+  from variante v
+  join tela t       on t.id = v.tela_id
+  left join categoria cat on cat.id = t.categoria_id
+  left join color col     on col.id = v.color_id
+  left join acabado ac    on ac.id = v.acabado_id;
+
+notify pgrst, 'reload schema';
+
+-- ============================================================================
 -- FIN del esquema
 -- ============================================================================

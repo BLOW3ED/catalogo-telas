@@ -25,6 +25,10 @@ export function SiteHeader() {
   const isCatalogo = pathname === "/" || pathname.startsWith("/tela/");
   const isInspiracion = pathname === "/inspiracion";
 
+  // /admin y /revision son herramientas internas con su propia nav (AdminNav,
+  // RevisionNav) — el header de vitrina (logo, cesta) no aplica ahí.
+  if (pathname.startsWith("/admin") || pathname.startsWith("/revision")) return null;
+
   return (
     /* Mismo blanco que las tarjetas (`--color-surface-container-lowest`, #fff),
         no un `bg-white` suelto: la paleta vive en globals.css. Al 60% deja
