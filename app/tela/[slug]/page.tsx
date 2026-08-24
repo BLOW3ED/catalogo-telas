@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTelaPorSlug, getFotosDeVariantes } from "@/lib/queries";
 import { publicImageUrl } from "@/lib/supabase/storage";
@@ -11,7 +10,6 @@ import { AttributeBadges } from "@/components/AttributeBadges";
 import { AddToCart } from "@/components/AddToCart";
 import { VolverAlCatalogo } from "@/components/VolverAlCatalogo";
 import { unidadDe } from "@/lib/unidades";
-import { sugerenciaMerceriaDeCategoria } from "@/lib/ingesta/categorias";
 
 const pesos = new Intl.NumberFormat("es-MX", {
   style: "currency",
@@ -90,7 +88,6 @@ export default async function TelaDetallePage({
   };
 
   const tags = [...seleccionada.casos_uso, ...seleccionada.oportunidades];
-  const sugerenciaMerceria = sugerenciaMerceriaDeCategoria(seleccionada.categoria_slug);
 
   const fotos = await getFotosDeVariantes(variantes.map((v) => v.variante_id));
   const slides = construirSlides({ variantes, fotos, seleccionada });
@@ -141,12 +138,6 @@ export default async function TelaDetallePage({
               variantes={variantes}
               selectedSlug={seleccionada.color_slug}
             />
-          </div>
-
-          <div className="rounded border border-outline-variant/30 bg-surface-container-lowest/80 p-4 text-center shadow-2xs">
-            <p className="text-xs sm:text-sm text-ink-soft">
-              📸 <strong>Fotografía auténtica:</strong> Tomada bajo luz natural en nuestro estudio de Fresnillo.
-            </p>
           </div>
         </div>
 
@@ -217,38 +208,13 @@ export default async function TelaDetallePage({
             />
           </div>
 
-          {/* Usos Recomendados (Stitch Style) */}
-          <div className="rounded border border-outline-variant/30 bg-surface-container-low p-5 shadow-xs">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-ink-display mb-3">
-              Usos Recomendados para esta Tela
-            </h3>
-            <div className="flex gap-4 overflow-x-auto pb-1 no-scrollbar">
-              <div className="flex flex-col items-center gap-1.5 min-w-[70px]">
-                <div className="flex h-14 w-14 items-center justify-center rounded bg-surface-container-lowest text-ink-display shadow-2xs">
-                  <span className="material-symbols-outlined text-[26px]">checkroom</span>
-                </div>
-                <span className="text-[11px] font-semibold text-ink-soft text-center">Vestidos</span>
-              </div>
-              <div className="flex flex-col items-center gap-1.5 min-w-[70px]">
-                <div className="flex h-14 w-14 items-center justify-center rounded bg-surface-container-lowest text-ink-display shadow-2xs">
-                  <span className="material-symbols-outlined text-[26px]">dry_cleaning</span>
-                </div>
-                <span className="text-[11px] font-semibold text-ink-soft text-center">Pañuelos</span>
-              </div>
-              <div className="flex flex-col items-center gap-1.5 min-w-[70px]">
-                <div className="flex h-14 w-14 items-center justify-center rounded bg-surface-container-lowest text-ink-display shadow-2xs">
-                  <span className="material-symbols-outlined text-[26px]">styler</span>
-                </div>
-                <span className="text-[11px] font-semibold text-ink-soft text-center">Blusas</span>
-              </div>
-              <div className="flex flex-col items-center gap-1.5 min-w-[70px]">
-                <div className="flex h-14 w-14 items-center justify-center rounded bg-surface-container-lowest text-ink-display shadow-2xs">
-                  <span className="material-symbols-outlined text-[26px]">bed</span>
-                </div>
-                <span className="text-[11px] font-semibold text-ink-soft text-center">Decoración</span>
-              </div>
-            </div>
-          </div>
+          {/* "Usos Recomendados": pausado a propósito, no borrado. Es una
+              funcionalidad que sí queremos, pero los 4 iconos (Vestidos,
+              Pañuelos, Blusas, Decoración) estaban fijos en el JSX — los
+              mismos para cualquier tela — sin ningún dato real del producto
+              detrás. Antes de reactivarlo hace falta decidir de dónde sale
+              el uso recomendado por tela (¿categoría? ¿caso_uso real?) y
+              conectarlo a datos, no dejarlo como texto de relleno. */}
 
           {/* Ficha técnica en cuadrícula */}
           {(seleccionada.sku || seleccionada.stock != null) && (
@@ -300,34 +266,13 @@ export default async function TelaDetallePage({
             </div>
           )}
 
-          {/* Mercería recomendada para esta tela. Se oculta por completo si
-              la categoría no se cose con hilo (pedrería, cinta, el propio
-              hilo…) — ver sugerenciaMerceriaDeCategoria en
-              lib/ingesta/categorias.ts. */}
-          {sugerenciaMerceria && (
-            <div className="border-t border-line/60 pt-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-amber mb-3">
-                Mercería sugerida para este producto
-              </h3>
-              <div className="grid grid-cols-2 gap-3">
-                {sugerenciaMerceria.map((s) => (
-                  <Link
-                    key={s.q}
-                    href={`/?q=${s.q}`}
-                    className="flex items-center gap-3 rounded border border-outline-variant/30 bg-surface-container-lowest p-3 shadow-2xs transition-all hover:bg-surface-container"
-                  >
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-surface-container text-ink-display">
-                      <span className="material-symbols-outlined text-[20px]">{s.icono}</span>
-                    </div>
-                    <div className="overflow-hidden">
-                      <p className="truncate text-xs font-bold text-ink-display">{s.titulo}</p>
-                      <p className="text-[11px] text-ink-soft">{s.detalle}</p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* "Mercería sugerida para este producto": pausado a propósito,
+              no borrado — sí es una funcionalidad que queremos, pero falta
+              validar con la tienda qué mercería sugerir por categoría antes
+              de mostrarlo al público. La lógica sigue viva en
+              sugerenciaMerceriaDeCategoria (lib/ingesta/categorias.ts); para
+              reactivarlo basta con volver a llamarla aquí y pintar el
+              grid de sugerencias. */}
 
           {/* Agregar a la Cotización */}
           <AddToCart variante={seleccionada} />
