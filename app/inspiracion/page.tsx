@@ -1,12 +1,24 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Construction } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Inspiración & Atelier — Telas La Jalisciense",
   description:
     "Ideas, tendencias de temporada y creaciones de nuestra comunidad textil en Fresnillo.",
 };
+
+// Toda esta página es contenido de muestra (fotos y testimonios generados
+// para el mockup de Stitch, no clientas reales) — el badge deja claro que
+// aún no está lista para mostrarse tal cual al público.
+function BadgeEnDesarrollo() {
+  return (
+    <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-amber px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white shadow-sm">
+      <Construction className="h-3 w-3" aria-hidden />
+      En desarrollo
+    </span>
+  );
+}
 
 export default function InspiracionPage() {
   return (
@@ -39,6 +51,7 @@ export default function InspiracionPage() {
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 space-y-16">
         {/* 1. Artículo Destacado (Hero Editorial) */}
         <section className="flex flex-col gap-4">
+          <BadgeEnDesarrollo />
           <div className="flex items-center gap-2">
             <span className="h-px w-8 bg-heritage-navy" />
             <span className="text-xs font-bold uppercase tracking-widest text-ink-display">
@@ -78,56 +91,60 @@ export default function InspiracionPage() {
         </section>
 
         {/* 2. Guía Técnica & Consejos de Confección */}
-        <section className="grid gap-6 md:grid-cols-2">
-          {/* Card 1: Hilos y Agujas */}
-          <div className="flex flex-col overflow-hidden rounded border border-outline-variant/30 bg-surface-container-lowest p-6 sm:p-8 shadow-xs">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded bg-surface-container text-amber">
-              <span className="material-symbols-outlined text-[28px]">design_services</span>
+        <section className="flex flex-col gap-4">
+          <BadgeEnDesarrollo />
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Card 1: Hilos y Agujas */}
+            <div className="flex flex-col overflow-hidden rounded border border-outline-variant/30 bg-surface-container-lowest p-6 sm:p-8 shadow-xs">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded bg-surface-container text-amber">
+                <span className="material-symbols-outlined text-[28px]">design_services</span>
+              </div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-amber">
+                Guía de Atelier
+              </span>
+              <h3 className="mt-1 font-display text-xl font-bold text-ink-display sm:text-2xl">
+                Cómo elegir el hilo y aguja correctos
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-ink-soft">
+                Para telas finas como chifón y seda, usa agujas Microtex Nº 60 u 70 e hilos de seda o poliéster fino para evitar perforaciones visibles en la trama.
+              </p>
+              <Link
+                href="/?q=hilo"
+                className="mt-6 inline-flex items-center gap-1.5 text-sm font-bold text-ink-display transition-colors hover:text-amber"
+              >
+                Explorar hilos y mercería
+                <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+              </Link>
             </div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-amber">
-              Guía de Atelier
-            </span>
-            <h3 className="mt-1 font-display text-xl font-bold text-ink-display sm:text-2xl">
-              Cómo elegir el hilo y aguja correctos
-            </h3>
-            <p className="mt-3 text-sm leading-relaxed text-ink-soft">
-              Para telas finas como chifón y seda, usa agujas Microtex Nº 60 u 70 e hilos de seda o poliéster fino para evitar perforaciones visibles en la trama.
-            </p>
-            <Link
-              href="/?q=hilo"
-              className="mt-6 inline-flex items-center gap-1.5 text-sm font-bold text-ink-display transition-colors hover:text-amber"
-            >
-              Explorar hilos y mercería
-              <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-            </Link>
-          </div>
 
-          {/* Card 2: Caída y Peso */}
-          <div className="flex flex-col overflow-hidden rounded border border-outline-variant/30 bg-surface-container-lowest p-6 sm:p-8 shadow-xs">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded bg-surface-container text-amber">
-              <span className="material-symbols-outlined text-[28px]">straighten</span>
+            {/* Card 2: Caída y Peso */}
+            <div className="flex flex-col overflow-hidden rounded border border-outline-variant/30 bg-surface-container-lowest p-6 sm:p-8 shadow-xs">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded bg-surface-container text-amber">
+                <span className="material-symbols-outlined text-[28px]">straighten</span>
+              </div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-amber">
+                Cálculo de Metraje
+              </span>
+              <h3 className="mt-1 font-display text-xl font-bold text-ink-display sm:text-2xl">
+                Calcula la tela para faldas con vuelo y vestidos
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-ink-soft">
+                Una falda circular completa requiere entre 2.5 y 3.5 metros según el ancho de la tela (1.40m o 1.50m). Considera siempre un 10% adicional para dobladillos y caídas al bies.
+              </p>
+              <Link
+                href="/"
+                className="mt-6 inline-flex items-center gap-1.5 text-sm font-bold text-ink-display transition-colors hover:text-amber"
+              >
+                Ver telas con caída
+                <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+              </Link>
             </div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-amber">
-              Cálculo de Metraje
-            </span>
-            <h3 className="mt-1 font-display text-xl font-bold text-ink-display sm:text-2xl">
-              Calcula la tela para faldas con vuelo y vestidos
-            </h3>
-            <p className="mt-3 text-sm leading-relaxed text-ink-soft">
-              Una falda circular completa requiere entre 2.5 y 3.5 metros según el ancho de la tela (1.40m o 1.50m). Considera siempre un 10% adicional para dobladillos y caídas al bies.
-            </p>
-            <Link
-              href="/"
-              className="mt-6 inline-flex items-center gap-1.5 text-sm font-bold text-ink-display transition-colors hover:text-amber"
-            >
-              Ver telas con caída
-              <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-            </Link>
           </div>
         </section>
 
         {/* 3. Galería de la Comunidad: "Hecho con Telas La Jalisciense" */}
         <section className="space-y-6">
+          <BadgeEnDesarrollo />
           <div className="flex flex-col items-center text-center">
             <span className="material-symbols-outlined text-[32px] text-amber">
               auto_awesome
