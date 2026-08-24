@@ -5,10 +5,11 @@ import { Expand, Plus, X } from "lucide-react";
 import { TelaImage } from "@/components/TelaImage";
 import { ColorSwatch } from "@/components/ColorSwatch";
 import { SubmitButton } from "@/components/admin/SubmitButton";
+import { GuardadoFeedback } from "@/components/revision/GuardadoFeedback";
 import { publicImageUrl } from "@/lib/supabase/storage";
 import type { DerivadosFoto } from "@/lib/types";
 import { UNIDADES_VENTA, unidadDe } from "@/lib/unidades";
-import { actualizarVarianteRevision, marcarRevisado } from "@/app/revision/actions";
+import { actualizarVarianteRevision, marcarRevisado, type EstadoGuardado } from "@/app/revision/actions";
 import { NuevoColorSheet, type ColorNuevo } from "@/components/revision/NuevoColorSheet";
 
 export type ColorLookup = { id: string; nombre: string; hex: string | null };
@@ -48,6 +49,8 @@ export function VarianteRevisionCard({
 }) {
   const [revisado, setRevisado] = useState(variante.revisado_en != null);
   const [pendienteRevisado, startRevisadoTransition] = useTransition();
+  const [estadoGuardado, setEstadoGuardado] = useState<EstadoGuardado | null>(null);
+  const [pendienteGuardado, startGuardadoTransition] = useTransition();
   const [errorRevisado, setErrorRevisado] = useState<string | null>(null);
 
   const [colores, setColores] = useState<ColorLookup[]>(coloresIniciales);
@@ -82,6 +85,18 @@ export function VarianteRevisionCard({
   function alCrearColor(color: ColorNuevo) {
     setColores((prev) => [...prev, color].sort((a, b) => a.nombre.localeCompare(b.nombre)));
     setColorSeleccionado(color.id);
+  }
+
+  function guardarVariante(e: React.FormEvent<HTMLFormElement>) {
+    // preventDefault + FormData manual, NO <form action={...}>: React
+    // resetea el form cuando una acción pasada directo a `action` termina
+    // bien, y eso regresaba el <select> de color a "— Sin color —" después
+    // de guardar aunque el cambio sí quedara en la base — ver actions.ts.
+    e.preventDefault();
+    const datos = new FormData(e.currentTarget);
+    startGuardadoTransition(async () => {
+      setEstadoGuardado(await actualizarVarianteRevision(datos));
+    });
   }
 
   return (
@@ -134,7 +149,7 @@ export function VarianteRevisionCard({
           </div>
         )}
 
-        <form action={actualizarVarianteRevision} className="flex-1 space-y-4">
+        <form onSubmit={guardarVariante} className="flex-1 space-y-4">
           <input type="hidden" name="variante_id" value={variante.id} />
           <input type="hidden" name="tela_id" value={telaId} />
 
@@ -240,7 +255,8 @@ export function VarianteRevisionCard({
             />
           </label>
 
-          <SubmitButton label="Guardar cambios" pendingLabel="Guardando…" />
+          <SubmitButton label="Guardar cambios" pendingLabel="Guardando…" pending={pendienteGuardado} />
+          <GuardadoFeedback estado={estadoGuardado} />
         </form>
       </div>
 

@@ -3,19 +3,25 @@
 import { useFormStatus } from "react-dom";
 
 /**
- * Botón de submit con estado "guardando…" vía useFormStatus.
- * Debe vivir DENTRO del <form> cuya action quiere observar.
+ * Botón de submit con estado "guardando…". Por default lo lee de
+ * useFormStatus (vive DENTRO del <form> cuya action quiere observar), pero
+ * acepta `pending` explícito para forms que se envían a mano con
+ * `onSubmit` + `startTransition` en vez de `<form action={...}>` —
+ * useFormStatus solo reacciona a ese segundo mecanismo.
  */
 export function SubmitButton({
   label,
   pendingLabel,
   size = "lg",
+  pending: pendienteExterno,
 }: {
   label: string;
   pendingLabel: string;
   size?: "sm" | "lg";
+  pending?: boolean;
 }) {
-  const { pending } = useFormStatus();
+  const { pending: pendienteFormStatus } = useFormStatus();
+  const pending = pendienteExterno ?? pendienteFormStatus;
 
   const sizeClasses =
     size === "lg" ? "h-12 px-5 text-sm w-full" : "h-10 px-4 text-sm";
