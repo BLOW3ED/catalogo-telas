@@ -40,6 +40,7 @@ export function CatalogToolbar({ filtros, facetas }: CatalogToolbarProps) {
 
   return (
     <div
+      id="catalogo-seccion"
       className={`sticky z-30 w-full border-b border-line/60 bg-sand-bg/90 pb-2.5 pt-2.5 shadow-[0_4px_16px_rgba(0,0,0,0.04)] backdrop-blur-xl transition-all sm:top-16 sm:pb-3 sm:pt-3 ${
         compacto ? "top-12" : "top-16"
       }`}

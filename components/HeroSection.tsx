@@ -33,20 +33,20 @@ export function HeroSection({ totalModelos }: HeroSectionProps) {
       <div className="mx-auto max-w-7xl px-4 pt-6 pb-8 sm:px-6 sm:pt-10 sm:pb-12 lg:px-8 lg:pt-12 lg:pb-14">
         {/* Layout en 2 columnas para Desktop (lg+) y vertical armónico en Móvil */}
         <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-12">
-          
+
           {/* Columna Izquierda: Información de Marca, Mensaje y Acciones */}
           <div className="flex flex-col lg:col-span-7">
             {/* Eyebrow de atelier con sello de Fresnillo */}
             <div className="mb-3.5 inline-flex items-center gap-2 self-start rounded-full border border-amber/30 bg-surface-container-lowest/80 px-3 py-1 shadow-xs backdrop-blur-xs">
               <span className="flex h-2 w-2 rounded-full bg-amber animate-pulse" />
               <span className="text-[11px] font-bold uppercase tracking-wider text-amber">
-                Fresnillo, Zac. · Atelier Textil Selecto
+                Fresnillo, Zac. · Tienda Textil y Mercería
               </span>
             </div>
 
             {/* Título Principal de Alto Impacto */}
             <h1 className="font-display text-3xl font-bold tracking-tight text-ink-display sm:text-5xl lg:text-[3.25rem] sm:leading-[1.15]">
-              Telas finas y texturas exclusivas para tus creaciones
+              Telas finas y mercería para tus creaciones y manualidades.
             </h1>
 
             {/* Descripción / Propuesta de Valor */}

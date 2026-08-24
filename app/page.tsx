@@ -45,12 +45,17 @@ export default async function HomePage({
         <HeroSection totalModelos={totalModelos} />
       )}
 
-      {/* 2. Barra de Búsqueda, Categorías y Filtros Sticky (Accesible en todo momento) */}
-      <div id="catalogo-seccion">
-        {configurado && (
-          <CatalogToolbar filtros={filtros} facetas={facetas} />
-        )}
-      </div>
+      {/* 2. Barra de Búsqueda, Categorías y Filtros Sticky (Accesible en todo momento).
+          El id="catalogo-seccion" (destino del botón "Explorar Catálogo" del Hero)
+          vive en el propio div sticky de CatalogToolbar, NO en un wrapper: un wrapper
+          que solo contuviera la barra tendría exactamente su misma altura, sin margen
+          para que el sticky "recorra" nada — se despega en el primer pixel de scroll.
+          El sticky necesita que su padre (aquí <main>, con el hero y el grid debajo)
+          sea más alto que el elemento pegado. */}
+      {!configurado && <div id="catalogo-seccion" />}
+      {configurado && (
+        <CatalogToolbar filtros={filtros} facetas={facetas} />
+      )}
 
       {/* 3. Contenedor de Productos del Catálogo */}
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
