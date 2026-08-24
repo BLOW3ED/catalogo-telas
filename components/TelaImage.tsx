@@ -123,6 +123,12 @@ export function TelaImage({
           sizes={sizes}
           className={clase}
           onLoad={() => setLoaded(true)}
+          ref={(el) => {
+            // Mismo catch-up que la rama <img> de arriba: si next/image ya
+            // resolvió la imagen desde caché al hidratar, onLoad no dispara
+            // y el skeleton se queda pegado en opacity-0 para siempre.
+            if (el?.complete && !loaded) setLoaded(true);
+          }}
         />
       )}
     </div>

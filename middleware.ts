@@ -6,6 +6,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Solo el admin necesita sesión; el catálogo público queda fuera.
-  matcher: ["/admin/:path*"],
+  // Admin y revisión necesitan sesión; el catálogo público queda fuera.
+  matcher: ["/admin/:path*", "/revision/:path*"],
 };

@@ -21,6 +21,11 @@ export function MobileBottomNav() {
   const isCatalogo = pathname === "/" || pathname.startsWith("/tela/");
   const isInspiracion = pathname === "/inspiracion";
 
+  // /admin y /revision son herramientas internas: esta barra fija (Catálogo,
+  // Inspiración, Cesta) no aplica y su `fixed bottom-0` chocaría con los
+  // botones/sheets propios de esas pantallas.
+  if (pathname.startsWith("/admin") || pathname.startsWith("/revision")) return null;
+
   return (
     <nav
       aria-label="Navegación principal móvil"

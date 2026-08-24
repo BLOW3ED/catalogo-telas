@@ -1,11 +1,12 @@
 /**
- * Regla de negocio del allowlist de administradores, separada de `admin-auth.ts`
- * para poder probarla sin depender de Supabase/Next (cookies, sesión, etc.).
+ * Regla de negocio de los allowlists de acceso (`ADMIN_EMAILS`, `REVISOR_EMAILS`),
+ * separada de `admin-auth.ts`/`revisor-auth.ts` para poder probarla sin
+ * depender de Supabase/Next (cookies, sesión, etc.).
  *
  * Sin allowlist configurada (`allowlist` vacío/undefined), nadie está
  * autorizado — seguro por default.
  */
-export function isAllowedAdminEmail(
+function isEmailInList(
   email: string | null | undefined,
   allowlist: string | undefined
 ): boolean {
@@ -17,4 +18,19 @@ export function isAllowedAdminEmail(
     .filter(Boolean);
 
   return emails.includes(email.toLowerCase());
+}
+
+export function isAllowedAdminEmail(
+  email: string | null | undefined,
+  allowlist: string | undefined
+): boolean {
+  return isEmailInList(email, allowlist);
+}
+
+/** Igual que `isAllowedAdminEmail`, contra el allowlist `REVISOR_EMAILS`. */
+export function isAllowedRevisorEmail(
+  email: string | null | undefined,
+  allowlist: string | undefined
+): boolean {
+  return isEmailInList(email, allowlist);
 }

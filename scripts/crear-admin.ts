@@ -1,12 +1,15 @@
 #!/usr/bin/env tsx
 /**
- * Alta de administradores — Telas La Jalisciense
+ * Alta de administradores y revisores — Telas La Jalisciense
  * ===========================================================================
- * Un "usuario admin" en este proyecto son DOS cosas independientes, y hacen
- * falta las dos (ver `lib/admin-auth.ts`):
+ * Un "usuario admin" (o "revisor") en este proyecto son DOS cosas
+ * independientes, y hacen falta las dos (ver `lib/admin-auth.ts` /
+ * `lib/revisor-auth.ts`):
  *
- *   1. Una cuenta en Supabase Auth  → da SESIÓN (correo + contraseña).
- *   2. Ese correo en `ADMIN_EMAILS` → da AUTORIZACIÓN.
+ *   1. Una cuenta en Supabase Auth        → da SESIÓN (correo + contraseña).
+ *   2. Ese correo en el allowlist del rol → da AUTORIZACIÓN
+ *      (`ADMIN_EMAILS` para admin, `REVISOR_EMAILS` para revisor — mismo
+ *      formato, `--rol` decide cuál).
  *
  * La sesión sola no sirve: Supabase permite sign-up público por default, así
  * que cualquiera podría crearse cuenta. El allowlist es la puerta real y vive
@@ -14,20 +17,26 @@
  * texto ya listo para pegar, cómo cerrar la mitad 2 — no puede escribir él
  * mismo en `.env.local` de producción (Vercel), donde es donde importa.
  *
+ * La cuenta de Auth es IDÉNTICA para ambos roles (correo + contraseña, sin
+ * rol propio) — el rol lo decide solo a qué allowlist se agrega el correo.
+ *
  * La contraseña NO se pide por argumento a propósito: quedaría escrita en el
  * historial del shell. El script la genera y la imprime UNA vez.
  *
- *   pnpm admin:crear --email=x@y.com              → SIMULACRO, no escribe nada
- *   pnpm admin:crear --email=x@y.com --aplicar    → crea la cuenta
+ *   pnpm admin:crear --email=x@y.com                    → SIMULACRO, no escribe nada
+ *   pnpm admin:crear --email=x@y.com --aplicar          → crea la cuenta (rol admin)
+ *   pnpm admin:crear --email=x@y.com --rol=revisor --aplicar
+ *                                                       → crea la cuenta (rol revisor)
  *   pnpm admin:crear --email=x@y.com --reset --aplicar
- *                                                 → repone la contraseña de
- *                                                   una cuenta que ya existe
- *   pnpm admin:crear --listar                     → quién tiene cuenta hoy
+ *                                                       → repone la contraseña de
+ *                                                         una cuenta que ya existe
+ *   pnpm admin:crear --listar                           → quién tiene cuenta hoy
+ *                                                         y para qué rol(es) está autorizado
  */
 import { createClient, type User } from "@supabase/supabase-js";
 import { config as loadEnv } from "dotenv";
 import { randomInt } from "node:crypto";
-import { isAllowedAdminEmail } from "../lib/admin-allowlist";
+import { isAllowedAdminEmail, isAllowedRevisorEmail } from "../lib/admin-allowlist";
 
 loadEnv({ path: ".env.local" });
 loadEnv({ path: ".env" });
@@ -63,6 +72,17 @@ const APLICAR = bandera("aplicar");
 const RESET = bandera("reset");
 const LISTAR = bandera("listar");
 const EMAIL = valor("email")?.trim().toLowerCase();
+
+type Rol = "admin" | "revisor";
+
+const ROL_RAW = valor("rol")?.trim().toLowerCase();
+if (ROL_RAW && ROL_RAW !== "admin" && ROL_RAW !== "revisor") {
+  console.error(`✖ --rol debe ser "admin" o "revisor" (recibido: "${ROL_RAW}")`);
+  process.exit(1);
+}
+const ROL: Rol = (ROL_RAW as Rol) ?? "admin";
+const ENV_VAR_DEL_ROL = ROL === "admin" ? "ADMIN_EMAILS" : "REVISOR_EMAILS";
+const isAllowedDelRol = ROL === "admin" ? isAllowedAdminEmail : isAllowedRevisorEmail;
 
 function crearClienteAdmin() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -120,20 +140,24 @@ async function listarTodos(sb: Sb) {
 // ---------------------------------------------------------------------------
 async function main() {
   const sb = crearClienteAdmin();
-  const allowlist = process.env.ADMIN_EMAILS;
+  const adminAllowlist = process.env.ADMIN_EMAILS;
+  const revisorAllowlist = process.env.REVISOR_EMAILS;
 
   if (LISTAR) {
     const usuarios = await listarTodos(sb);
     console.log(`\nCuentas de Supabase Auth (${usuarios.length}):\n`);
     for (const u of usuarios) {
-      const autorizado = isAllowedAdminEmail(u.email, allowlist);
+      const esAdmin = isAllowedAdminEmail(u.email, adminAllowlist);
+      const esRevisor = isAllowedRevisorEmail(u.email, revisorAllowlist);
+      const roles = [esAdmin && "admin", esRevisor && "revisor"].filter(Boolean).join(" + ");
       console.log(
-        `  ${autorizado ? "✔" : "·"} ${u.email}` +
-          `  ${autorizado ? "[admin]" : "[SIN autorización]"}` +
+        `  ${esAdmin || esRevisor ? "✔" : "·"} ${u.email}` +
+          `  [${roles || "SIN autorización"}]` +
           `  último acceso: ${u.last_sign_in_at?.slice(0, 10) ?? "nunca"}`
       );
     }
-    console.log(`\n  ADMIN_EMAILS local: ${allowlist || "(vacío — nadie entra)"}\n`);
+    console.log(`\n  ADMIN_EMAILS local:   ${adminAllowlist || "(vacío — nadie entra)"}`);
+    console.log(`  REVISOR_EMAILS local: ${revisorAllowlist || "(vacío — nadie entra)"}\n`);
     return;
   }
 
@@ -142,13 +166,14 @@ async function main() {
     process.exit(1);
   }
 
+  const allowlist = ROL === "admin" ? adminAllowlist : revisorAllowlist;
   const existente = await buscarPorEmail(sb, EMAIL);
-  const enAllowlist = isAllowedAdminEmail(EMAIL, allowlist);
+  const enAllowlist = isAllowedDelRol(EMAIL, allowlist);
 
-  console.log(`\n${APLICAR ? "APLICANDO" : "SIMULACRO (no escribe nada)"}\n`);
+  console.log(`\n${APLICAR ? "APLICANDO" : "SIMULACRO (no escribe nada)"}  —  rol: ${ROL}\n`);
   console.log(`  correo:      ${EMAIL}`);
   console.log(`  cuenta Auth: ${existente ? "YA EXISTE" : "no existe"}`);
-  console.log(`  ADMIN_EMAILS local: ${enAllowlist ? "✔ incluido" : "✖ NO incluido"}\n`);
+  console.log(`  ${ENV_VAR_DEL_ROL} local: ${enAllowlist ? "✔ incluido" : "✖ NO incluido"}\n`);
 
   if (existente && !RESET) {
     console.log("→ La cuenta ya existe. No la toco.");
@@ -195,16 +220,16 @@ async function main() {
   console.log("   Se muestra UNA sola vez. Que la cambien al entrar.\n");
 
   if (!enAllowlist) avisoAllowlist(EMAIL, allowlist);
-  else console.log("→ Ya está en ADMIN_EMAILS local. Verifica que también esté en producción.\n");
+  else console.log(`→ Ya está en ${ENV_VAR_DEL_ROL} local. Verifica que también esté en producción.\n`);
 }
 
 function avisoAllowlist(email: string, allowlist: string | undefined) {
   const actuales = (allowlist ?? "").split(",").map((e) => e.trim()).filter(Boolean);
   const nuevo = [...actuales, email].join(",");
-  console.log("⚠  Este correo NO está en ADMIN_EMAILS: puede iniciar sesión pero");
-  console.log("   /admin lo va a rechazar. Falta la mitad 2. Pon esto en .env.local");
+  console.log(`⚠  Este correo NO está en ${ENV_VAR_DEL_ROL}: puede iniciar sesión pero`);
+  console.log(`   ${ROL === "admin" ? "/admin" : "/revision"} lo va a rechazar. Falta la mitad 2. Pon esto en .env.local`);
   console.log("   Y en las variables de entorno de producción (Vercel):\n");
-  console.log(`   ADMIN_EMAILS=${nuevo}\n`);
+  console.log(`   ${ENV_VAR_DEL_ROL}=${nuevo}\n`);
 }
 
 main().catch((e) => {
